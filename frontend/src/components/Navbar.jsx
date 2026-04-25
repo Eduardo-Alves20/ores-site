@@ -39,7 +39,7 @@ const NAV = [
   { label: 'Contato', to: '/contato' },
 ];
 
-export default function Navbar() {
+export default function Navbar({ siteInfo = {} }) {
   const location = useLocation();
   const [open, setOpen] = useState(null);
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -75,10 +75,14 @@ export default function Navbar() {
 
         {/* Logo */}
         <Link to="/" style={{ display:'flex',alignItems:'center',gap:10 }}>
-          <div style={{ width:34,height:34,borderRadius:'50%',background:'var(--gold)',display:'flex',alignItems:'center',justifyContent:'center',fontSize:16,color:'#fff',fontFamily:'Playfair Display,serif',fontWeight:700,flexShrink:0 }}>✦</div>
+          {siteInfo.site_logo_url ? (
+            <img src={siteInfo.site_logo_url} alt="" style={{ width:34,height:34,borderRadius:'50%',objectFit:'cover',flexShrink:0 }} />
+          ) : (
+            <div style={{ width:34,height:34,borderRadius:'50%',background:'var(--gold)',display:'flex',alignItems:'center',justifyContent:'center',fontSize:16,color:'#fff',fontFamily:'Playfair Display,serif',fontWeight:700,flexShrink:0 }}>✦</div>
+          )}
           <div>
-            <div style={{ fontFamily:'Playfair Display,serif',fontWeight:700,fontSize:15,color:tc,lineHeight:1.1,transition:'color .35s' }}>Paróquia</div>
-            <div style={{ fontFamily:'Playfair Display,serif',fontWeight:400,fontSize:12,color:solid?'var(--gold)':'rgba(255,255,255,.75)',letterSpacing:'0.06em',transition:'color .35s' }}>Espírito Santo</div>
+            <div style={{ fontFamily:'Playfair Display,serif',fontWeight:700,fontSize:15,color:tc,lineHeight:1.1,transition:'color .35s' }}>{siteInfo.site_name?.split(' ')[0] || 'Paróquia'}</div>
+            <div style={{ fontFamily:'Playfair Display,serif',fontWeight:400,fontSize:12,color:solid?'var(--gold)':'rgba(255,255,255,.75)',letterSpacing:'0.06em',transition:'color .35s' }}>{siteInfo.site_name?.split(' ').slice(1).join(' ') || 'Espírito Santo'}</div>
           </div>
         </Link>
 

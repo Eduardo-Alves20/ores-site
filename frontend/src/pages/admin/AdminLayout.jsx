@@ -9,7 +9,7 @@ import {
 
 const MENU = [
   { label:'Dashboard', to:'/admin/dashboard', icon:<LayoutDashboard size={18}/> },
-  { label:'Configurações', to:'/admin/settings', icon:<Settings size={18}/> },
+  { label:'Aparência e Páginas', to:'/admin/settings', icon:<Settings size={18}/> },
   { divider: true, label:'Conteúdo' },
   { label:'Notícias', to:'/admin/news', icon:<Newspaper size={18}/> },
   { label:'Eventos', to:'/admin/events', icon:<Calendar size={18}/> },

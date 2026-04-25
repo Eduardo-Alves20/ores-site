@@ -6,6 +6,7 @@ import morgan from 'morgan';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import dotenv from 'dotenv';
+import fs from 'fs';
 
 import { securityHeaders, globalRateLimit, sanitizeRequest } from './middleware/security.js';
 import publicRoutes from './routes/public.js';
@@ -17,6 +18,9 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const app = express();
 const PORT = process.env.PORT || 3001;
 const isDev = process.env.NODE_ENV !== 'production';
+const uploadsDir = path.join(__dirname, '../public/uploads');
+
+fs.mkdirSync(uploadsDir, { recursive: true });
 
 // ── Trust proxy (Hostinger / nginx) ─────────────────────────────────────────
 app.set('trust proxy', 1);
@@ -46,6 +50,7 @@ if (isDev) app.use(morgan('dev'));
 // ── Global rate limit + sanitizer ────────────────────────────────────────────
 app.use(globalRateLimit);
 app.use(sanitizeRequest);
+app.use('/uploads', express.static(uploadsDir, { maxAge: '30d', etag: true }));
 
 // ── API routes ────────────────────────────────────────────────────────────────
 app.use('/api', publicRoutes);

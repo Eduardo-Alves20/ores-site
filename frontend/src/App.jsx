@@ -46,7 +46,7 @@ function PublicLayout() {
   const isHome = location.pathname === '/';
   return (
     <>
-      <Navbar />
+      <Navbar siteInfo={siteInfo || {}} />
       <main style={{ paddingTop: isHome ? 0 : 68, minHeight:'80vh' }}>
         <Routes>
           <Route path="/" element={<Home />} />

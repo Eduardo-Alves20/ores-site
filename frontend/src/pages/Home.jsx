@@ -51,6 +51,7 @@ export default function Home() {
     <div className="animate-page">
       {/* ── Hero ── */}
       <section style={{ background:'var(--navy)',minHeight:'100vh',display:'flex',alignItems:'center',position:'relative',overflow:'hidden' }}>
+        {settings.hero_image_url && <img src={settings.hero_image_url} alt="" style={{ position:'absolute',inset:0,width:'100%',height:'100%',objectFit:'cover',opacity:.28 }} />}
         {/* Rings */}
         <div style={{ position:'absolute',top:'50%',left:'50%',width:700,height:700,borderRadius:'50%',border:'1px solid rgba(184,148,90,.12)',transform:'translate(-50%,-50%)',animation:'ringPulse 6s ease-in-out infinite' }} />
         <div style={{ position:'absolute',top:'50%',left:'50%',width:500,height:500,borderRadius:'50%',border:'1px solid rgba(184,148,90,.12)',transform:'translate(-50%,-50%)',animation:'ringPulse 6s ease-in-out infinite',animationDelay:'1s' }} />
@@ -60,7 +61,7 @@ export default function Home() {
         <div style={{ maxWidth:1200,margin:'0 auto',padding:'120px 24px 80px',width:'100%',position:'relative',zIndex:1 }}>
           <div style={{ maxWidth:680 }}>
             <div className="animate-fade-up" style={{ fontSize:11,fontWeight:600,letterSpacing:'0.2em',textTransform:'uppercase',color:'var(--gold-light)',marginBottom:22 }}>
-              Bem-vindo à
+              {settings.hero_eyebrow || 'Bem-vindo à'}
             </div>
             <h1 className="animate-fade-up" style={{ fontFamily:'Playfair Display,serif',fontSize:'clamp(44px,7vw,84px)',fontWeight:700,color:'#fff',lineHeight:1.08,marginBottom:20,animationDelay:'.1s' }}>
               {settings.hero_title ? settings.hero_title.split('Espírito Santo').map((part, i, arr) =>
@@ -71,15 +72,15 @@ export default function Home() {
               {settings.hero_subtitle || 'Venha fazer parte desta família de fé. Missas, grupos, pastorais e muito mais para toda a família.'}
             </p>
             <div className="animate-fade-up" style={{ display:'flex',gap:16,flexWrap:'wrap',animationDelay:'.3s' }}>
-              <Link to="/conheca" className="btn-gold" style={{ display:'inline-flex',alignItems:'center',gap:6,padding:'13px 28px',borderRadius:100,background:'var(--gold)',color:'#fff',fontWeight:600,fontSize:14,boxShadow:'0 4px 18px rgba(184,148,90,.35)',transition:'transform .2s,box-shadow .2s' }}
+              <Link to={settings.hero_primary_url || '/conheca'} className="btn-gold" style={{ display:'inline-flex',alignItems:'center',gap:6,padding:'13px 28px',borderRadius:100,background:'var(--gold)',color:'#fff',fontWeight:600,fontSize:14,boxShadow:'0 4px 18px rgba(184,148,90,.35)',transition:'transform .2s,box-shadow .2s' }}
                 onMouseEnter={e => { e.currentTarget.style.transform='translateY(-2px)'; e.currentTarget.style.boxShadow='0 8px 26px rgba(184,148,90,.45)'; }}
                 onMouseLeave={e => { e.currentTarget.style.transform=''; e.currentTarget.style.boxShadow='0 4px 18px rgba(184,148,90,.35)'; }}>
-                Conheça a Paróquia
+                {settings.hero_primary_label || 'Conheça a Paróquia'}
               </Link>
-              <Link to="/contato" style={{ display:'inline-flex',alignItems:'center',padding:'13px 28px',borderRadius:100,border:'1.5px solid rgba(255,255,255,.3)',color:'#fff',fontWeight:500,fontSize:14,transition:'background .2s,border-color .2s' }}
+              <Link to={settings.hero_secondary_url || '/contato'} style={{ display:'inline-flex',alignItems:'center',padding:'13px 28px',borderRadius:100,border:'1.5px solid rgba(255,255,255,.3)',color:'#fff',fontWeight:500,fontSize:14,transition:'background .2s,border-color .2s' }}
                 onMouseEnter={e => { e.currentTarget.style.background='rgba(255,255,255,.08)'; e.currentTarget.style.borderColor='rgba(255,255,255,.5)'; }}
                 onMouseLeave={e => { e.currentTarget.style.background=''; e.currentTarget.style.borderColor='rgba(255,255,255,.3)'; }}>
-                Fale Conosco
+                {settings.hero_secondary_label || 'Fale Conosco'}
               </Link>
             </div>
           </div>
@@ -103,7 +104,7 @@ export default function Home() {
           <Reveal>
             <div style={{ textAlign:'center',marginBottom:48 }}>
               <div style={{ fontSize:11,fontWeight:700,letterSpacing:'0.15em',textTransform:'uppercase',color:'var(--gold)',marginBottom:12 }}>Acesso Rápido</div>
-              <h2 style={{ fontFamily:'Playfair Display,serif',fontSize:'clamp(26px,4vw,40px)',fontWeight:700,color:'var(--navy)' }}>O que você está procurando?</h2>
+              <h2 style={{ fontFamily:'Playfair Display,serif',fontSize:'clamp(26px,4vw,40px)',fontWeight:700,color:'var(--navy)' }}>{settings.home_quick_title || 'O que você está procurando?'}</h2>
             </div>
           </Reveal>
           <div style={{ display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(160px,1fr))',gap:16 }}>
@@ -233,24 +234,24 @@ export default function Home() {
           <div style={{ maxWidth:1200,margin:'0 auto' }}>
             <div style={{ background:'var(--navy)',borderRadius:20,padding:'56px 64px',display:'grid',gridTemplateColumns:'1fr auto',gap:48,alignItems:'center' }}>
               <div>
-                <div style={{ fontSize:11,fontWeight:600,letterSpacing:'0.2em',textTransform:'uppercase',color:'var(--gold-light)',marginBottom:16 }}>Nossa Missão</div>
+                <div style={{ fontSize:11,fontWeight:600,letterSpacing:'0.2em',textTransform:'uppercase',color:'var(--gold-light)',marginBottom:16 }}>{settings.home_mission_eyebrow || 'Nossa Missão'}</div>
                 <h2 style={{ fontFamily:'Playfair Display,serif',fontSize:'clamp(24px,3.5vw,38px)',fontWeight:700,color:'#fff',lineHeight:1.25,marginBottom:20 }}>
-                  Evangelizar, celebrar e servir com amor
+                  {settings.home_mission_title || 'Evangelizar, celebrar e servir com amor'}
                 </h2>
                 <p style={{ fontSize:15,color:'rgba(255,255,255,.6)',lineHeight:1.75 }}>
-                  A Paróquia Espírito Santo é uma comunidade viva que celebra os sacramentos, promove a formação cristã e serve à sociedade com amor fraterno.
+                  {settings.home_mission_text || 'A Paróquia Espírito Santo é uma comunidade viva que celebra os sacramentos, promove a formação cristã e serve à sociedade com amor fraterno.'}
                 </p>
               </div>
               <div style={{ display:'flex',flexDirection:'column',gap:16,flexShrink:0 }}>
-                <Link to="/conheca" style={{ display:'inline-flex',alignItems:'center',gap:6,padding:'13px 28px',borderRadius:100,background:'var(--gold)',color:'#fff',fontWeight:600,fontSize:14,boxShadow:'0 4px 18px rgba(184,148,90,.35)',transition:'transform .2s' }}
+                <Link to={settings.home_mission_primary_url || '/conheca'} style={{ display:'inline-flex',alignItems:'center',gap:6,padding:'13px 28px',borderRadius:100,background:'var(--gold)',color:'#fff',fontWeight:600,fontSize:14,boxShadow:'0 4px 18px rgba(184,148,90,.35)',transition:'transform .2s' }}
                   onMouseEnter={e => e.currentTarget.style.transform='translateY(-2px)'}
                   onMouseLeave={e => e.currentTarget.style.transform=''}>
-                  Saiba mais
+                  {settings.home_mission_primary_label || 'Saiba mais'}
                 </Link>
-                <Link to="/voluntario" style={{ display:'inline-flex',alignItems:'center',justifyContent:'center',padding:'13px 28px',borderRadius:100,border:'1.5px solid rgba(255,255,255,.3)',color:'#fff',fontWeight:500,fontSize:14,transition:'background .2s' }}
+                <Link to={settings.home_mission_secondary_url || '/voluntario'} style={{ display:'inline-flex',alignItems:'center',justifyContent:'center',padding:'13px 28px',borderRadius:100,border:'1.5px solid rgba(255,255,255,.3)',color:'#fff',fontWeight:500,fontSize:14,transition:'background .2s' }}
                   onMouseEnter={e => e.currentTarget.style.background='rgba(255,255,255,.08)'}
                   onMouseLeave={e => e.currentTarget.style.background=''}>
-                  Seja voluntário
+                  {settings.home_mission_secondary_label || 'Seja voluntário'}
                 </Link>
               </div>
             </div>

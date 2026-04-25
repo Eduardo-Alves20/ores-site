@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Pencil, Trash2, Plus, X, Check, Search } from 'lucide-react';
 import api from '../../lib/api';
 import { useFetch } from '../../hooks/useFetch';
+import MediaField from './MediaField';
 
 function Modal({ title, children, onClose }) {
   return (
@@ -17,9 +18,11 @@ function Modal({ title, children, onClose }) {
   );
 }
 
-function Field({ label, type='text', value, onChange, options, required, textarea }) {
+function Field({ label, type='text', value, onChange, options, required, textarea, upload }) {
   const style = { width:'100%', padding:'9px 12px', borderRadius:8, border:'1px solid var(--border)', fontSize:14, outline:'none', fontFamily:'Plus Jakarta Sans,sans-serif', transition:'border-color .2s' };
   const events = { onFocus:e=>e.target.style.borderColor='var(--gold)', onBlur:e=>e.target.style.borderColor='var(--border)' };
+  if (upload) return <MediaField label={label} value={value} onChange={onChange} />;
+
   return (
     <div style={{ marginBottom:14 }}>
       <label style={{ display:'block', fontSize:11, fontWeight:700, color:'var(--text-soft)', marginBottom:5, textTransform:'uppercase', letterSpacing:'0.04em' }}>{label}{required && ' *'}</label>
@@ -148,7 +151,7 @@ export default function CrudTable({
       {modal && (
         <Modal title={modal==='create'?`Novo ${title}`:`Editar`} onClose={()=>setModal(null)}>
           {fields.map(f => (
-            <Field key={f.key} label={f.label} type={f.type} value={form[f.key]} onChange={v=>set(f.key,v)} options={f.options} required={f.required} textarea={f.textarea} />
+            <Field key={f.key} label={f.label} type={f.type} value={form[f.key]} onChange={v=>set(f.key,v)} options={f.options} required={f.required} textarea={f.textarea} upload={f.upload} />
           ))}
           {error && <p style={{ fontSize:13, color:'#dc2626', marginBottom:14 }}>{error}</p>}
           <div style={{ display:'flex', gap:10, justifyContent:'flex-end', paddingTop:8 }}>

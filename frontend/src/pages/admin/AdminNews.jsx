@@ -18,7 +18,7 @@ export default function AdminNews() {
         { key:'category', label:'Categoria' },
         { key:'summary', label:'Resumo', textarea:true },
         { key:'content', label:'Conteúdo', textarea:true },
-        { key:'image_url', label:'URL da Imagem' },
+        { key:'image_url', label:'Imagem da notícia', upload:true },
         { key:'published', label:'Publicado', options:[{value:'1',label:'Sim'},{value:'0',label:'Não'}] },
       ]}
       initialForm={{ title:'', slug:'', category:'', summary:'', content:'', image_url:'', published:'1' }}

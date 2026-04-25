@@ -37,6 +37,7 @@ router.get('/dashboard', adm.getDashboardStats);
 // ── Settings ─────────────────────────────────────────────────────────────────
 router.get('/settings', adm.getSettings);
 router.put('/settings', adm.updateSettings);
+router.post('/media', adm.uploadMedia);
 
 // ── Events ───────────────────────────────────────────────────────────────────
 router.get('/events', adm.listEvents);

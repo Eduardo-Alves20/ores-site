@@ -16,7 +16,7 @@ export default function AdminPriests() {
         { key:'sigla', label:'Sigla', required:true },
         { key:'role', label:'Cargo', required:true },
         { key:'bio', label:'Biografia', textarea:true },
-        { key:'photo_url', label:'URL da foto' },
+        { key:'photo_url', label:'Foto', upload:true },
         { key:'display_order', label:'Ordem de exibição', type:'number' },
         { key:'active', label:'Ativo', options:[{value:'1',label:'Sim'},{value:'0',label:'Não'}] },
       ]}

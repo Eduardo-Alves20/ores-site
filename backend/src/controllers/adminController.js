@@ -2,6 +2,57 @@ import { query, queryOne } from '../database/connection.js';
 import pool from '../database/connection.js';
 import { auditLog } from '../middleware/auth.js';
 import { sanitizeText, sanitizeRichText } from '../middleware/validate.js';
+import multer from 'multer';
+import path from 'path';
+import fs from 'fs';
+import { fileURLToPath } from 'url';
+import { randomUUID } from 'crypto';
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const uploadsDir = path.join(__dirname, '../public/uploads');
+fs.mkdirSync(uploadsDir, { recursive: true });
+
+const upload = multer({
+  storage: multer.diskStorage({
+    destination: (_req, _file, cb) => cb(null, uploadsDir),
+    filename: (_req, file, cb) => {
+      const ext = path.extname(file.originalname || '').toLowerCase();
+      cb(null, `${Date.now()}-${randomUUID()}${ext}`);
+    },
+  }),
+  limits: { fileSize: 5 * 1024 * 1024 },
+  fileFilter: (_req, file, cb) => {
+    if (!/^image\/(png|jpe?g|webp|gif|svg\+xml)$/.test(file.mimetype)) {
+      return cb(new Error('Formato de imagem inválido.'));
+    }
+    cb(null, true);
+  },
+}).single('file');
+
+const SETTINGS_KEYS = [
+  'site_name', 'site_tagline', 'site_logo_url', 'site_address', 'site_email', 'site_whatsapp',
+  'site_phone', 'site_facebook', 'site_instagram', 'site_youtube', 'radio_stream_url',
+  'daily_message', 'secretary_hours', 'maps_url',
+  'hero_eyebrow', 'hero_title', 'hero_subtitle', 'hero_image_url', 'hero_primary_label',
+  'hero_primary_url', 'hero_secondary_label', 'hero_secondary_url',
+  'home_quick_title', 'home_mission_eyebrow', 'home_mission_title', 'home_mission_text',
+  'home_mission_primary_label', 'home_mission_primary_url', 'home_mission_secondary_label',
+  'home_mission_secondary_url',
+  'conheca_eyebrow', 'conheca_title', 'conheca_subtitle', 'conheca_history_title',
+  'conheca_history_text_1', 'conheca_history_text_2',
+  'voluntario_eyebrow', 'voluntario_title', 'voluntario_subtitle', 'voluntario_cta_title',
+  'voluntario_cta_text', 'voluntario_cta_label', 'voluntario_cta_url',
+  'obra_social_eyebrow', 'obra_social_title', 'obra_social_subtitle', 'obra_social_mission_title',
+  'obra_social_mission_text', 'obra_social_cta_label', 'obra_social_cta_url',
+  'news_eyebrow', 'news_title', 'news_subtitle', 'radio_eyebrow', 'radio_title', 'radio_subtitle',
+  'homilies_eyebrow', 'homilies_title', 'homilies_subtitle', 'contact_eyebrow', 'contact_title',
+  'contact_subtitle', 'priests_eyebrow', 'priests_title', 'priests_subtitle',
+  'facilities_eyebrow', 'facilities_title', 'facilities_subtitle', 'calendar_eyebrow',
+  'calendar_title', 'calendar_subtitle', 'rooms_eyebrow', 'rooms_title', 'rooms_subtitle',
+  'groups_eyebrow', 'groups_title', 'groups_subtitle', 'pastorals_eyebrow',
+  'pastorals_title', 'pastorals_subtitle', 'communities_eyebrow', 'communities_title',
+  'communities_subtitle',
+];
 
 // ── Generic CRUD helpers ─────────────────────────────────────────────────────
 async function list(table, orderBy = 'id') {
@@ -76,12 +127,7 @@ export async function getSettings(req, res) {
 
 export async function updateSettings(req, res) {
   try {
-    const allowed = [
-      'site_name', 'site_address', 'site_email', 'site_whatsapp', 'site_phone',
-      'site_facebook', 'site_instagram', 'site_youtube', 'radio_stream_url',
-      'daily_message', 'secretary_hours', 'hero_title', 'hero_subtitle', 'maps_url',
-    ];
-    for (const key of allowed) {
+    for (const key of SETTINGS_KEYS) {
       if (req.body[key] !== undefined) {
         await query(
           `INSERT INTO site_settings (\`key\`, value) VALUES (?, ?) ON DUPLICATE KEY UPDATE value = VALUES(value)`,
@@ -94,6 +140,16 @@ export async function updateSettings(req, res) {
   } catch (err) {
     return res.status(500).json({ error: 'Erro interno.' });
   }
+}
+
+export async function uploadMedia(req, res) {
+  upload(req, res, async (err) => {
+    if (err) return res.status(400).json({ error: err.message || 'Erro no upload.' });
+    if (!req.file) return res.status(400).json({ error: 'Arquivo obrigatório.' });
+    const url = `/uploads/${req.file.filename}`;
+    await auditLog(req.adminUser.id, 'UPLOAD_MEDIA', 'uploads', null, null, { url, name: req.file.originalname }, req.ip);
+    return res.status(201).json({ url });
+  });
 }
 
 // ── Events ───────────────────────────────────────────────────────────────────

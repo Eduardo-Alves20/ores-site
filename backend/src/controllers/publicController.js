@@ -29,9 +29,8 @@ function groupBy(parents, details, fk, field) {
 // ── Home data ────────────────────────────────────────────────────────────────
 export async function getHomeData(req, res) {
   try {
-    const settings = await getSettings([
-      'daily_message', 'hero_title', 'hero_subtitle',
-    ]);
+    const settingsRows = await query(`SELECT \`key\`, value FROM site_settings`);
+    const settings = Object.fromEntries(settingsRows.map(r => [r.key, r.value]));
 
     const events = await query(
       `SELECT id, title, event_date, start_time, end_time, location, category
@@ -61,11 +60,8 @@ export async function getHomeData(req, res) {
 // ── Site settings (public) ───────────────────────────────────────────────────
 export async function getSiteInfo(req, res) {
   try {
-    const settings = await getSettings([
-      'site_name', 'site_address', 'site_email', 'site_whatsapp',
-      'site_phone', 'site_facebook', 'site_instagram', 'site_youtube',
-      'radio_stream_url', 'secretary_hours', 'maps_url',
-    ]);
+    const rows = await query(`SELECT \`key\`, value FROM site_settings`);
+    const settings = Object.fromEntries(rows.map(r => [r.key, r.value]));
     return res.json(settings);
   } catch (err) {
     return res.status(500).json({ error: 'Erro interno.' });
