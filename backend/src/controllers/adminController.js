@@ -1,0 +1,451 @@
+import { query, queryOne } from '../database/connection.js';
+import pool from '../database/connection.js';
+import { auditLog } from '../middleware/auth.js';
+import { sanitizeText, sanitizeRichText } from '../middleware/validate.js';
+
+// ── Generic CRUD helpers ─────────────────────────────────────────────────────
+async function list(table, orderBy = 'id') {
+  return query(`SELECT * FROM ${table} ORDER BY ${orderBy}`);
+}
+
+async function updateRecord(req, res, table, allowedFields, recordId) {
+  const old = await queryOne(`SELECT * FROM ${table} WHERE id = ?`, [recordId]);
+  if (!old) return res.status(404).json({ error: 'Registro não encontrado.' });
+
+  const updates = [];
+  const values = [];
+  for (const field of allowedFields) {
+    if (req.body[field] !== undefined) {
+      updates.push(`\`${field}\` = ?`);
+      values.push(typeof req.body[field] === 'string' ? sanitizeText(req.body[field]) : req.body[field]);
+    }
+  }
+  if (!updates.length) return res.status(400).json({ error: 'Nenhum campo para atualizar.' });
+
+  values.push(recordId);
+  await query(`UPDATE ${table} SET ${updates.join(', ')} WHERE id = ?`, values);
+  await auditLog(req.adminUser.id, `UPDATE_${table.toUpperCase()}`, table, recordId, old, req.body, req.ip);
+
+  const updated = await queryOne(`SELECT * FROM ${table} WHERE id = ?`, [recordId]);
+  return res.json(updated);
+}
+
+async function deleteRecord(req, res, table, recordId) {
+  const old = await queryOne(`SELECT * FROM ${table} WHERE id = ?`, [recordId]);
+  if (!old) return res.status(404).json({ error: 'Registro não encontrado.' });
+  await query(`DELETE FROM ${table} WHERE id = ?`, [recordId]);
+  await auditLog(req.adminUser.id, `DELETE_${table.toUpperCase()}`, table, recordId, old, null, req.ip);
+  return res.json({ message: 'Excluído com sucesso.' });
+}
+
+// ── Dashboard stats ──────────────────────────────────────────────────────────
+export async function getDashboardStats(req, res) {
+  try {
+    const [eventCount] = await query(`SELECT COUNT(*) as n FROM events WHERE active = 1`);
+    const [newsCount] = await query(`SELECT COUNT(*) as n FROM news WHERE published = 1`);
+    const [msgCount] = await query(`SELECT COUNT(*) as n FROM contact_messages WHERE read_at IS NULL`);
+    const [bookingCount] = await query(`SELECT COUNT(*) as n FROM room_bookings WHERE status = 'pending'`);
+    const recentLogs = await query(`SELECT al.*, au.name as admin_name FROM audit_log al LEFT JOIN admin_users au ON au.id = al.admin_id ORDER BY al.created_at DESC LIMIT 10`);
+    const recentMessages = await query(`SELECT * FROM contact_messages ORDER BY created_at DESC LIMIT 5`);
+
+    return res.json({
+      stats: {
+        events: eventCount.n,
+        news: newsCount.n,
+        unreadMessages: msgCount.n,
+        pendingBookings: bookingCount.n,
+      },
+      recentLogs,
+      recentMessages,
+    });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ error: 'Erro interno.' });
+  }
+}
+
+// ── Site settings ────────────────────────────────────────────────────────────
+export async function getSettings(req, res) {
+  try {
+    const rows = await query(`SELECT \`key\`, value FROM site_settings ORDER BY \`key\``);
+    return res.json(Object.fromEntries(rows.map(r => [r.key, r.value])));
+  } catch (err) {
+    return res.status(500).json({ error: 'Erro interno.' });
+  }
+}
+
+export async function updateSettings(req, res) {
+  try {
+    const allowed = [
+      'site_name', 'site_address', 'site_email', 'site_whatsapp', 'site_phone',
+      'site_facebook', 'site_instagram', 'site_youtube', 'radio_stream_url',
+      'daily_message', 'secretary_hours', 'hero_title', 'hero_subtitle', 'maps_url',
+    ];
+    for (const key of allowed) {
+      if (req.body[key] !== undefined) {
+        await query(
+          `INSERT INTO site_settings (\`key\`, value) VALUES (?, ?) ON DUPLICATE KEY UPDATE value = VALUES(value)`,
+          [key, sanitizeText(String(req.body[key]))]
+        );
+      }
+    }
+    await auditLog(req.adminUser.id, 'UPDATE_SETTINGS', 'site_settings', null, null, req.body, req.ip);
+    return res.json({ message: 'Configurações salvas.' });
+  } catch (err) {
+    return res.status(500).json({ error: 'Erro interno.' });
+  }
+}
+
+// ── Events ───────────────────────────────────────────────────────────────────
+export async function listEvents(req, res) {
+  return res.json(await list('events', 'event_date, start_time'));
+}
+
+export async function createEvent(req, res) {
+  try {
+    const { title, event_date, start_time, end_time, location, category, description } = req.body;
+    const [result] = await pool.execute(
+      `INSERT INTO events (title, event_date, start_time, end_time, location, category, description) VALUES (?, ?, ?, ?, ?, ?, ?)`,
+      [sanitizeText(title), event_date, start_time || null, end_time || null, sanitizeText(location), sanitizeText(category), sanitizeText(description)]
+    );
+    await auditLog(req.adminUser.id, 'CREATE_EVENT', 'events', result.insertId, null, req.body, req.ip);
+    return res.status(201).json({ id: result.insertId });
+  } catch (err) {
+    return res.status(500).json({ error: 'Erro interno.' });
+  }
+}
+
+export async function updateEvent(req, res) {
+  return updateRecord(req, res, 'events', ['title', 'event_date', 'start_time', 'end_time', 'location', 'category', 'description', 'active'], parseInt(req.params.id));
+}
+
+export async function deleteEvent(req, res) {
+  return deleteRecord(req, res, 'events', parseInt(req.params.id));
+}
+
+// ── News ─────────────────────────────────────────────────────────────────────
+export async function listNews(req, res) {
+  return res.json(await query(`SELECT * FROM news ORDER BY published_at DESC`));
+}
+
+export async function createNews(req, res) {
+  try {
+    const { title, slug, category, summary, content, image_url } = req.body;
+    const [result] = await pool.execute(
+      `INSERT INTO news (title, slug, category, summary, content, image_url) VALUES (?, ?, ?, ?, ?, ?)`,
+      [sanitizeText(title), sanitizeText(slug), sanitizeText(category), sanitizeText(summary), sanitizeRichText(content), sanitizeText(image_url)]
+    );
+    await auditLog(req.adminUser.id, 'CREATE_NEWS', 'news', result.insertId, null, req.body, req.ip);
+    return res.status(201).json({ id: result.insertId });
+  } catch (err) {
+    if (err.code === 'ER_DUP_ENTRY') return res.status(409).json({ error: 'Slug já existe.' });
+    return res.status(500).json({ error: 'Erro interno.' });
+  }
+}
+
+export async function updateNews(req, res) {
+  return updateRecord(req, res, 'news', ['title', 'slug', 'category', 'summary', 'content', 'image_url', 'published'], parseInt(req.params.id));
+}
+
+export async function deleteNews(req, res) {
+  return deleteRecord(req, res, 'news', parseInt(req.params.id));
+}
+
+// ── Priests ──────────────────────────────────────────────────────────────────
+export async function listPriests(req, res) {
+  return res.json(await list('priests', 'display_order'));
+}
+
+export async function createPriest(req, res) {
+  try {
+    const { name, sigla, role, bio, photo_url, display_order } = req.body;
+    const [result] = await pool.execute(
+      `INSERT INTO priests (name, sigla, role, bio, photo_url, display_order) VALUES (?, ?, ?, ?, ?, ?)`,
+      [sanitizeText(name), sanitizeText(sigla), sanitizeText(role), sanitizeText(bio), sanitizeText(photo_url), display_order || 0]
+    );
+    await auditLog(req.adminUser.id, 'CREATE_PRIEST', 'priests', result.insertId, null, req.body, req.ip);
+    return res.status(201).json({ id: result.insertId });
+  } catch (err) {
+    return res.status(500).json({ error: 'Erro interno.' });
+  }
+}
+
+export async function updatePriest(req, res) {
+  return updateRecord(req, res, 'priests', ['name', 'sigla', 'role', 'bio', 'photo_url', 'display_order', 'active'], parseInt(req.params.id));
+}
+
+export async function deletePriest(req, res) {
+  return deleteRecord(req, res, 'priests', parseInt(req.params.id));
+}
+
+// ── Mass schedule ────────────────────────────────────────────────────────────
+export async function listMassSchedule(req, res) {
+  const [scheduleRaw, times] = await Promise.all([
+    query(`SELECT * FROM mass_schedule ORDER BY day_order`),
+    query(`SELECT id, schedule_id, time_value AS time, priest_sigla AS sigla FROM mass_times`),
+  ]);
+  for (const s of scheduleRaw) {
+    s.times = times.filter(t => t.schedule_id === s.id);
+  }
+  return res.json(scheduleRaw);
+}
+
+export async function updateMassDay(req, res) {
+  try {
+    const scheduleId = parseInt(req.params.id);
+    const { times } = req.body; // [{ time: '07:00', sigla: 'MVS' }]
+    await query(`DELETE FROM mass_times WHERE schedule_id = ?`, [scheduleId]);
+    if (Array.isArray(times)) {
+      for (const t of times) {
+        await query(`INSERT INTO mass_times (schedule_id, time_value, priest_sigla) VALUES (?, ?, ?)`,
+          [scheduleId, t.time, t.sigla || null]);
+      }
+    }
+    await auditLog(req.adminUser.id, 'UPDATE_MASS_SCHEDULE', 'mass_times', scheduleId, null, req.body, req.ip);
+    return res.json({ message: 'Horários atualizados.' });
+  } catch (err) {
+    return res.status(500).json({ error: 'Erro interno.' });
+  }
+}
+
+// ── Prayer groups ─────────────────────────────────────────────────────────────
+export async function listGroups(req, res) {
+  return res.json(await list('prayer_groups', 'display_order'));
+}
+
+export async function createGroup(req, res) {
+  try {
+    const { name, day_of_week, time_value, location, description, coordinator_phone, display_order } = req.body;
+    const [result] = await pool.execute(
+      `INSERT INTO prayer_groups (name, day_of_week, time_value, location, description, coordinator_phone, display_order) VALUES (?, ?, ?, ?, ?, ?, ?)`,
+      [sanitizeText(name), sanitizeText(day_of_week), sanitizeText(time_value), sanitizeText(location), sanitizeText(description), sanitizeText(coordinator_phone), display_order || 0]
+    );
+    await auditLog(req.adminUser.id, 'CREATE_GROUP', 'prayer_groups', result.insertId, null, req.body, req.ip);
+    return res.status(201).json({ id: result.insertId });
+  } catch (err) {
+    return res.status(500).json({ error: 'Erro interno.' });
+  }
+}
+
+export async function updateGroup(req, res) {
+  return updateRecord(req, res, 'prayer_groups', ['name', 'day_of_week', 'time_value', 'location', 'description', 'coordinator_phone', 'display_order', 'active'], parseInt(req.params.id));
+}
+
+export async function deleteGroup(req, res) {
+  return deleteRecord(req, res, 'prayer_groups', parseInt(req.params.id));
+}
+
+// ── Pastorals ────────────────────────────────────────────────────────────────
+export async function listPastorals(req, res) {
+  return res.json(await list('pastorals', 'category, display_order'));
+}
+
+export async function createPastoral(req, res) {
+  try {
+    const { name, category, description, coordinator, phone, meeting_day, meeting_time, location, display_order } = req.body;
+    const [result] = await pool.execute(
+      `INSERT INTO pastorals (name, category, description, coordinator, phone, meeting_day, meeting_time, location, display_order) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      [sanitizeText(name), sanitizeText(category), sanitizeText(description), sanitizeText(coordinator), sanitizeText(phone), sanitizeText(meeting_day), sanitizeText(meeting_time), sanitizeText(location), display_order || 0]
+    );
+    await auditLog(req.adminUser.id, 'CREATE_PASTORAL', 'pastorals', result.insertId, null, req.body, req.ip);
+    return res.status(201).json({ id: result.insertId });
+  } catch (err) {
+    return res.status(500).json({ error: 'Erro interno.' });
+  }
+}
+
+export async function updatePastoral(req, res) {
+  return updateRecord(req, res, 'pastorals', ['name', 'category', 'description', 'coordinator', 'phone', 'meeting_day', 'meeting_time', 'location', 'display_order', 'active'], parseInt(req.params.id));
+}
+
+export async function deletePastoral(req, res) {
+  return deleteRecord(req, res, 'pastorals', parseInt(req.params.id));
+}
+
+// ── Communities ──────────────────────────────────────────────────────────────
+export async function listCommunities(req, res) {
+  return res.json(await list('communities', 'display_order'));
+}
+
+export async function createCommunity(req, res) {
+  try {
+    const { name, neighborhood, coordinator_name, coordinator_phone, display_order } = req.body;
+    const [result] = await pool.execute(
+      `INSERT INTO communities (name, neighborhood, coordinator_name, coordinator_phone, display_order) VALUES (?, ?, ?, ?, ?)`,
+      [sanitizeText(name), sanitizeText(neighborhood), sanitizeText(coordinator_name), sanitizeText(coordinator_phone), display_order || 0]
+    );
+    await auditLog(req.adminUser.id, 'CREATE_COMMUNITY', 'communities', result.insertId, null, req.body, req.ip);
+    return res.status(201).json({ id: result.insertId });
+  } catch (err) {
+    return res.status(500).json({ error: 'Erro interno.' });
+  }
+}
+
+export async function updateCommunity(req, res) {
+  return updateRecord(req, res, 'communities', ['name', 'neighborhood', 'coordinator_name', 'coordinator_phone', 'display_order', 'active'], parseInt(req.params.id));
+}
+
+export async function deleteCommunity(req, res) {
+  return deleteRecord(req, res, 'communities', parseInt(req.params.id));
+}
+
+// ── Facilities ───────────────────────────────────────────────────────────────
+export async function listFacilities(req, res) {
+  return res.json(await list('facilities', 'display_order'));
+}
+
+export async function updateFacility(req, res) {
+  return updateRecord(req, res, 'facilities', ['name', 'description', 'icon', 'capacity', 'display_order', 'active'], parseInt(req.params.id));
+}
+
+// ── Room bookings ─────────────────────────────────────────────────────────────
+export async function listBookings(req, res) {
+  try {
+    const bookings = await query(
+      `SELECT rb.*, f.name AS facility_name FROM room_bookings rb
+       JOIN facilities f ON f.id = rb.facility_id ORDER BY rb.booking_date DESC`
+    );
+    return res.json(bookings);
+  } catch (err) {
+    return res.status(500).json({ error: 'Erro interno.' });
+  }
+}
+
+export async function updateBookingStatus(req, res) {
+  return updateRecord(req, res, 'room_bookings', ['status'], parseInt(req.params.id));
+}
+
+// ── Homilies ─────────────────────────────────────────────────────────────────
+export async function listHomilies(req, res) {
+  return res.json(await list('homilies', 'published_at DESC'));
+}
+
+export async function createHomily(req, res) {
+  try {
+    const { title, priest_name, type, duration, audio_url, published_at } = req.body;
+    const [result] = await pool.execute(
+      `INSERT INTO homilies (title, priest_name, type, duration, audio_url, published_at) VALUES (?, ?, ?, ?, ?, ?)`,
+      [sanitizeText(title), sanitizeText(priest_name), type, sanitizeText(duration), sanitizeText(audio_url), published_at || null]
+    );
+    await auditLog(req.adminUser.id, 'CREATE_HOMILY', 'homilies', result.insertId, null, req.body, req.ip);
+    return res.status(201).json({ id: result.insertId });
+  } catch (err) {
+    return res.status(500).json({ error: 'Erro interno.' });
+  }
+}
+
+export async function updateHomily(req, res) {
+  return updateRecord(req, res, 'homilies', ['title', 'priest_name', 'type', 'duration', 'audio_url', 'published_at', 'active'], parseInt(req.params.id));
+}
+
+export async function deleteHomily(req, res) {
+  return deleteRecord(req, res, 'homilies', parseInt(req.params.id));
+}
+
+// ── Courses ──────────────────────────────────────────────────────────────────
+export async function listCourses(req, res) {
+  return res.json(await list('courses', 'display_order'));
+}
+
+export async function createCourse(req, res) {
+  try {
+    const { name, duration, schedule, vacancies, description, display_order } = req.body;
+    const [result] = await pool.execute(
+      `INSERT INTO courses (name, duration, schedule, vacancies, description, display_order) VALUES (?, ?, ?, ?, ?, ?)`,
+      [sanitizeText(name), sanitizeText(duration), sanitizeText(schedule), vacancies || null, sanitizeText(description), display_order || 0]
+    );
+    await auditLog(req.adminUser.id, 'CREATE_COURSE', 'courses', result.insertId, null, req.body, req.ip);
+    return res.status(201).json({ id: result.insertId });
+  } catch (err) {
+    return res.status(500).json({ error: 'Erro interno.' });
+  }
+}
+
+export async function updateCourse(req, res) {
+  return updateRecord(req, res, 'courses', ['name', 'duration', 'schedule', 'vacancies', 'description', 'display_order', 'active'], parseInt(req.params.id));
+}
+
+export async function deleteCourse(req, res) {
+  return deleteRecord(req, res, 'courses', parseInt(req.params.id));
+}
+
+// ── Social services ───────────────────────────────────────────────────────────
+export async function listServices(req, res) {
+  return res.json(await list('social_services', 'display_order'));
+}
+
+export async function updateService(req, res) {
+  return updateRecord(req, res, 'social_services', ['title', 'description', 'icon', 'display_order', 'active'], parseInt(req.params.id));
+}
+
+// ── Contact messages ──────────────────────────────────────────────────────────
+export async function listMessages(req, res) {
+  try {
+    const messages = await query(`SELECT * FROM contact_messages ORDER BY created_at DESC LIMIT 100`);
+    return res.json(messages);
+  } catch (err) {
+    return res.status(500).json({ error: 'Erro interno.' });
+  }
+}
+
+export async function markMessageRead(req, res) {
+  try {
+    await query(`UPDATE contact_messages SET read_at = NOW() WHERE id = ?`, [parseInt(req.params.id)]);
+    return res.json({ message: 'Mensagem marcada como lida.' });
+  } catch (err) {
+    return res.status(500).json({ error: 'Erro interno.' });
+  }
+}
+
+export async function deleteMessage(req, res) {
+  return deleteRecord(req, res, 'contact_messages', parseInt(req.params.id));
+}
+
+// ── Admin users (super_admin only) ────────────────────────────────────────────
+export async function listAdminUsers(req, res) {
+  try {
+    const users = await query(`SELECT id, name, email, role, last_login, created_at FROM admin_users ORDER BY id`);
+    return res.json(users);
+  } catch (err) {
+    return res.status(500).json({ error: 'Erro interno.' });
+  }
+}
+
+export async function createAdminUser(req, res) {
+  try {
+    const bcrypt = await import('bcryptjs');
+    const { name, email, password, role } = req.body;
+    if (!name || !email || !password) return res.status(400).json({ error: 'Nome, e-mail e senha são obrigatórios.' });
+    if (password.length < 8) return res.status(422).json({ error: 'Senha deve ter pelo menos 8 caracteres.' });
+    const hash = await bcrypt.default.hash(password, 12);
+    const [result] = await pool.execute(
+      `INSERT INTO admin_users (name, email, password_hash, role) VALUES (?, ?, ?, ?)`,
+      [sanitizeText(name), email.toLowerCase().trim(), hash, role === 'super_admin' ? 'super_admin' : 'editor']
+    );
+    await auditLog(req.adminUser.id, 'CREATE_ADMIN_USER', 'admin_users', result.insertId, null, { name, email, role }, req.ip);
+    return res.status(201).json({ id: result.insertId });
+  } catch (err) {
+    if (err.code === 'ER_DUP_ENTRY') return res.status(409).json({ error: 'E-mail já cadastrado.' });
+    return res.status(500).json({ error: 'Erro interno.' });
+  }
+}
+
+export async function deleteAdminUser(req, res) {
+  const userId = parseInt(req.params.id);
+  if (userId === req.adminUser.id) return res.status(400).json({ error: 'Não é possível excluir a própria conta.' });
+  return deleteRecord(req, res, 'admin_users', userId);
+}
+
+// ── Audit log ────────────────────────────────────────────────────────────────
+export async function getAuditLog(req, res) {
+  try {
+    const logs = await query(
+      `SELECT al.*, au.name as admin_name FROM audit_log al
+       LEFT JOIN admin_users au ON au.id = al.admin_id
+       ORDER BY al.created_at DESC LIMIT 200`
+    );
+    return res.json(logs);
+  } catch (err) {
+    return res.status(500).json({ error: 'Erro interno.' });
+  }
+}
