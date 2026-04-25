@@ -103,7 +103,7 @@ https://seudominio.com.br/admin
 Credenciais iniciais:
 
 ```txt
-Email: admin@paroquiaespiritosanto.com.br
+Email: admin@teste.com
 Senha: Admin@PES2026!
 ```
 

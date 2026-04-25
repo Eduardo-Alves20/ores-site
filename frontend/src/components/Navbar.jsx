@@ -56,10 +56,15 @@ export default function Navbar() {
 
   useEffect(() => { setMobileOpen(false); setOpen(null); }, [location.pathname]);
 
+  useEffect(() => {
+    document.body.style.overflow = mobileOpen ? 'hidden' : '';
+    return () => { document.body.style.overflow = ''; };
+  }, [mobileOpen]);
+
   const openDrop = (l) => { clearTimeout(closeTimer.current); setOpen(l); };
   const closeDrop = () => { closeTimer.current = setTimeout(() => setOpen(null), 420); };
 
-  const solid = scrolled || !isHome;
+  const solid = scrolled || !isHome || mobileOpen;
   const bg = solid ? 'rgba(255,255,255,0.98)' : 'transparent';
   const tc = solid ? 'var(--navy)' : '#fff';
   const border = solid ? '1px solid var(--border)' : '1px solid transparent';
@@ -113,44 +118,118 @@ export default function Navbar() {
         </div>
 
         {/* Mobile toggle */}
-        <button onClick={() => setMobileOpen(!mobileOpen)} style={{ color:tc,display:'none' }} className="mobile-toggle">
+        <button type="button" aria-label={mobileOpen ? 'Fechar menu' : 'Abrir menu'} aria-expanded={mobileOpen}
+          onClick={() => setMobileOpen(!mobileOpen)}
+          style={{ color:tc }}
+          className="mobile-toggle">
           {mobileOpen ? <X size={22} /> : <Menu size={22} />}
         </button>
       </div>
 
       {/* Mobile menu */}
       {mobileOpen && (
-        <div style={{ background:'#fff',borderTop:'1px solid var(--border)',maxHeight:'80vh',overflowY:'auto' }}>
-          {NAV.map(item => (
-            <div key={item.label} style={{ borderBottom:'1px solid var(--cream-dark)' }}>
-              {item.children ? (
-                <>
-                  <button onClick={() => setMobileExp(mobileExp===item.label?null:item.label)}
-                    style={{ display:'flex',width:'100%',alignItems:'center',justifyContent:'space-between',padding:'14px 24px',fontWeight:600,fontSize:14,color:'var(--navy)' }}>
-                    {item.label} <ChevronDown size={14} style={{ transform:mobileExp===item.label?'rotate(180deg)':'rotate(0)',transition:'transform .2s' }} />
-                  </button>
-                  {mobileExp === item.label && item.children.map(c => (
-                    <Link key={c.label} to={c.to} onClick={() => setMobileOpen(false)}
-                      style={{ display:'block',padding:'11px 40px',fontSize:13.5,color:'var(--text-mid)',fontWeight:400,borderTop:'1px solid var(--cream-dark)',background:'var(--cream)' }}>
-                      {c.label}
-                    </Link>
-                  ))}
-                </>
-              ) : (
-                <Link to={item.to} onClick={() => setMobileOpen(false)}
-                  style={{ display:'block',padding:'14px 24px',fontSize:14,fontWeight:600,color:'var(--navy)' }}>
-                  {item.label}
-                </Link>
-              )}
-            </div>
-          ))}
+        <div className="mobile-menu-shell">
+          <div className="mobile-menu-panel">
+            {NAV.map(item => (
+              <div key={item.label} className="mobile-menu-group">
+                {item.children ? (
+                  <>
+                    <button type="button" onClick={() => setMobileExp(mobileExp===item.label?null:item.label)}
+                      className="mobile-menu-row">
+                      <span>{item.label}</span>
+                      <ChevronDown size={16} style={{ transform:mobileExp===item.label?'rotate(180deg)':'rotate(0)',transition:'transform .2s' }} />
+                    </button>
+                    {mobileExp === item.label && (
+                      <div className="mobile-submenu">
+                        {item.children.map(c => (
+                          <Link key={c.label} to={c.to} onClick={() => setMobileOpen(false)}
+                            className={location.pathname===c.to ? 'mobile-submenu-link active' : 'mobile-submenu-link'}>
+                            {c.label}
+                          </Link>
+                        ))}
+                      </div>
+                    )}
+                  </>
+                ) : (
+                  <Link to={item.to} onClick={() => setMobileOpen(false)}
+                    className={location.pathname===item.to ? 'mobile-menu-link active' : 'mobile-menu-link'}>
+                    {item.label}
+                  </Link>
+                )}
+              </div>
+            ))}
+          </div>
         </div>
       )}
 
       <style>{`
+        .mobile-toggle {
+          display: none;
+          align-items: center;
+          justify-content: center;
+          width: 44px;
+          height: 44px;
+          border-radius: 10px;
+          transition: background .2s, color .35s;
+        }
+        .mobile-toggle:hover,
+        .mobile-toggle:focus-visible {
+          background: var(--cream);
+          outline: none;
+        }
+        .mobile-menu-shell {
+          position: fixed;
+          top: 68px;
+          left: 0;
+          right: 0;
+          height: calc(100vh - 68px);
+          background: rgba(26,39,68,.28);
+          border-top: 1px solid var(--border);
+        }
+        .mobile-menu-panel {
+          background: #fff;
+          max-height: min(78vh, 620px);
+          overflow-y: auto;
+          box-shadow: 0 18px 48px rgba(0,0,0,.18);
+        }
+        .mobile-menu-group {
+          border-bottom: 1px solid var(--cream-dark);
+        }
+        .mobile-menu-row,
+        .mobile-menu-link {
+          display: flex;
+          width: 100%;
+          min-height: 54px;
+          align-items: center;
+          justify-content: space-between;
+          padding: 0 24px;
+          color: var(--navy);
+          font-size: 15px;
+          font-weight: 700;
+          text-align: left;
+        }
+        .mobile-menu-link.active,
+        .mobile-submenu-link.active {
+          color: var(--gold);
+        }
+        .mobile-submenu {
+          background: var(--cream);
+          padding: 6px 0;
+        }
+        .mobile-submenu-link {
+          display: block;
+          min-height: 44px;
+          padding: 12px 40px;
+          color: var(--text-mid);
+          font-size: 14px;
+          font-weight: 500;
+        }
         @media (max-width: 860px) {
           .desk-nav { display: none !important; }
           .mobile-toggle { display: flex !important; }
+        }
+        @media (min-width: 861px) {
+          .mobile-menu-shell { display: none; }
         }
       `}</style>
     </nav>

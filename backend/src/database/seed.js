@@ -9,7 +9,7 @@ async function seed() {
   // Admin user
   const hash = await bcrypt.hash('Admin@PES2026!', 12);
   await query(`INSERT IGNORE INTO admin_users (name, email, password_hash, role) VALUES (?, ?, ?, ?)`,
-    ['Administrador', 'admin@paroquiaespiritosanto.com.br', hash, 'super_admin']);
+    ['Administrador', 'admin@teste.com', hash, 'super_admin']);
 
   // Site settings
   const settings = [
