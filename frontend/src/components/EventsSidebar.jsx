@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import { parseDateOnly } from '../lib/date';
 
 const MONTHS_PT = ['JAN','FEV','MAR','ABR','MAI','JUN','JUL','AGO','SET','OUT','NOV','DEZ'];
 
@@ -9,9 +10,9 @@ export default function EventsSidebar({ events = [], max = 3 }) {
         <h3 style={{ fontFamily:'Playfair Display,serif',fontSize:17,color:'#fff',fontWeight:600 }}>Próximos Eventos</h3>
       </div>
       {events.slice(0, max).map((ev, i) => {
-        const d = new Date(ev.event_date + 'T12:00:00');
-        const day = String(d.getDate()).padStart(2,'0');
-        const month = MONTHS_PT[d.getMonth()];
+        const d = parseDateOnly(ev.event_date);
+        const day = d ? String(d.getDate()).padStart(2,'0') : '--';
+        const month = d ? MONTHS_PT[d.getMonth()] : '';
         const time = ev.start_time ? ev.start_time.slice(0,5) : '';
         return (
           <div key={i} style={{ padding:'14px 20px',borderBottom:'1px solid var(--cream-dark)',display:'flex',gap:14,alignItems:'flex-start' }}>

@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useFetch } from '../hooks/useFetch';
 import PageHeader from '../components/PageHeader';
 import { ChevronLeft, ChevronRight, Clock, MapPin } from 'lucide-react';
+import { parseDateOnly, formatEventDate } from '../lib/date';
 
 const MONTHS = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
 const DAYS = ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
@@ -18,11 +19,12 @@ export default function Calendario() {
   const cells = Array.from({ length: firstDay + daysInMonth }, (_, i) => i < firstDay ? null : i - firstDay + 1);
 
   const eventsInMonth = (events || []).filter(ev => {
-    const d = new Date(ev.event_date + 'T12:00:00');
+    const d = parseDateOnly(ev.event_date);
+    if (!d) return false;
     return d.getFullYear() === year && d.getMonth() === month;
   });
 
-  const eventsOnDay = (day) => eventsInMonth.filter(ev => new Date(ev.event_date + 'T12:00:00').getDate() === day);
+  const eventsOnDay = (day) => eventsInMonth.filter(ev => parseDateOnly(ev.event_date)?.getDate() === day);
 
   const prev = () => { if (month === 0) { setYear(y => y - 1); setMonth(11); } else setMonth(m => m - 1); };
   const next = () => { if (month === 11) { setYear(y => y + 1); setMonth(0); } else setMonth(m => m + 1); };
@@ -73,14 +75,13 @@ export default function Calendario() {
             <h3 style={{ fontFamily:'Playfair Display,serif', fontSize:22, fontWeight:700, color:'var(--navy)', marginBottom:20 }}>Eventos de {MONTHS[month]}</h3>
             <div style={{ display:'flex', flexDirection:'column', gap:12 }}>
               {eventsInMonth.map((ev, i) => {
-                const d = new Date(ev.event_date + 'T12:00:00');
                 return (
                   <div key={i} style={{ background:'#fff', borderRadius:10, border:'1px solid var(--border)', padding:'16px 20px', display:'flex', gap:16, alignItems:'center' }}>
                     <div style={{ width:6, borderRadius:3, alignSelf:'stretch', background:CAT_COLORS[ev.category]||'var(--navy)', flexShrink:0 }} />
                     <div style={{ flex:1 }}>
                       <div style={{ fontWeight:600, color:'var(--navy)', marginBottom:4 }}>{ev.title}</div>
                       <div style={{ display:'flex', gap:16, fontSize:12, color:'var(--text-soft)' }}>
-                        <span style={{ display:'flex', alignItems:'center', gap:4 }}><Clock size={12} />{String(d.getDate()).padStart(2,'0')}/{String(d.getMonth()+1).padStart(2,'0')} {ev.start_time?.slice(0,5)}h{ev.end_time && `–${ev.end_time.slice(0,5)}h`}</span>
+                        <span style={{ display:'flex', alignItems:'center', gap:4 }}><Clock size={12} />{formatEventDate(ev.event_date)} {ev.start_time?.slice(0,5)}h{ev.end_time && `–${ev.end_time.slice(0,5)}h`}</span>
                         {ev.location && <span style={{ display:'flex', alignItems:'center', gap:4 }}><MapPin size={12} />{ev.location}</span>}
                       </div>
                     </div>

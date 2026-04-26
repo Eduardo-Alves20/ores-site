@@ -5,6 +5,7 @@ import Reveal from '../components/Reveal';
 import MassScheduleSidebar from '../components/MassScheduleSidebar';
 import EventsSidebar from '../components/EventsSidebar';
 import { Calendar, Users, Radio, Heart, BookOpen, Clock, MapPin } from 'lucide-react';
+import { parseDateOnly } from '../lib/date';
 
 const MONTHS_PT = ['JAN','FEV','MAR','ABR','MAI','JUN','JUL','AGO','SET','OUT','NOV','DEZ'];
 
@@ -180,9 +181,9 @@ export default function Home() {
             </Reveal>
             <div style={{ display:'flex',flexDirection:'column',gap:12 }}>
               {events.map((ev, i) => {
-                const d = new Date(ev.event_date + 'T12:00:00');
-                const day = String(d.getDate()).padStart(2,'0');
-                const month = MONTHS_PT[d.getMonth()];
+                const d = parseDateOnly(ev.event_date);
+                const day = d ? String(d.getDate()).padStart(2,'0') : '--';
+                const month = d ? MONTHS_PT[d.getMonth()] : '';
                 return (
                   <Reveal key={ev.id} delay={i * 80}>
                     <div style={{ background:'#fff',borderRadius:12,border:'1px solid var(--border)',padding:'20px 24px',display:'flex',gap:20,alignItems:'flex-start',transition:'transform .2s,box-shadow .2s',boxShadow:'0 1px 4px rgba(0,0,0,.03)' }}

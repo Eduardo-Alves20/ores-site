@@ -18,23 +18,23 @@ function PastoralModal({ pastoral, onClose }) {
   const hasMap = Boolean(pastoral.map_url);
 
   return (
-    <div style={{ position:'fixed', inset:0, zIndex:3500, background:'rgba(26,39,68,.62)', backdropFilter:'blur(6px)', display:'flex', alignItems:'center', justifyContent:'center', padding:24 }} onClick={onClose}>
-      <div style={{ width:'100%', maxWidth:680, background:'#fff', borderRadius:14, overflow:'hidden', boxShadow:'0 30px 80px rgba(0,0,0,.28)' }} onClick={e => e.stopPropagation()}>
-        <div style={{ padding:'26px 28px', background:'var(--cream)', borderBottom:'1px solid var(--border)', position:'relative' }}>
+    <div style={{ position:'fixed', inset:0, zIndex:9999, background:'rgba(26,39,68,.62)', backdropFilter:'blur(6px)', display:'flex', alignItems:'center', justifyContent:'center', padding:24 }} onClick={onClose}>
+      <div className="pastoral-modal" style={{ width:'100%', maxWidth:620, maxHeight:'calc(100dvh - 72px)', background:'#fff', borderRadius:14, overflow:'hidden', boxShadow:'0 30px 80px rgba(0,0,0,.28)', display:'flex', flexDirection:'column' }} onClick={e => e.stopPropagation()}>
+        <div style={{ padding:'22px 26px', background:'var(--cream)', borderBottom:'1px solid var(--border)', position:'relative', flexShrink:0 }}>
           <button type="button" onClick={onClose} style={{ position:'absolute', top:18, right:18, width:34, height:34, borderRadius:10, background:'#fff', color:'var(--text-soft)', display:'flex', alignItems:'center', justifyContent:'center' }}>
             <X size={18} />
           </button>
           <div style={{ fontSize:11, fontWeight:800, letterSpacing:'0.1em', textTransform:'uppercase', color:'var(--gold)', marginBottom:8 }}>{pastoral.category || 'Pastoral'}</div>
-          <h2 style={{ fontFamily:'Playfair Display,serif', fontSize:'clamp(26px,4vw,36px)', color:'var(--navy)', fontWeight:700, marginBottom:6, paddingRight:42 }}>{pastoral.name}</h2>
+          <h2 style={{ fontFamily:'Playfair Display,serif', fontSize:'clamp(24px,4vw,32px)', color:'var(--navy)', fontWeight:700, marginBottom:6, paddingRight:42 }}>{pastoral.name}</h2>
           {pastoral.coordinator && <p style={{ fontSize:14, color:'var(--text-mid)' }}>Coord.: {pastoral.coordinator}</p>}
         </div>
 
-        <div style={{ padding:28 }}>
+        <div style={{ padding:26, overflowY:'auto' }}>
           <div style={{ borderRadius:12, overflow:'hidden', border:'1px solid var(--border)', marginBottom:18, background:'var(--cream)' }}>
             {hasMap ? (
-              <iframe title={`Mapa ${pastoral.name}`} src={pastoral.map_url} style={{ width:'100%', height:220, border:0, display:'block' }} loading="lazy" />
+              <iframe title={`Mapa ${pastoral.name}`} src={pastoral.map_url} style={{ width:'100%', height:180, border:0, display:'block' }} loading="lazy" />
             ) : pastoral.image_url ? (
-              <img src={pastoral.image_url} alt="" style={{ width:'100%', height:220, objectFit:'cover' }} />
+              <img src={pastoral.image_url} alt="" style={{ width:'100%', height:180, objectFit:'cover', display:'block' }} />
             ) : mediaFallback(pastoral.name)}
           </div>
 
@@ -64,6 +64,12 @@ function PastoralModal({ pastoral, onClose }) {
           </div>
         </div>
       </div>
+      <style>{`
+        @media (max-width: 700px) {
+          .pastoral-modal { max-height: calc(100dvh - 28px) !important; }
+          .pastoral-modal [style*="grid-template-columns: 1fr 1fr"] { grid-template-columns: 1fr !important; }
+        }
+      `}</style>
     </div>
   );
 }
