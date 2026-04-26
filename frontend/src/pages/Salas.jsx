@@ -3,6 +3,7 @@ import { useFetch } from '../hooks/useFetch';
 import PageHeader from '../components/PageHeader';
 import api from '../lib/api';
 import { ChevronLeft, ChevronRight, X } from 'lucide-react';
+import { useAppAlert } from '../components/AppAlert';
 
 const MONTHS = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
 const DAYS = ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
@@ -10,6 +11,7 @@ const COLORS = ['#6366f1','#f59e0b','#10b981','#3b82f6','#8b5cf6','#ec4899','#ef
 
 export default function Salas() {
   const { data: facilities } = useFetch('/facilities');
+  const { notify } = useAppAlert();
   const now = new Date();
   const [year, setYear] = useState(now.getFullYear());
   const [month, setMonth] = useState(now.getMonth());
@@ -43,9 +45,12 @@ export default function Salas() {
     try {
       await api.post('/room-bookings', { ...form, booking_date: modal.date });
       setMsg('Agendamento solicitado! Aguarde confirmação.');
+      notify({ type:'success', title:'Agendamento solicitado', message:'Sua solicitação foi enviada. Aguarde a confirmação da secretaria.' });
       refetch();
     } catch (err) {
-      setMsg(err.response?.data?.error || 'Erro ao agendar.');
+      const message = err.response?.data?.error || 'Erro ao agendar.';
+      setMsg(message);
+      notify({ type:'error', title:'Erro ao agendar', message });
     }
   };
 

@@ -3,6 +3,7 @@ import api from '../../lib/api';
 import { useFetch } from '../../hooks/useFetch';
 import { Save } from 'lucide-react';
 import MediaField from './MediaField';
+import { useAppAlert } from '../../components/AppAlert';
 
 const sections = [
   {
@@ -48,6 +49,24 @@ const sections = [
       ['home_mission_primary_url', 'Missão: link principal'],
       ['home_mission_secondary_label', 'Missão: botão secundário'],
       ['home_mission_secondary_url', 'Missão: link secundário'],
+    ],
+  },
+  {
+    title: 'Doações',
+    fields: [
+      ['donation_enabled', 'Mostrar seção? (1 sim, 0 não)'],
+      ['donation_eyebrow', 'Etiqueta'],
+      ['donation_title', 'Título'],
+      ['donation_text', 'Mensagem de incentivo', 'textarea'],
+      ['donation_pix_key', 'Chave Pix'],
+      ['donation_qr_url', 'QR Code Pix', 'image'],
+      ['donation_button_label', 'Texto do botão'],
+      ['donation_gallery_1_url', 'Foto 1', 'image'],
+      ['donation_gallery_1_caption', 'Legenda da foto 1'],
+      ['donation_gallery_2_url', 'Foto 2', 'image'],
+      ['donation_gallery_2_caption', 'Legenda da foto 2'],
+      ['donation_gallery_3_url', 'Foto 3', 'image'],
+      ['donation_gallery_3_caption', 'Legenda da foto 3'],
     ],
   },
   {
@@ -130,6 +149,7 @@ const sections = [
 
 export default function AdminSettings() {
   const { data, refetch } = useFetch('/admin/settings');
+  const { notify } = useAppAlert();
   const [form, setForm] = useState({});
   const [active, setActive] = useState(sections[0].title);
   const [msg, setMsg] = useState('');
@@ -145,9 +165,11 @@ export default function AdminSettings() {
     try {
       await api.put('/admin/settings', form);
       setMsg('Configurações salvas com sucesso.');
+      notify({ type:'success', title:'Configurações salvas', message:'As alterações já estão prontas para aparecer no site.' });
       refetch();
     } catch {
       setMsg('Erro ao salvar.');
+      notify({ type:'error', title:'Erro ao salvar', message:'Não consegui salvar as configurações agora. Tente novamente.' });
     } finally {
       setLoading(false);
     }

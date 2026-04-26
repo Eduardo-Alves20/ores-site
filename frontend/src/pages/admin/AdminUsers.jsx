@@ -3,9 +3,11 @@ import { useFetch } from '../../hooks/useFetch';
 import api from '../../lib/api';
 import { useAuth } from '../../hooks/useAuth.jsx';
 import { Trash2, Plus, X, Check } from 'lucide-react';
+import { useAppAlert } from '../../components/AppAlert';
 
 export default function AdminUsers() {
   const { user: me } = useAuth();
+  const { notify, confirm } = useAppAlert();
   const { data: users, loading, refetch } = useFetch('/admin/users');
   const [modal, setModal] = useState(false);
   const [form, setForm] = useState({ name:'', email:'', password:'', role:'editor' });
@@ -14,15 +16,30 @@ export default function AdminUsers() {
 
   const create = async () => {
     setSaving(true); setError('');
-    try { await api.post('/admin/users', form); setModal(false); refetch(); }
-    catch (err) { setError(err.response?.data?.error || 'Erro ao criar.'); }
+    try {
+      await api.post('/admin/users', form);
+      setModal(false);
+      notify({ type:'success', title:'Usuário criado', message:'O acesso administrativo foi cadastrado.' });
+      refetch();
+    }
+    catch (err) {
+      const message = err.response?.data?.error || 'Erro ao criar.';
+      setError(message);
+      notify({ type:'error', title:'Erro ao criar usuário', message });
+    }
     finally { setSaving(false); }
   };
 
   const del = async (id) => {
-    if (!window.confirm('Excluir usuário?')) return;
-    await api.delete(`/admin/users/${id}`);
-    refetch();
+    const ok = await confirm({ title:'Excluir usuário?', message:'Esse acesso será removido do painel administrativo.', confirmText:'Excluir' });
+    if (!ok) return;
+    try {
+      await api.delete(`/admin/users/${id}`);
+      notify({ type:'success', title:'Usuário excluído', message:'O acesso foi removido.' });
+      refetch();
+    } catch (err) {
+      notify({ type:'error', title:'Erro ao excluir', message:err.response?.data?.error || 'Não consegui excluir este usuário agora.' });
+    }
   };
 
   return (

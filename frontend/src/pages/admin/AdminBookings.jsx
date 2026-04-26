@@ -2,18 +2,24 @@ import { useState } from 'react';
 import { useFetch } from '../../hooks/useFetch';
 import api from '../../lib/api';
 import { Check, X } from 'lucide-react';
+import { useAppAlert } from '../../components/AppAlert';
 
 const STATUS_COLORS = { pending:'#f59e0b', confirmed:'#16a34a', cancelled:'#ef4444' };
 const STATUS_LABELS = { pending:'Pendente', confirmed:'Confirmado', cancelled:'Cancelado' };
 
 export default function AdminBookings() {
   const { data: bookings, loading, refetch } = useFetch('/admin/bookings');
+  const { notify } = useAppAlert();
   const [updating, setUpdating] = useState(null);
 
   const updateStatus = async (id, status) => {
     setUpdating(id);
-    try { await api.put(`/admin/bookings/${id}`, { status }); refetch(); }
-    catch { alert('Erro ao atualizar.'); }
+    try {
+      await api.put(`/admin/bookings/${id}`, { status });
+      notify({ type:'success', title:'Agendamento atualizado', message:`Status alterado para ${STATUS_LABELS[status]}.` });
+      refetch();
+    }
+    catch { notify({ type:'error', title:'Erro ao atualizar', message:'Não consegui atualizar este agendamento agora.' }); }
     finally { setUpdating(null); }
   };
 

@@ -1,10 +1,12 @@
 import { useState } from 'react';
 import { useFetch } from '../../hooks/useFetch';
 import api from '../../lib/api';
-import { Eye, Trash2 } from 'lucide-react';
+import { Trash2 } from 'lucide-react';
+import { useAppAlert } from '../../components/AppAlert';
 
 export default function AdminMessages() {
   const { data: messages, loading, refetch } = useFetch('/admin/messages');
+  const { notify, confirm } = useAppAlert();
   const [selected, setSelected] = useState(null);
 
   const markRead = async (id) => {
@@ -13,10 +15,16 @@ export default function AdminMessages() {
   };
 
   const del = async (id) => {
-    if (!window.confirm('Excluir mensagem?')) return;
-    await api.delete(`/admin/messages/${id}`);
-    setSelected(null);
-    refetch();
+    const ok = await confirm({ title:'Excluir mensagem?', message:'A mensagem será removida definitivamente.', confirmText:'Excluir' });
+    if (!ok) return;
+    try {
+      await api.delete(`/admin/messages/${id}`);
+      setSelected(null);
+      notify({ type:'success', title:'Mensagem excluída', message:'A mensagem foi removida.' });
+      refetch();
+    } catch {
+      notify({ type:'error', title:'Erro ao excluir', message:'Não consegui excluir a mensagem agora.' });
+    }
   };
 
   return (

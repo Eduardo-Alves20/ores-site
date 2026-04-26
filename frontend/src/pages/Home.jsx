@@ -4,8 +4,9 @@ import { useFetch } from '../hooks/useFetch';
 import Reveal from '../components/Reveal';
 import MassScheduleSidebar from '../components/MassScheduleSidebar';
 import EventsSidebar from '../components/EventsSidebar';
-import { Calendar, Users, Radio, Heart, BookOpen, Clock, MapPin } from 'lucide-react';
+import { Calendar, Users, Radio, Heart, BookOpen, Clock, MapPin, Copy, Gift } from 'lucide-react';
 import { parseDateOnly } from '../lib/date';
+import { useAppAlert } from '../components/AppAlert';
 
 const MONTHS_PT = ['JAN','FEV','MAR','ABR','MAI','JUN','JUL','AGO','SET','OUT','NOV','DEZ'];
 
@@ -33,6 +34,7 @@ function Counter({ target, suffix = '' }) {
 
 export default function Home() {
   const { data } = useFetch('/home');
+  const { notify } = useAppAlert();
   const settings = data?.settings || {};
   const heroSlides = data?.heroSlides || [];
   const events = data?.events || [];
@@ -69,20 +71,36 @@ export default function Home() {
     { icon: <Radio size={22} />, label: 'Web Rádio', to: '/radio' },
     { icon: <BookOpen size={22} />, label: 'Homilias', to: '/homilias' },
   ];
+  const donationPhotos = [1, 2, 3]
+    .map(i => ({ url: settings[`donation_gallery_${i}_url`], caption: settings[`donation_gallery_${i}_caption`] }))
+    .filter(item => item.url || item.caption);
+
+  const copyPix = async () => {
+    if (!settings.donation_pix_key) {
+      notify({ type:'warning', title:'Chave Pix não cadastrada', message:'Cadastre a chave Pix no painel administrativo para habilitar a cópia.' });
+      return;
+    }
+    try {
+      await navigator.clipboard.writeText(settings.donation_pix_key);
+      notify({ type:'success', title:'Chave Pix copiada', message:'Agora é só colar no aplicativo do banco para fazer a contribuição.' });
+    } catch {
+      notify({ type:'info', title:'Chave Pix', message:settings.donation_pix_key });
+    }
+  };
 
   return (
     <div className="animate-page">
       {/* ── Hero ── */}
-      <section style={{ background:'var(--navy)',minHeight:'100vh',display:'flex',alignItems:'center',position:'relative',overflow:'hidden' }}>
+      <section style={{ background:'#000',minHeight:'100vh',display:'flex',alignItems:'center',position:'relative',overflow:'hidden' }}>
         {slides.map((slide, i) => slide.image_url && (
           <img
             key={slide.id || i}
             src={slide.image_url}
             alt=""
-            style={{ position:'absolute',inset:0,width:'100%',height:'100%',objectFit:'cover',opacity:i === currentSlide ? .36 : 0,transform:i === currentSlide ? 'scale(1.03)' : 'scale(1)',transition:'opacity .9s ease, transform 7s ease' }}
+            style={{ position:'absolute',inset:0,width:'100%',height:'100%',objectFit:'cover',opacity:i === currentSlide ? 1 : 0,transform:i === currentSlide ? 'scale(1.03)' : 'scale(1)',transition:'opacity .9s ease, transform 7s ease' }}
           />
         ))}
-        <div style={{ position:'absolute',inset:0,background:'linear-gradient(90deg,rgba(26,39,68,.94) 0%,rgba(26,39,68,.78) 48%,rgba(26,39,68,.68) 100%)' }} />
+        <div style={{ position:'absolute',inset:0,background:'linear-gradient(90deg,rgba(0,0,0,.55) 0%,rgba(0,0,0,.3) 60%,rgba(0,0,0,.1) 100%)' }} />
         {/* Rings */}
         <div style={{ position:'absolute',top:'50%',left:'50%',width:700,height:700,borderRadius:'50%',border:'1px solid rgba(184,148,90,.12)',transform:'translate(-50%,-50%)',animation:'ringPulse 6s ease-in-out infinite' }} />
         <div style={{ position:'absolute',top:'50%',left:'50%',width:500,height:500,borderRadius:'50%',border:'1px solid rgba(184,148,90,.12)',transform:'translate(-50%,-50%)',animation:'ringPulse 6s ease-in-out infinite',animationDelay:'1s' }} />
@@ -166,6 +184,52 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      {settings.donation_enabled !== '0' && (
+        <Reveal>
+          <section style={{ padding:'0 24px 72px' }}>
+            <div style={{ maxWidth:1200, margin:'0 auto', background:'#fff', border:'1px solid var(--border)', borderRadius:18, overflow:'hidden', boxShadow:'0 18px 60px rgba(26,39,68,.08)' }}>
+              <div className="donation-grid" style={{ display:'grid', gridTemplateColumns:'1.05fr .95fr', alignItems:'stretch' }}>
+                <div style={{ padding:'44px 48px', background:'var(--navy)', color:'#fff', position:'relative', overflow:'hidden' }}>
+                  <div style={{ position:'absolute', right:-90, top:-90, width:260, height:260, borderRadius:'50%', border:'1px solid rgba(212,170,114,.16)' }} />
+                  <div style={{ position:'absolute', right:40, bottom:-120, width:300, height:300, borderRadius:'50%', border:'1px solid rgba(212,170,114,.1)' }} />
+                  <div style={{ position:'relative' }}>
+                    <div style={{ width:54, height:54, borderRadius:'50%', background:'var(--gold)', display:'flex', alignItems:'center', justifyContent:'center', marginBottom:20, boxShadow:'0 10px 28px rgba(184,148,90,.35)' }}><Gift size={24} /></div>
+                    <div style={{ fontSize:11, fontWeight:800, letterSpacing:'0.16em', textTransform:'uppercase', color:'var(--gold-light)', marginBottom:14 }}>{settings.donation_eyebrow || 'Contribua com a comunidade'}</div>
+                    <h2 style={{ fontFamily:'Playfair Display,serif', fontSize:'clamp(28px,4vw,44px)', lineHeight:1.15, fontWeight:700, marginBottom:18 }}>{settings.donation_title || 'Sua doação ajuda a manter nossas obras vivas'}</h2>
+                    <p style={{ fontSize:15, lineHeight:1.8, color:'rgba(255,255,255,.72)', marginBottom:28 }}>{settings.donation_text || 'Com a sua generosidade, conseguimos cuidar da igreja, apoiar pastorais, realizar ações sociais e acolher melhor cada família que passa por aqui. Qualquer valor faz diferença.'}</p>
+                    <button onClick={copyPix} style={{ display:'inline-flex', alignItems:'center', gap:8, padding:'13px 24px', borderRadius:999, background:'var(--gold)', color:'#fff', fontWeight:800, fontSize:14, boxShadow:'0 8px 26px rgba(184,148,90,.32)' }}>
+                      <Copy size={16} />{settings.donation_button_label || 'Copiar chave Pix'}
+                    </button>
+                    {settings.donation_pix_key && <div style={{ marginTop:14, fontSize:12, color:'rgba(255,255,255,.55)', wordBreak:'break-word' }}>Pix: {settings.donation_pix_key}</div>}
+                  </div>
+                </div>
+                <div className="donation-media" style={{ padding:'32px', display:'grid', gridTemplateColumns:settings.donation_qr_url ? '170px 1fr' : '1fr', gap:20, alignItems:'center', background:'var(--cream)' }}>
+                  {settings.donation_qr_url && (
+                    <div style={{ background:'#fff', border:'1px solid var(--border)', borderRadius:14, padding:14, boxShadow:'0 10px 30px rgba(0,0,0,.06)' }}>
+                      <img src={settings.donation_qr_url} alt="QR Code Pix" style={{ width:'100%', aspectRatio:'1 / 1', objectFit:'contain' }} />
+                      <div style={{ marginTop:10, textAlign:'center', fontSize:11, fontWeight:800, color:'var(--gold)', textTransform:'uppercase', letterSpacing:'0.08em' }}>Pix QR Code</div>
+                    </div>
+                  )}
+                  <div style={{ display:'grid', gap:12 }}>
+                    {donationPhotos.length ? donationPhotos.map((item, i) => (
+                      <div key={i} style={{ display:'grid', gridTemplateColumns:item.url ? '84px 1fr' : '1fr', gap:12, alignItems:'center', background:'#fff', border:'1px solid var(--border)', borderRadius:12, padding:10 }}>
+                        {item.url && <img src={item.url} alt="" style={{ width:84, height:64, objectFit:'cover', borderRadius:8 }} />}
+                        <div style={{ fontSize:13, lineHeight:1.55, color:'var(--navy)', fontWeight:600 }}>{item.caption || 'Doação aplicada nas ações da comunidade'}</div>
+                      </div>
+                    )) : (
+                      <div style={{ background:'#fff', border:'1px solid var(--border)', borderRadius:12, padding:22 }}>
+                        <div style={{ fontFamily:'Playfair Display,serif', fontSize:20, color:'var(--navy)', fontWeight:700, marginBottom:8 }}>Transparência e cuidado</div>
+                        <p style={{ fontSize:13, color:'var(--text-mid)', lineHeight:1.7 }}>Use os cards do painel para mostrar fotos e exemplos de como as contribuições ajudam a comunidade.</p>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+        </Reveal>
+      )}
 
       {/* ── Main content + sidebar ── */}
       <section style={{ padding:'0 24px 72px' }}>
@@ -309,6 +373,13 @@ export default function Home() {
           }
           section > div > div > [style*="grid-template-columns: 1fr auto"] {
             grid-template-columns: 1fr !important;
+          }
+          .donation-grid,
+          .donation-media {
+            grid-template-columns: 1fr !important;
+          }
+          .donation-grid > div {
+            padding: 28px 24px !important;
           }
         }
       `}</style>

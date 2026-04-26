@@ -2,9 +2,11 @@ import { useState, useEffect } from 'react';
 import { useFetch } from '../../hooks/useFetch';
 import api from '../../lib/api';
 import { Save, Plus, Trash2 } from 'lucide-react';
+import { useAppAlert } from '../../components/AppAlert';
 
 export default function AdminMass() {
   const { data, loading, refetch } = useFetch('/admin/mass-schedule');
+  const { notify } = useAppAlert();
   const [schedule, setSchedule] = useState([]);
   const [saving, setSaving] = useState(null);
   const [msg, setMsg] = useState('');
@@ -35,8 +37,12 @@ export default function AdminMass() {
     try {
       await api.put(`/admin/mass-schedule/${day.id}`, { times: day.times.filter(t => t.time) });
       setMsg(`Horários de ${day.day_name} salvos!`);
+      notify({ type:'success', title:'Horários salvos', message:`Os horários de ${day.day_name} foram atualizados.` });
       refetch();
-    } catch { setMsg('Erro ao salvar.'); }
+    } catch {
+      setMsg('Erro ao salvar.');
+      notify({ type:'error', title:'Erro ao salvar', message:'Não consegui salvar os horários agora.' });
+    }
     finally { setSaving(null); }
   };
 

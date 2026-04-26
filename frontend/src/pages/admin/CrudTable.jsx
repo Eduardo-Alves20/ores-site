@@ -3,6 +3,7 @@ import { Pencil, Trash2, Plus, X, Check, Search } from 'lucide-react';
 import api from '../../lib/api';
 import { useFetch } from '../../hooks/useFetch';
 import MediaField from './MediaField';
+import { useAppAlert } from '../../components/AppAlert';
 
 function Modal({ title, children, onClose }) {
   return (
@@ -45,6 +46,7 @@ export default function CrudTable({
   searchField, extraActions, noCreate, noDelete
 }) {
   const { data, loading, refetch } = useFetch(apiPath);
+  const { notify, confirm } = useAppAlert();
   const [modal, setModal] = useState(null);
   const [form, setForm] = useState(initialForm);
   const [error, setError] = useState('');
@@ -65,17 +67,26 @@ export default function CrudTable({
     try {
       if (modal === 'create') await api.post(apiPath, form);
       else await api.put(`${apiPath}/${form.id}`, form);
-      setModal(null); refetch();
+      setModal(null);
+      notify({ type:'success', title:'Salvo com sucesso', message:'As alterações foram registradas.' });
+      refetch();
     } catch (err) {
-      setError(err.response?.data?.error || 'Erro ao salvar.');
+      const message = err.response?.data?.error || 'Erro ao salvar.';
+      setError(message);
+      notify({ type:'error', title:'Erro ao salvar', message });
     } finally { setSaving(false); }
   };
 
   const remove = async (id) => {
-    if (!window.confirm('Excluir este registro?')) return;
+    const ok = await confirm({ title:'Excluir registro?', message:'Essa ação não pode ser desfeita.', confirmText:'Excluir' });
+    if (!ok) return;
     setDeleting(id);
-    try { await api.delete(`${apiPath}/${id}`); refetch(); }
-    catch { alert('Erro ao excluir.'); }
+    try {
+      await api.delete(`${apiPath}/${id}`);
+      notify({ type:'success', title:'Registro excluído', message:'O item foi removido com sucesso.' });
+      refetch();
+    }
+    catch { notify({ type:'error', title:'Erro ao excluir', message:'Não consegui excluir este registro agora.' }); }
     finally { setDeleting(null); }
   };
 

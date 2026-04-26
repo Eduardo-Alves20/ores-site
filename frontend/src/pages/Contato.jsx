@@ -4,9 +4,11 @@ import Reveal from '../components/Reveal';
 import { useFetch } from '../hooks/useFetch';
 import api from '../lib/api';
 import { Mail, Phone, MapPin, Clock } from 'lucide-react';
+import { useAppAlert } from '../components/AppAlert';
 
 export default function Contato() {
   const { data: siteInfo } = useFetch('/site-info');
+  const { notify } = useAppAlert();
   const [form, setForm] = useState({ name:'', email:'', phone:'', subject:'', message:'' });
   const [status, setStatus] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -18,9 +20,12 @@ export default function Contato() {
     try {
       await api.post('/contact', form);
       setStatus({ ok:true, msg:'Mensagem enviada com sucesso! Retornaremos em breve.' });
+      notify({ type:'success', title:'Mensagem enviada', message:'Recebemos seu contato. Retornaremos em breve.' });
       setForm({ name:'', email:'', phone:'', subject:'', message:'' });
     } catch (err) {
-      setStatus({ ok:false, msg: err.response?.data?.error || 'Erro ao enviar. Tente novamente.' });
+      const message = err.response?.data?.error || 'Erro ao enviar. Tente novamente.';
+      setStatus({ ok:false, msg: message });
+      notify({ type:'error', title:'Erro ao enviar', message });
     } finally {
       setLoading(false);
     }
