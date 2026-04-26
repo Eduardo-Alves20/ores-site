@@ -47,6 +47,7 @@ async function seed() {
     ['donation_title', 'Sua doação ajuda a manter nossas obras vivas'],
     ['donation_text', 'Com a sua generosidade, conseguimos cuidar da igreja, apoiar pastorais, realizar ações sociais e acolher melhor cada família que passa por aqui. Qualquer valor faz diferença.'],
     ['donation_pix_key', ''],
+    ['donation_background_url', ''],
     ['donation_qr_url', ''],
     ['donation_button_label', 'Copiar chave Pix'],
     ['donation_gallery_1_url', ''],

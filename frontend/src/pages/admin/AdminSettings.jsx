@@ -59,6 +59,7 @@ const sections = [
       ['donation_title', 'Título'],
       ['donation_text', 'Mensagem de incentivo', 'textarea'],
       ['donation_pix_key', 'Chave Pix'],
+      ['donation_background_url', 'Foto de fundo da seção', 'image'],
       ['donation_qr_url', 'QR Code Pix', 'image'],
       ['donation_button_label', 'Texto do botão'],
       ['donation_gallery_1_url', 'Foto 1', 'image'],

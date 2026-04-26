@@ -39,6 +39,7 @@ const SETTINGS_KEYS = [
   'home_mission_primary_label', 'home_mission_primary_url', 'home_mission_secondary_label',
   'home_mission_secondary_url',
   'donation_enabled', 'donation_eyebrow', 'donation_title', 'donation_text', 'donation_pix_key',
+  'donation_background_url',
   'donation_qr_url', 'donation_button_label', 'donation_gallery_1_url', 'donation_gallery_1_caption',
   'donation_gallery_2_url', 'donation_gallery_2_caption', 'donation_gallery_3_url',
   'donation_gallery_3_caption',
