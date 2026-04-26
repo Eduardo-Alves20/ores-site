@@ -20,7 +20,7 @@ export default function Conheca() {
 
   return (
     <div className="animate-page">
-      <PageHeader eyebrow={s.conheca_eyebrow || 'Paróquia'} title={s.conheca_title || 'Conheça a PES'} subtitle={s.conheca_subtitle || 'Tudo sobre a Paróquia Espírito Santo de São José dos Campos.'} />
+      <PageHeader headerKey="conheca" eyebrow={s.conheca_eyebrow || 'Paróquia'} title={s.conheca_title || 'Conheça a PES'} subtitle={s.conheca_subtitle || 'Tudo sobre a Paróquia Espírito Santo de São José dos Campos.'} />
       <section style={{ padding:'72px 24px' }}>
         <div style={{ maxWidth:1200, margin:'0 auto', display:'grid', gridTemplateColumns:'1fr 340px', gap:32, alignItems:'start' }}>
           <div>

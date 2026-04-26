@@ -33,10 +33,32 @@ function Counter({ target, suffix = '' }) {
 export default function Home() {
   const { data } = useFetch('/home');
   const settings = data?.settings || {};
+  const heroSlides = data?.heroSlides || [];
   const events = data?.events || [];
   const massSchedule = data?.massSchedule || [];
   const confessions = data?.confessions || [];
   const news = data?.news || [];
+  const [currentSlide, setCurrentSlide] = useState(0);
+  const fallbackSlide = {
+    eyebrow: settings.hero_eyebrow || 'Bem-vindo à',
+    title: settings.hero_title || 'Uma comunidade unida no Espírito Santo',
+    subtitle: settings.hero_subtitle || 'Venha fazer parte desta família de fé. Missas, grupos, pastorais e muito mais para toda a família.',
+    image_url: settings.hero_image_url || '',
+    primary_label: settings.hero_primary_label || 'Conheça a Paróquia',
+    primary_url: settings.hero_primary_url || '/conheca',
+    secondary_label: settings.hero_secondary_label || 'Fale Conosco',
+    secondary_url: settings.hero_secondary_url || '/contato',
+    duration_ms: 6000,
+  };
+  const slides = heroSlides.length ? heroSlides : [fallbackSlide];
+  const hero = slides[currentSlide] || slides[0] || fallbackSlide;
+
+  useEffect(() => {
+    if (slides.length < 2) return undefined;
+    const duration = Math.max(Number(hero.duration_ms) || 6000, 1500);
+    const timer = setTimeout(() => setCurrentSlide(i => (i + 1) % slides.length), duration);
+    return () => clearTimeout(timer);
+  }, [currentSlide, hero.duration_ms, slides.length]);
 
   const quickLinks = [
     { icon: <Calendar size={22} />, label: 'Agenda de Eventos', to: '/calendario' },
@@ -51,7 +73,15 @@ export default function Home() {
     <div className="animate-page">
       {/* ── Hero ── */}
       <section style={{ background:'var(--navy)',minHeight:'100vh',display:'flex',alignItems:'center',position:'relative',overflow:'hidden' }}>
-        {settings.hero_image_url && <img src={settings.hero_image_url} alt="" style={{ position:'absolute',inset:0,width:'100%',height:'100%',objectFit:'cover',opacity:.28 }} />}
+        {slides.map((slide, i) => slide.image_url && (
+          <img
+            key={slide.id || i}
+            src={slide.image_url}
+            alt=""
+            style={{ position:'absolute',inset:0,width:'100%',height:'100%',objectFit:'cover',opacity:i === currentSlide ? .36 : 0,transform:i === currentSlide ? 'scale(1.03)' : 'scale(1)',transition:'opacity .9s ease, transform 7s ease' }}
+          />
+        ))}
+        <div style={{ position:'absolute',inset:0,background:'linear-gradient(90deg,rgba(26,39,68,.94) 0%,rgba(26,39,68,.78) 48%,rgba(26,39,68,.68) 100%)' }} />
         {/* Rings */}
         <div style={{ position:'absolute',top:'50%',left:'50%',width:700,height:700,borderRadius:'50%',border:'1px solid rgba(184,148,90,.12)',transform:'translate(-50%,-50%)',animation:'ringPulse 6s ease-in-out infinite' }} />
         <div style={{ position:'absolute',top:'50%',left:'50%',width:500,height:500,borderRadius:'50%',border:'1px solid rgba(184,148,90,.12)',transform:'translate(-50%,-50%)',animation:'ringPulse 6s ease-in-out infinite',animationDelay:'1s' }} />
@@ -61,28 +91,40 @@ export default function Home() {
         <div style={{ maxWidth:1200,margin:'0 auto',padding:'120px 24px 80px',width:'100%',position:'relative',zIndex:1 }}>
           <div style={{ maxWidth:680 }}>
             <div className="animate-fade-up" style={{ fontSize:11,fontWeight:600,letterSpacing:'0.2em',textTransform:'uppercase',color:'var(--gold-light)',marginBottom:22 }}>
-              {settings.hero_eyebrow || 'Bem-vindo à'}
+              {hero.eyebrow || 'Bem-vindo à'}
             </div>
             <h1 className="animate-fade-up" style={{ fontFamily:'Playfair Display,serif',fontSize:'clamp(44px,7vw,84px)',fontWeight:700,color:'#fff',lineHeight:1.08,marginBottom:20,animationDelay:'.1s' }}>
-              {settings.hero_title ? settings.hero_title.split('Espírito Santo').map((part, i, arr) =>
+              {hero.title ? hero.title.split('Espírito Santo').map((part, i, arr) =>
                 i < arr.length - 1 ? [part, <em key={i} style={{ color:'var(--gold-light)',fontStyle:'italic' }}>Espírito Santo</em>] : part
               ) : <><em style={{ color:'var(--gold-light)',fontStyle:'italic' }}>Espírito</em> Santo</>}
             </h1>
             <p className="animate-fade-up" style={{ fontSize:17,color:'rgba(255,255,255,.65)',lineHeight:1.7,fontWeight:300,marginBottom:40,animationDelay:'.2s' }}>
-              {settings.hero_subtitle || 'Venha fazer parte desta família de fé. Missas, grupos, pastorais e muito mais para toda a família.'}
+              {hero.subtitle || 'Venha fazer parte desta família de fé. Missas, grupos, pastorais e muito mais para toda a família.'}
             </p>
             <div className="animate-fade-up" style={{ display:'flex',gap:16,flexWrap:'wrap',animationDelay:'.3s' }}>
-              <Link to={settings.hero_primary_url || '/conheca'} className="btn-gold" style={{ display:'inline-flex',alignItems:'center',gap:6,padding:'13px 28px',borderRadius:100,background:'var(--gold)',color:'#fff',fontWeight:600,fontSize:14,boxShadow:'0 4px 18px rgba(184,148,90,.35)',transition:'transform .2s,box-shadow .2s' }}
+              <Link to={hero.primary_url || '/conheca'} className="btn-gold" style={{ display:'inline-flex',alignItems:'center',gap:6,padding:'13px 28px',borderRadius:100,background:'var(--gold)',color:'#fff',fontWeight:600,fontSize:14,boxShadow:'0 4px 18px rgba(184,148,90,.35)',transition:'transform .2s,box-shadow .2s' }}
                 onMouseEnter={e => { e.currentTarget.style.transform='translateY(-2px)'; e.currentTarget.style.boxShadow='0 8px 26px rgba(184,148,90,.45)'; }}
                 onMouseLeave={e => { e.currentTarget.style.transform=''; e.currentTarget.style.boxShadow='0 4px 18px rgba(184,148,90,.35)'; }}>
-                {settings.hero_primary_label || 'Conheça a Paróquia'}
+                {hero.primary_label || 'Conheça a Paróquia'}
               </Link>
-              <Link to={settings.hero_secondary_url || '/contato'} style={{ display:'inline-flex',alignItems:'center',padding:'13px 28px',borderRadius:100,border:'1.5px solid rgba(255,255,255,.3)',color:'#fff',fontWeight:500,fontSize:14,transition:'background .2s,border-color .2s' }}
+              <Link to={hero.secondary_url || '/contato'} style={{ display:'inline-flex',alignItems:'center',padding:'13px 28px',borderRadius:100,border:'1.5px solid rgba(255,255,255,.3)',color:'#fff',fontWeight:500,fontSize:14,transition:'background .2s,border-color .2s' }}
                 onMouseEnter={e => { e.currentTarget.style.background='rgba(255,255,255,.08)'; e.currentTarget.style.borderColor='rgba(255,255,255,.5)'; }}
                 onMouseLeave={e => { e.currentTarget.style.background=''; e.currentTarget.style.borderColor='rgba(255,255,255,.3)'; }}>
-                {settings.hero_secondary_label || 'Fale Conosco'}
+                {hero.secondary_label || 'Fale Conosco'}
               </Link>
             </div>
+            {slides.length > 1 && (
+              <div style={{ display:'flex',gap:8,marginTop:34 }}>
+                {slides.map((slide, i) => (
+                  <button
+                    key={slide.id || i}
+                    onClick={() => setCurrentSlide(i)}
+                    aria-label={`Ir para slide ${i + 1}`}
+                    style={{ width:i === currentSlide ? 28 : 10,height:10,borderRadius:999,background:i === currentSlide ? 'var(--gold-light)' : 'rgba(255,255,255,.28)',transition:'width .2s, background .2s' }}
+                  />
+                ))}
+              </div>
+            )}
           </div>
         </div>
       </section>

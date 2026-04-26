@@ -44,6 +44,7 @@ const SETTINGS_KEYS = [
   'voluntario_cta_text', 'voluntario_cta_label', 'voluntario_cta_url',
   'obra_social_eyebrow', 'obra_social_title', 'obra_social_subtitle', 'obra_social_mission_title',
   'obra_social_mission_text', 'obra_social_cta_label', 'obra_social_cta_url',
+  'conheca_image_url', 'voluntario_image_url', 'obra_social_image_url',
   'news_eyebrow', 'news_title', 'news_subtitle', 'radio_eyebrow', 'radio_title', 'radio_subtitle',
   'homilies_eyebrow', 'homilies_title', 'homilies_subtitle', 'contact_eyebrow', 'contact_title',
   'contact_subtitle', 'priests_eyebrow', 'priests_title', 'priests_subtitle',
@@ -52,6 +53,9 @@ const SETTINGS_KEYS = [
   'groups_eyebrow', 'groups_title', 'groups_subtitle', 'pastorals_eyebrow',
   'pastorals_title', 'pastorals_subtitle', 'communities_eyebrow', 'communities_title',
   'communities_subtitle',
+  'news_image_url', 'radio_image_url', 'homilies_image_url', 'contact_image_url',
+  'priests_image_url', 'facilities_image_url', 'calendar_image_url', 'rooms_image_url',
+  'groups_image_url', 'pastorals_image_url', 'communities_image_url',
 ];
 
 // ── Generic CRUD helpers ─────────────────────────────────────────────────────
@@ -150,6 +154,46 @@ export async function uploadMedia(req, res) {
     await auditLog(req.adminUser.id, 'UPLOAD_MEDIA', 'uploads', null, null, { url, name: req.file.originalname }, req.ip);
     return res.status(201).json({ url });
   });
+}
+
+// ── Hero slides ──────────────────────────────────────────────────────────────
+export async function listHeroSlides(req, res) {
+  return res.json(await list('hero_slides', 'display_order, id'));
+}
+
+export async function createHeroSlide(req, res) {
+  try {
+    const {
+      eyebrow, title, subtitle, image_url, primary_label, primary_url,
+      secondary_label, secondary_url, duration_ms, display_order, active,
+    } = req.body;
+    const clean = (value) => sanitizeText(value || '');
+    const [result] = await pool.execute(
+      `INSERT INTO hero_slides (eyebrow, title, subtitle, image_url, primary_label, primary_url, secondary_label, secondary_url, duration_ms, display_order, active)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      [
+        clean(eyebrow), clean(title), clean(subtitle), clean(image_url),
+        clean(primary_label), clean(primary_url), clean(secondary_label),
+        clean(secondary_url), Number(duration_ms) || 6000, Number(display_order) || 0,
+        active === undefined ? 1 : Number(active) ? 1 : 0,
+      ]
+    );
+    await auditLog(req.adminUser.id, 'CREATE_HERO_SLIDE', 'hero_slides', result.insertId, null, req.body, req.ip);
+    return res.status(201).json({ id: result.insertId });
+  } catch (err) {
+    return res.status(500).json({ error: 'Erro interno.' });
+  }
+}
+
+export async function updateHeroSlide(req, res) {
+  return updateRecord(req, res, 'hero_slides', [
+    'eyebrow', 'title', 'subtitle', 'image_url', 'primary_label', 'primary_url',
+    'secondary_label', 'secondary_url', 'duration_ms', 'display_order', 'active',
+  ], parseInt(req.params.id));
+}
+
+export async function deleteHeroSlide(req, res) {
+  return deleteRecord(req, res, 'hero_slides', parseInt(req.params.id));
 }
 
 // ── Events ───────────────────────────────────────────────────────────────────

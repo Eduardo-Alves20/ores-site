@@ -11,7 +11,7 @@ export default function ObraSocial() {
   const courses = data?.courses || [];
   return (
     <div className="animate-page">
-      <PageHeader eyebrow={s.obra_social_eyebrow || 'Obra Social'} title={s.obra_social_title || 'Obra Social Notre Dame de Fátima'} subtitle={s.obra_social_subtitle || 'Servindo a comunidade com amor e solidariedade há décadas.'} />
+      <PageHeader headerKey="obra_social" eyebrow={s.obra_social_eyebrow || 'Obra Social'} title={s.obra_social_title || 'Obra Social Notre Dame de Fátima'} subtitle={s.obra_social_subtitle || 'Servindo a comunidade com amor e solidariedade há décadas.'} />
       <section style={{ padding:'72px 24px', maxWidth:1200, margin:'0 auto' }}>
         <Reveal>
           <div style={{ background:'var(--navy)', borderRadius:16, padding:'40px 48px', marginBottom:56, display:'grid', gridTemplateColumns:'1fr auto', gap:32, alignItems:'center' }}>

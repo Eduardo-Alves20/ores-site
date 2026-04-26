@@ -42,6 +42,25 @@ const migrations = [
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
   ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci`,
 
+  // Home carousel slides
+  `CREATE TABLE IF NOT EXISTS hero_slides (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    eyebrow VARCHAR(120),
+    title VARCHAR(300) NOT NULL,
+    subtitle TEXT,
+    image_url VARCHAR(500),
+    primary_label VARCHAR(100),
+    primary_url VARCHAR(300),
+    secondary_label VARCHAR(100),
+    secondary_url VARCHAR(300),
+    duration_ms INT DEFAULT 6000,
+    display_order INT DEFAULT 0,
+    active TINYINT(1) DEFAULT 1,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    INDEX idx_active_order (active, display_order)
+  ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci`,
+
   // Mass schedule
   `CREATE TABLE IF NOT EXISTS mass_schedule (
     id INT AUTO_INCREMENT PRIMARY KEY,

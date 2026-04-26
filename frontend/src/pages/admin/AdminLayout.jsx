@@ -4,12 +4,13 @@ import { useAuth } from '../../hooks/useAuth.jsx';
 import {
   LayoutDashboard, Calendar, Newspaper, Users, Clock, BookOpen,
   Church, MapPin, Heart, GraduationCap, Headphones, MessageSquare,
-  Settings, LogOut, Menu, X, Shield, ChevronRight, Handshake
+  Settings, LogOut, Menu, X, Shield, ChevronRight, Handshake, Images
 } from 'lucide-react';
 
 const MENU = [
   { label:'Dashboard', to:'/admin/dashboard', icon:<LayoutDashboard size={18}/> },
   { label:'Aparência e Páginas', to:'/admin/settings', icon:<Settings size={18}/> },
+  { label:'Carrossel Home', to:'/admin/hero-slides', icon:<Images size={18}/> },
   { divider: true, label:'Conteúdo' },
   { label:'Notícias', to:'/admin/news', icon:<Newspaper size={18}/> },
   { label:'Eventos', to:'/admin/events', icon:<Calendar size={18}/> },

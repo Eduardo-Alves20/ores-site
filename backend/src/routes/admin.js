@@ -39,6 +39,14 @@ router.get('/settings', adm.getSettings);
 router.put('/settings', adm.updateSettings);
 router.post('/media', adm.uploadMedia);
 
+router.get('/hero-slides', adm.listHeroSlides);
+router.post('/hero-slides', [
+  body('title').trim().isLength({ min: 3 }),
+  validateRequest,
+], adm.createHeroSlide);
+router.put('/hero-slides/:id', adm.updateHeroSlide);
+router.delete('/hero-slides/:id', adm.deleteHeroSlide);
+
 // ── Events ───────────────────────────────────────────────────────────────────
 router.get('/events', adm.listEvents);
 router.post('/events', [

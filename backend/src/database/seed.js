@@ -45,12 +45,14 @@ async function seed() {
     ['conheca_eyebrow', 'Paróquia'],
     ['conheca_title', 'Conheça a PES'],
     ['conheca_subtitle', 'Tudo sobre a Paróquia Espírito Santo de São José dos Campos.'],
+    ['conheca_image_url', ''],
     ['conheca_history_title', 'Nossa História'],
     ['conheca_history_text_1', 'A Paróquia Espírito Santo está localizada no Jardim Satélite, em São José dos Campos/SP. Com décadas de história, a paróquia serve a comunidade com fé, caridade e evangelização.'],
     ['conheca_history_text_2', 'Nossa missão é evangelizar, celebrar os sacramentos e promover o desenvolvimento integral da pessoa humana, à luz do Evangelho e do Magistério da Igreja.'],
     ['voluntario_eyebrow', 'Comunidade'],
     ['voluntario_title', 'Quero ser Voluntário'],
     ['voluntario_subtitle', 'Junte-se a nós! Há muitas formas de servir ao próximo.'],
+    ['voluntario_image_url', ''],
     ['voluntario_cta_title', 'Pronto para servir?'],
     ['voluntario_cta_text', 'Entre em contato com a secretaria paroquial ou nos envie uma mensagem. Teremos prazer em apresentar as oportunidades de voluntariado.'],
     ['voluntario_cta_label', 'Entrar em Contato'],
@@ -58,14 +60,47 @@ async function seed() {
     ['obra_social_eyebrow', 'Obra Social'],
     ['obra_social_title', 'Obra Social Notre Dame de Fátima'],
     ['obra_social_subtitle', 'Servindo a comunidade com amor e solidariedade há décadas.'],
+    ['obra_social_image_url', ''],
     ['obra_social_mission_title', 'Nossa Missão Social'],
     ['obra_social_mission_text', 'A Obra Social Nossa Senhora de Fátima é o braço assistencial da Paróquia Espírito Santo, oferecendo serviços gratuitos e cursos profissionalizantes para famílias em situação de vulnerabilidade.'],
     ['obra_social_cta_label', 'Seja Voluntário'],
     ['obra_social_cta_url', '/voluntario'],
     ['maps_url', 'https://maps.google.com/?q=Av.+Cassiopeia,+461,+Jardim+Satélite,+São+José+dos+Campos'],
+    ['news_image_url', ''],
+    ['radio_image_url', ''],
+    ['homilies_image_url', ''],
+    ['contact_image_url', ''],
+    ['priests_image_url', ''],
+    ['facilities_image_url', ''],
+    ['calendar_image_url', ''],
+    ['rooms_image_url', ''],
+    ['groups_image_url', ''],
+    ['pastorals_image_url', ''],
+    ['communities_image_url', ''],
   ];
   for (const [k, v] of settings) {
     await query(`INSERT INTO site_settings (\`key\`, value) VALUES (?, ?) ON DUPLICATE KEY UPDATE value = VALUES(value)`, [k, v]);
+  }
+
+  const [{ n: slideCount }] = await query(`SELECT COUNT(*) AS n FROM hero_slides`);
+  if (slideCount === 0) {
+    await query(
+      `INSERT INTO hero_slides (eyebrow, title, subtitle, image_url, primary_label, primary_url, secondary_label, secondary_url, duration_ms, display_order, active)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      [
+        'Bem-vindo à',
+        'Uma comunidade unida no Espírito Santo',
+        'Venha fazer parte desta família de fé. Missas, grupos, pastorais e muito mais para toda a família.',
+        '',
+        'Conheça a Paróquia',
+        '/conheca',
+        'Fale Conosco',
+        '/contato',
+        6000,
+        1,
+        1,
+      ]
+    );
   }
 
   // Mass schedule

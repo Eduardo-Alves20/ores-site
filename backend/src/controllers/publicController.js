@@ -50,7 +50,13 @@ export async function getHomeData(req, res) {
        FROM news WHERE published = 1 ORDER BY published_at DESC LIMIT 3`
     );
 
-    return res.json({ settings, events, massSchedule, confessions, news });
+    const heroSlides = await query(
+      `SELECT id, eyebrow, title, subtitle, image_url, primary_label, primary_url,
+              secondary_label, secondary_url, duration_ms, display_order
+       FROM hero_slides WHERE active = 1 ORDER BY display_order, id`
+    );
+
+    return res.json({ settings, heroSlides, events, massSchedule, confessions, news });
   } catch (err) {
     console.error(err);
     return res.status(500).json({ error: 'Erro interno.' });
@@ -268,5 +274,18 @@ export async function submitContact(req, res) {
     return res.status(201).json({ message: 'Mensagem enviada com sucesso!' });
   } catch (err) {
     return res.status(500).json({ error: 'Erro ao enviar mensagem.' });
+  }
+}
+
+export async function getHeroSlides(req, res) {
+  try {
+    const rows = await query(
+      `SELECT id, eyebrow, title, subtitle, image_url, primary_label, primary_url,
+              secondary_label, secondary_url, duration_ms, display_order
+       FROM hero_slides WHERE active = 1 ORDER BY display_order, id`
+    );
+    return res.json(rows);
+  } catch (err) {
+    return res.status(500).json({ error: 'Erro interno.' });
   }
 }

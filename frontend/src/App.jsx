@@ -24,6 +24,7 @@ import AdminLogin from './pages/admin/AdminLogin';
 import AdminLayout from './pages/admin/AdminLayout';
 import Dashboard from './pages/admin/Dashboard';
 import AdminSettings from './pages/admin/AdminSettings';
+import AdminHeroSlides from './pages/admin/AdminHeroSlides';
 import AdminEvents from './pages/admin/AdminEvents';
 import AdminNews from './pages/admin/AdminNews';
 import AdminPriests from './pages/admin/AdminPriests';
@@ -98,6 +99,7 @@ export default function App() {
             <Route index element={<Navigate to="/admin/dashboard" replace />} />
             <Route path="dashboard" element={<Dashboard />} />
             <Route path="settings" element={<AdminSettings />} />
+            <Route path="hero-slides" element={<AdminHeroSlides />} />
             <Route path="events" element={<AdminEvents />} />
             <Route path="news" element={<AdminNews />} />
             <Route path="priests" element={<AdminPriests />} />

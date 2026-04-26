@@ -16,7 +16,7 @@ export default function Voluntario() {
   const s = siteInfo || {};
   return (
     <div className="animate-page">
-      <PageHeader eyebrow={s.voluntario_eyebrow || 'Comunidade'} title={s.voluntario_title || 'Quero ser Voluntário'} subtitle={s.voluntario_subtitle || 'Junte-se a nós! Há muitas formas de servir ao próximo.'} />
+      <PageHeader headerKey="voluntario" eyebrow={s.voluntario_eyebrow || 'Comunidade'} title={s.voluntario_title || 'Quero ser Voluntário'} subtitle={s.voluntario_subtitle || 'Junte-se a nós! Há muitas formas de servir ao próximo.'} />
       <section style={{ padding:'72px 24px', maxWidth:1100, margin:'0 auto' }}>
         <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fill,minmax(240px,1fr))', gap:24, marginBottom:64 }}>
           {areas.map((a, i) => (
