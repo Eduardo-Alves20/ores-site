@@ -298,10 +298,10 @@ export async function listPastorals(req, res) {
 
 export async function createPastoral(req, res) {
   try {
-    const { name, category, description, coordinator, phone, meeting_day, meeting_time, location, display_order } = req.body;
+    const { name, category, description, coordinator, phone, meeting_day, meeting_time, location, address, map_url, image_url, display_order } = req.body;
     const [result] = await pool.execute(
-      `INSERT INTO pastorals (name, category, description, coordinator, phone, meeting_day, meeting_time, location, display_order) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-      [sanitizeText(name), sanitizeText(category), sanitizeText(description), sanitizeText(coordinator), sanitizeText(phone), sanitizeText(meeting_day), sanitizeText(meeting_time), sanitizeText(location), display_order || 0]
+      `INSERT INTO pastorals (name, category, description, coordinator, phone, meeting_day, meeting_time, location, address, map_url, image_url, display_order) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      [sanitizeText(name), sanitizeText(category), sanitizeText(description), sanitizeText(coordinator), sanitizeText(phone), sanitizeText(meeting_day), sanitizeText(meeting_time), sanitizeText(location), sanitizeText(address), sanitizeText(map_url), sanitizeText(image_url), display_order || 0]
     );
     await auditLog(req.adminUser.id, 'CREATE_PASTORAL', 'pastorals', result.insertId, null, req.body, req.ip);
     return res.status(201).json({ id: result.insertId });
@@ -311,7 +311,7 @@ export async function createPastoral(req, res) {
 }
 
 export async function updatePastoral(req, res) {
-  return updateRecord(req, res, 'pastorals', ['name', 'category', 'description', 'coordinator', 'phone', 'meeting_day', 'meeting_time', 'location', 'display_order', 'active'], parseInt(req.params.id));
+  return updateRecord(req, res, 'pastorals', ['name', 'category', 'description', 'coordinator', 'phone', 'meeting_day', 'meeting_time', 'location', 'address', 'map_url', 'image_url', 'display_order', 'active'], parseInt(req.params.id));
 }
 
 export async function deletePastoral(req, res) {

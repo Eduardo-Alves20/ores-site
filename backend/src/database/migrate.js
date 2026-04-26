@@ -133,6 +133,9 @@ const migrations = [
     meeting_day VARCHAR(100),
     meeting_time VARCHAR(50),
     location VARCHAR(200),
+    address VARCHAR(300),
+    map_url VARCHAR(700),
+    image_url VARCHAR(500),
     active TINYINT(1) DEFAULT 1,
     display_order INT DEFAULT 0,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -268,11 +271,20 @@ const migrations = [
   ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci`,
 ];
 
+const alterMigrations = [
+  `ALTER TABLE pastorals ADD COLUMN IF NOT EXISTS address VARCHAR(300) AFTER location`,
+  `ALTER TABLE pastorals ADD COLUMN IF NOT EXISTS map_url VARCHAR(700) AFTER address`,
+  `ALTER TABLE pastorals ADD COLUMN IF NOT EXISTS image_url VARCHAR(500) AFTER map_url`,
+];
+
 async function runMigrations() {
   const conn = await pool.getConnection();
   try {
     console.log('Running migrations...');
     for (const sql of migrations) {
+      await conn.execute(sql);
+    }
+    for (const sql of alterMigrations) {
       await conn.execute(sql);
     }
     console.log('Migrations completed successfully.');
