@@ -12,8 +12,8 @@ const sections = [
       ['site_name', 'Nome do site'],
       ['site_tagline', 'Linha de apoio'],
       ['site_logo_url', 'Logo', 'image'],
-      ['site_address', 'Endereço', 'textarea'],
-      ['secretary_hours', 'Horário de funcionamento'],
+      ['site_address', 'Endereco', 'textarea'],
+      ['secretary_hours', 'Horario de funcionamento'],
       ['maps_url', 'URL do Google Maps'],
     ],
   },
@@ -26,42 +26,42 @@ const sections = [
       ['site_facebook', 'Facebook URL'],
       ['site_instagram', 'Instagram URL'],
       ['site_youtube', 'YouTube URL'],
-      ['radio_stream_url', 'URL da Web Rádio'],
+      ['radio_stream_url', 'URL da Web Radio'],
     ],
   },
   {
     title: 'Home',
     fields: [
-      ['hero_eyebrow', 'Texto acima do título'],
-      ['hero_title', 'Título principal'],
-      ['hero_subtitle', 'Subtítulo', 'textarea'],
+      ['hero_eyebrow', 'Texto acima do titulo'],
+      ['hero_title', 'Titulo principal'],
+      ['hero_subtitle', 'Subtitulo', 'textarea'],
       ['hero_image_url', 'Imagem do hero', 'image'],
-      ['hero_primary_label', 'Botão principal'],
-      ['hero_primary_url', 'Link do botão principal'],
-      ['hero_secondary_label', 'Botão secundário'],
-      ['hero_secondary_url', 'Link do botão secundário'],
+      ['hero_primary_label', 'Botao principal'],
+      ['hero_primary_url', 'Link do botao principal'],
+      ['hero_secondary_label', 'Botao secundario'],
+      ['hero_secondary_url', 'Link do botao secundario'],
       ['daily_message', 'Mensagem do dia', 'textarea'],
-      ['home_quick_title', 'Título dos acessos rápidos'],
-      ['home_mission_eyebrow', 'Missão: etiqueta'],
-      ['home_mission_title', 'Missão: título'],
-      ['home_mission_text', 'Missão: texto', 'textarea'],
-      ['home_mission_primary_label', 'Missão: botão principal'],
-      ['home_mission_primary_url', 'Missão: link principal'],
-      ['home_mission_secondary_label', 'Missão: botão secundário'],
-      ['home_mission_secondary_url', 'Missão: link secundário'],
+      ['home_quick_title', 'Titulo dos acessos rapidos'],
+      ['home_mission_eyebrow', 'Missao: etiqueta'],
+      ['home_mission_title', 'Missao: titulo'],
+      ['home_mission_text', 'Missao: texto', 'textarea'],
+      ['home_mission_primary_label', 'Missao: botao principal'],
+      ['home_mission_primary_url', 'Missao: link principal'],
+      ['home_mission_secondary_label', 'Missao: botao secundario'],
+      ['home_mission_secondary_url', 'Missao: link secundario'],
     ],
   },
   {
-    title: 'Doações',
+    title: 'Doacoes',
     fields: [
-      ['donation_enabled', 'Mostrar seção? (1 sim, 0 não)'],
+      ['donation_enabled', 'Mostrar secao? (1 sim, 0 nao)'],
       ['donation_eyebrow', 'Etiqueta'],
-      ['donation_title', 'Título'],
+      ['donation_title', 'Titulo'],
       ['donation_text', 'Mensagem de incentivo', 'textarea'],
       ['donation_pix_key', 'Chave Pix'],
-      ['donation_background_url', 'Foto de fundo da seção', 'image'],
+      ['donation_background_url', 'Foto de fundo da secao', 'image'],
       ['donation_qr_url', 'QR Code Pix', 'image'],
-      ['donation_button_label', 'Texto do botão'],
+      ['donation_button_label', 'Texto do botao'],
       ['donation_gallery_1_url', 'Foto 1', 'image'],
       ['donation_gallery_1_caption', 'Legenda da foto 1'],
       ['donation_gallery_2_url', 'Foto 2', 'image'],
@@ -71,79 +71,140 @@ const sections = [
     ],
   },
   {
-    title: 'Conheça',
+    title: 'Conheca a PES',
     fields: [
       ['conheca_eyebrow', 'Etiqueta'],
-      ['conheca_title', 'Título'],
-      ['conheca_subtitle', 'Subtítulo', 'textarea'],
+      ['conheca_title', 'Titulo'],
+      ['conheca_subtitle', 'Subtitulo', 'textarea'],
       ['conheca_image_url', 'Imagem do banner', 'image'],
-      ['conheca_history_title', 'Bloco: título'],
+      ['conheca_history_title', 'Bloco: titulo'],
       ['conheca_history_text_1', 'Bloco: texto 1', 'textarea'],
       ['conheca_history_text_2', 'Bloco: texto 2', 'textarea'],
+    ],
+  },
+  {
+    title: 'Padres e Diaconos',
+    fields: [
+      ['priests_eyebrow', 'Etiqueta'],
+      ['priests_title', 'Titulo'],
+      ['priests_subtitle', 'Subtitulo', 'textarea'],
+      ['priests_image_url', 'Imagem do banner', 'image'],
+    ],
+  },
+  {
+    title: 'Instalacoes',
+    fields: [
+      ['facilities_eyebrow', 'Etiqueta'],
+      ['facilities_title', 'Titulo'],
+      ['facilities_subtitle', 'Subtitulo', 'textarea'],
+      ['facilities_image_url', 'Imagem do banner', 'image'],
+    ],
+  },
+  {
+    title: 'Calendario de Eventos',
+    fields: [
+      ['calendar_eyebrow', 'Etiqueta'],
+      ['calendar_title', 'Titulo'],
+      ['calendar_subtitle', 'Subtitulo', 'textarea'],
+      ['calendar_image_url', 'Imagem do banner', 'image'],
+    ],
+  },
+  {
+    title: 'Agendamento de Salas',
+    fields: [
+      ['rooms_eyebrow', 'Etiqueta'],
+      ['rooms_title', 'Titulo'],
+      ['rooms_subtitle', 'Subtitulo', 'textarea'],
+      ['rooms_image_url', 'Imagem do banner', 'image'],
+    ],
+  },
+  {
+    title: 'Grupos de Oracao',
+    fields: [
+      ['groups_eyebrow', 'Etiqueta'],
+      ['groups_title', 'Titulo'],
+      ['groups_subtitle', 'Subtitulo', 'textarea'],
+      ['groups_image_url', 'Imagem do banner', 'image'],
+    ],
+  },
+  {
+    title: 'Pastorais e Movimentos',
+    fields: [
+      ['pastorals_eyebrow', 'Etiqueta'],
+      ['pastorals_title', 'Titulo'],
+      ['pastorals_subtitle', 'Subtitulo', 'textarea'],
+      ['pastorals_image_url', 'Imagem do banner', 'image'],
+    ],
+  },
+  {
+    title: 'Comunidades',
+    fields: [
+      ['communities_eyebrow', 'Etiqueta'],
+      ['communities_title', 'Titulo'],
+      ['communities_subtitle', 'Subtitulo', 'textarea'],
+      ['communities_image_url', 'Imagem do banner', 'image'],
+    ],
+  },
+  {
+    title: 'Noticias',
+    fields: [
+      ['news_eyebrow', 'Etiqueta'],
+      ['news_title', 'Titulo'],
+      ['news_subtitle', 'Subtitulo', 'textarea'],
+      ['news_image_url', 'Imagem do banner', 'image'],
+    ],
+  },
+  {
+    title: 'Web Radio',
+    fields: [
+      ['radio_eyebrow', 'Etiqueta'],
+      ['radio_title', 'Titulo'],
+      ['radio_subtitle', 'Subtitulo', 'textarea'],
+      ['radio_image_url', 'Imagem do banner', 'image'],
+    ],
+  },
+  {
+    title: 'Homilias e Reflexoes',
+    fields: [
+      ['homilies_eyebrow', 'Etiqueta'],
+      ['homilies_title', 'Titulo'],
+      ['homilies_subtitle', 'Subtitulo', 'textarea'],
+      ['homilies_image_url', 'Imagem do banner', 'image'],
     ],
   },
   {
     title: 'Obra Social',
     fields: [
       ['obra_social_eyebrow', 'Etiqueta'],
-      ['obra_social_title', 'Título'],
-      ['obra_social_subtitle', 'Subtítulo', 'textarea'],
+      ['obra_social_title', 'Titulo'],
+      ['obra_social_subtitle', 'Subtitulo', 'textarea'],
       ['obra_social_image_url', 'Imagem do banner', 'image'],
-      ['obra_social_mission_title', 'Missão: título'],
-      ['obra_social_mission_text', 'Missão: texto', 'textarea'],
-      ['obra_social_cta_label', 'Botão'],
-      ['obra_social_cta_url', 'Link do botão'],
+      ['obra_social_mission_title', 'Missao: titulo'],
+      ['obra_social_mission_text', 'Missao: texto', 'textarea'],
+      ['obra_social_cta_label', 'Botao'],
+      ['obra_social_cta_url', 'Link do botao'],
     ],
   },
   {
-    title: 'Voluntário',
+    title: 'Voluntario',
     fields: [
       ['voluntario_eyebrow', 'Etiqueta'],
-      ['voluntario_title', 'Título'],
-      ['voluntario_subtitle', 'Subtítulo', 'textarea'],
+      ['voluntario_title', 'Titulo'],
+      ['voluntario_subtitle', 'Subtitulo', 'textarea'],
       ['voluntario_image_url', 'Imagem do banner', 'image'],
-      ['voluntario_cta_title', 'CTA: título'],
+      ['voluntario_cta_title', 'CTA: titulo'],
       ['voluntario_cta_text', 'CTA: texto', 'textarea'],
-      ['voluntario_cta_label', 'CTA: botão'],
+      ['voluntario_cta_label', 'CTA: botao'],
       ['voluntario_cta_url', 'CTA: link'],
     ],
   },
   {
-    title: 'Cabeçalhos',
+    title: 'Contato',
     fields: [
-      ['news_title', 'Notícias: título'],
-      ['news_subtitle', 'Notícias: subtítulo'],
-      ['news_image_url', 'Notícias: imagem do banner', 'image'],
-      ['radio_title', 'Rádio: título'],
-      ['radio_subtitle', 'Rádio: subtítulo'],
-      ['radio_image_url', 'Rádio: imagem do banner', 'image'],
-      ['homilies_title', 'Homilias: título'],
-      ['homilies_subtitle', 'Homilias: subtítulo'],
-      ['homilies_image_url', 'Homilias: imagem do banner', 'image'],
-      ['contact_title', 'Contato: título'],
-      ['contact_subtitle', 'Contato: subtítulo'],
-      ['contact_image_url', 'Contato: imagem do banner', 'image'],
-      ['priests_title', 'Padres: título'],
-      ['priests_subtitle', 'Padres: subtítulo'],
-      ['priests_image_url', 'Padres: imagem do banner', 'image'],
-      ['facilities_title', 'Instalações: título'],
-      ['facilities_subtitle', 'Instalações: subtítulo'],
-      ['facilities_image_url', 'Instalações: imagem do banner', 'image'],
-      ['calendar_title', 'Calendário: título'],
-      ['calendar_subtitle', 'Calendário: subtítulo'],
-      ['calendar_image_url', 'Calendário: imagem do banner', 'image'],
-      ['rooms_title', 'Salas: título'],
-      ['rooms_subtitle', 'Salas: subtítulo'],
-      ['rooms_image_url', 'Salas: imagem do banner', 'image'],
-      ['groups_title', 'Grupos: título'],
-      ['groups_subtitle', 'Grupos: subtítulo'],
-      ['groups_image_url', 'Grupos: imagem do banner', 'image'],
-      ['pastorals_title', 'Pastorais: título'],
-      ['pastorals_subtitle', 'Pastorais: subtítulo'],
-      ['pastorals_image_url', 'Pastorais: imagem do banner', 'image'],
-      ['communities_title', 'Comunidades: título'],
-      ['communities_subtitle', 'Comunidades: subtítulo'],
-      ['communities_image_url', 'Comunidades: imagem do banner', 'image'],
+      ['contact_eyebrow', 'Etiqueta'],
+      ['contact_title', 'Titulo'],
+      ['contact_subtitle', 'Subtitulo', 'textarea'],
+      ['contact_image_url', 'Imagem do banner', 'image'],
     ],
   },
 ];
@@ -165,12 +226,12 @@ export default function AdminSettings() {
     setMsg('');
     try {
       await api.put('/admin/settings', form);
-      setMsg('Configurações salvas com sucesso.');
-      notify({ type:'success', title:'Configurações salvas', message:'As alterações já estão prontas para aparecer no site.' });
+      setMsg('Configuracoes salvas com sucesso.');
+      notify({ type:'success', title:'Configuracoes salvas', message:'As alteracoes ja estao prontas para aparecer no site.' });
       refetch();
     } catch {
       setMsg('Erro ao salvar.');
-      notify({ type:'error', title:'Erro ao salvar', message:'Não consegui salvar as configurações agora. Tente novamente.' });
+      notify({ type:'error', title:'Erro ao salvar', message:'Nao consegui salvar as configuracoes agora. Tente novamente.' });
     } finally {
       setLoading(false);
     }
@@ -202,7 +263,7 @@ export default function AdminSettings() {
     <div>
       <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', gap:16, marginBottom:24 }}>
         <div>
-          <h1 style={{ fontFamily:'Playfair Display,serif', fontSize:26, fontWeight:700, color:'var(--navy)', marginBottom:4 }}>Aparência e Páginas</h1>
+          <h1 style={{ fontFamily:'Playfair Display,serif', fontSize:26, fontWeight:700, color:'var(--navy)', marginBottom:4 }}>Aparencia e Paginas</h1>
           <p style={{ fontSize:13, color:'var(--text-soft)' }}>Edite textos, links e imagens mantendo o layout do site.</p>
         </div>
         <button onClick={save} disabled={loading} style={{ display:'flex', alignItems:'center', gap:8, padding:'10px 24px', borderRadius:10, background:'var(--gold)', color:'#fff', fontWeight:600, fontSize:14, flexShrink:0 }}>
@@ -212,11 +273,11 @@ export default function AdminSettings() {
 
       {msg && <p style={{ marginBottom:18, fontSize:14, color:msg.includes('sucesso')?'#16a34a':'#dc2626', fontWeight:600 }}>{msg}</p>}
 
-      <div style={{ display:'grid', gridTemplateColumns:'220px 1fr', gap:24, alignItems:'start' }}>
-        <div style={{ background:'#fff', border:'1px solid var(--border)', borderRadius:12, overflow:'hidden' }}>
+      <div style={{ display:'grid', gridTemplateColumns:'240px 1fr', gap:24, alignItems:'start' }}>
+        <div style={{ background:'#fff', border:'1px solid var(--border)', borderRadius:12, overflow:'hidden', maxHeight:'72vh', overflowY:'auto' }}>
           {sections.map(s => (
             <button key={s.title} onClick={() => setActive(s.title)}
-              style={{ display:'block', width:'100%', textAlign:'left', padding:'13px 16px', fontSize:13, fontWeight:active===s.title?700:500, color:active===s.title?'var(--gold)':'var(--navy)', background:active===s.title?'var(--cream)':'#fff', borderBottom:'1px solid var(--cream-dark)' }}>
+              style={{ display:'block', width:'100%', textAlign:'left', padding:'12px 14px', fontSize:12.5, fontWeight:active===s.title?700:500, color:active===s.title?'var(--gold)':'var(--navy)', background:active===s.title?'var(--cream)':'#fff', borderBottom:'1px solid var(--cream-dark)' }}>
               {s.title}
             </button>
           ))}
@@ -236,7 +297,7 @@ export default function AdminSettings() {
 
       <style>{`
         @media (max-width: 900px) {
-          div[style*="grid-template-columns: 220px 1fr"] { grid-template-columns: 1fr !important; }
+          div[style*="grid-template-columns: 240px 1fr"] { grid-template-columns: 1fr !important; }
           div[style*="repeat(2,minmax(0,1fr))"] { grid-template-columns: 1fr !important; }
         }
       `}</style>
