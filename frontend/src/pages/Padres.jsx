@@ -2,6 +2,28 @@ import { useFetch } from '../hooks/useFetch';
 import PageHeader from '../components/PageHeader';
 import Reveal from '../components/Reveal';
 
+function PriestAvatar({ priest }) {
+  const fallback = (
+    <div style={{ width:80, height:80, borderRadius:'50%', background:'var(--gold)', display:'flex', alignItems:'center', justifyContent:'center', fontSize:24, color:'#fff', fontFamily:'Playfair Display,serif', fontWeight:700, border:'3px solid var(--gold)' }}>
+      {priest.sigla || priest.name?.replace(/^Pe\.?\s*/i, '').slice(0, 2).toUpperCase() || 'P'}
+    </div>
+  );
+
+  if (!priest.photo_url) return fallback;
+
+  return (
+    <img
+      src={priest.photo_url}
+      alt={priest.name}
+      onError={e => {
+        e.currentTarget.style.display = 'none';
+        e.currentTarget.nextElementSibling.style.display = 'flex';
+      }}
+      style={{ width:80, height:80, borderRadius:'50%', objectFit:'cover', border:'3px solid var(--gold)' }}
+    />
+  );
+}
+
 export default function Padres() {
   const { data: priests, loading } = useFetch('/priests');
 
@@ -17,10 +39,12 @@ export default function Padres() {
                 <Reveal key={p.id} delay={i * 80}>
                   <div style={{ background:'#fff', borderRadius:12, border:'1px solid var(--border)', overflow:'hidden', boxShadow:'0 1px 4px rgba(0,0,0,.03)' }}>
                     <div style={{ background:'var(--navy)', height:120, display:'flex', alignItems:'center', justifyContent:'center' }}>
-                      {p.photo_url
-                        ? <img src={p.photo_url} alt={p.name} style={{ width:80, height:80, borderRadius:'50%', objectFit:'cover', border:'3px solid var(--gold)' }} />
-                        : <div style={{ width:80, height:80, borderRadius:'50%', background:'var(--gold)', display:'flex', alignItems:'center', justifyContent:'center', fontSize:28, color:'#fff', fontFamily:'Playfair Display,serif', fontWeight:700 }}>{p.sigla}</div>
-                      }
+                      <div style={{ position:'relative', width:80, height:80 }}>
+                        <PriestAvatar priest={p} />
+                        <div style={{ display:'none', position:'absolute', inset:0, borderRadius:'50%', background:'var(--gold)', alignItems:'center', justifyContent:'center', fontSize:24, color:'#fff', fontFamily:'Playfair Display,serif', fontWeight:700, border:'3px solid var(--gold)' }}>
+                          {p.sigla || p.name?.replace(/^Pe\.?\s*/i, '').slice(0, 2).toUpperCase() || 'P'}
+                        </div>
+                      </div>
                     </div>
                     <div style={{ padding:'20px 24px' }}>
                       <span style={{ display:'inline-block', fontSize:10, fontWeight:700, letterSpacing:'0.08em', textTransform:'uppercase', padding:'2px 8px', borderRadius:100, background:'rgba(184,148,90,.1)', color:'var(--gold)', marginBottom:8 }}>{p.role}</span>

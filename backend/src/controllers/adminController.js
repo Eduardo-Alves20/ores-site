@@ -9,7 +9,7 @@ import { fileURLToPath } from 'url';
 import { randomUUID } from 'crypto';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const uploadsDir = path.join(__dirname, '../public/uploads');
+const uploadsDir = path.join(__dirname, '../../public/uploads');
 fs.mkdirSync(uploadsDir, { recursive: true });
 
 const upload = multer({
