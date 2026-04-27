@@ -4,7 +4,7 @@ import { useFetch } from '../hooks/useFetch';
 import Reveal from '../components/Reveal';
 import MassScheduleSidebar from '../components/MassScheduleSidebar';
 import EventsSidebar from '../components/EventsSidebar';
-import { Calendar, Users, Radio, Heart, BookOpen, Clock, MapPin, Copy, Gift } from 'lucide-react';
+import { Calendar, Users, Radio, Heart, BookOpen, Clock, MapPin, Copy, Gift, ChevronLeft, ChevronRight } from 'lucide-react';
 import { parseDateOnly } from '../lib/date';
 import { useAppAlert } from '../components/AppAlert';
 
@@ -72,9 +72,18 @@ export default function Home() {
     { icon: <Radio size={22} />, label: 'Web Rádio', to: '/radio' },
     { icon: <BookOpen size={22} />, label: 'Homilias', to: '/homilias' },
   ];
-  const donationPhotos = [1, 2, 3]
+  const donationSlides = [1, 2, 3]
     .map(i => ({ url: settings[`donation_gallery_${i}_url`], caption: settings[`donation_gallery_${i}_caption`] }))
-    .filter(item => item.url || item.caption);
+    .filter(item => item.url);
+  const [donationSlide, setDonationSlide] = useState(0);
+
+  useEffect(() => {
+    if (donationSlides.length < 2) return undefined;
+    const timer = setTimeout(() => {
+      setDonationSlide((idx) => (idx + 1) % donationSlides.length);
+    }, 5200);
+    return () => clearTimeout(timer);
+  }, [donationSlide, donationSlides.length]);
 
   const copyPix = async () => {
     if (!settings.donation_pix_key) {
@@ -236,15 +245,66 @@ export default function Home() {
                     {settings.donation_pix_key && <div style={{ marginTop:14, fontSize:12, color:'rgba(255,255,255,.55)', wordBreak:'break-word' }}>Pix: {settings.donation_pix_key}</div>}
                   </div>
                 </div>
-                <div className="donation-media" style={{ padding:'32px', display:'grid', gridTemplateColumns:settings.donation_qr_url ? '170px 1fr' : '1fr', gap:20, alignItems:'center', background:settings.donation_background_url ? 'rgba(249,247,244,.72)' : 'var(--cream)' }}>
-                  {settings.donation_qr_url && (
+                <div className="donation-media" style={{ padding:'32px', display:'grid', gap:16, alignContent:'space-between', background:settings.donation_background_url ? 'rgba(249,247,244,.72)' : 'var(--cream)' }}>
+                  {false && settings.donation_qr_url && (
                     <div style={{ background:'#fff', border:'1px solid var(--border)', borderRadius:14, padding:14, boxShadow:'0 10px 30px rgba(0,0,0,.06)' }}>
                       <img src={settings.donation_qr_url} alt="QR Code Pix" style={{ width:'100%', aspectRatio:'1 / 1', objectFit:'contain' }} />
                       <div style={{ marginTop:10, textAlign:'center', fontSize:11, fontWeight:800, color:'var(--gold)', textTransform:'uppercase', letterSpacing:'0.08em' }}>Pix QR Code</div>
                     </div>
                   )}
-                  <div style={{ display:'grid', gap:12 }}>
-                    {donationPhotos.length ? donationPhotos.map((item, i) => (
+                  <div style={{ background:'#fff', border:'1px solid var(--border)', borderRadius:14, padding:16 }}>
+                    <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', gap:12, marginBottom:12 }}>
+                      <div style={{ minWidth:0 }}>
+                        <div style={{ fontSize:11, fontWeight:800, letterSpacing:'0.1em', textTransform:'uppercase', color:'var(--gold)', marginBottom:4 }}>Resultados da doacao</div>
+                        <div style={{ fontSize:15, lineHeight:1.45, fontWeight:700, color:'var(--navy)' }}>
+                          {donationSlides[donationSlide]?.caption || 'Sua contribuicao transforma a comunidade todos os dias.'}
+                        </div>
+                      </div>
+                      {donationSlides.length > 1 && (
+                        <div style={{ display:'flex', gap:8, flexShrink:0 }}>
+                          <button type="button" onClick={() => setDonationSlide(i => (i - 1 + donationSlides.length) % donationSlides.length)} style={{ width:32, height:32, borderRadius:8, border:'1px solid var(--border)', background:'#fff', color:'var(--navy)', display:'flex', alignItems:'center', justifyContent:'center' }}>
+                            <ChevronLeft size={16} />
+                          </button>
+                          <button type="button" onClick={() => setDonationSlide(i => (i + 1) % donationSlides.length)} style={{ width:32, height:32, borderRadius:8, border:'1px solid var(--border)', background:'#fff', color:'var(--navy)', display:'flex', alignItems:'center', justifyContent:'center' }}>
+                            <ChevronRight size={16} />
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                    {donationSlides.length ? (
+                      <div style={{ position:'relative', borderRadius:12, overflow:'hidden', border:'1px solid var(--border)', background:'#f3f1ec', aspectRatio:'16 / 9' }}>
+                        {donationSlides.map((item, i) => (
+                          <img
+                            key={`${item.url}-${i}`}
+                            src={item.url}
+                            alt={item.caption || 'Foto da doacao'}
+                            style={{ position:'absolute', inset:0, width:'100%', height:'100%', objectFit:'cover', opacity:i === donationSlide ? 1 : 0, transform:i === donationSlide ? 'scale(1.02)' : 'scale(1)', transition:'opacity .45s ease, transform 3.6s ease' }}
+                          />
+                        ))}
+                      </div>
+                    ) : (
+                      <div style={{ background:'#f7f5f1', border:'1px dashed var(--border)', borderRadius:12, padding:24, textAlign:'center' }}>
+                        <div style={{ fontFamily:'Playfair Display,serif', fontSize:18, color:'var(--navy)', marginBottom:6 }}>Adicione fotos no painel</div>
+                        <div style={{ fontSize:13, color:'var(--text-soft)' }}>Preencha Foto 1, Foto 2 e Foto 3 na aba Doacoes.</div>
+                      </div>
+                    )}
+                    {donationSlides.length > 1 && (
+                      <div style={{ display:'flex', justifyContent:'center', gap:7, marginTop:12 }}>
+                        {donationSlides.map((item, i) => (
+                          <button
+                            type="button"
+                            key={`${item.url}-dot-${i}`}
+                            onClick={() => setDonationSlide(i)}
+                            aria-label={`Ir para foto ${i + 1}`}
+                            style={{ width:i === donationSlide ? 20 : 8, height:8, borderRadius:999, background:i === donationSlide ? 'var(--gold)' : 'rgba(26,39,68,.2)', transition:'width .2s, background .2s' }}
+                          />
+                        ))}
+                      </div>
+                    )}
+                  </div>
+
+                  <div style={{ display:'none' }}>
+                    {donationSlides.length ? donationSlides.map((item, i) => (
                       <div key={i} style={{ display:'grid', gridTemplateColumns:item.url ? '84px 1fr' : '1fr', gap:12, alignItems:'center', background:'#fff', border:'1px solid var(--border)', borderRadius:12, padding:10 }}>
                         {item.url && <img src={item.url} alt="" style={{ width:84, height:64, objectFit:'cover', borderRadius:8 }} />}
                         <div style={{ fontSize:13, lineHeight:1.55, color:'var(--navy)', fontWeight:600 }}>{item.caption || 'Doação aplicada nas ações da comunidade'}</div>
@@ -256,6 +316,12 @@ export default function Home() {
                       </div>
                     )}
                   </div>
+                  {settings.donation_qr_url && (
+                    <div style={{ background:'#fff', border:'1px solid var(--border)', borderRadius:14, padding:14, boxShadow:'0 6px 22px rgba(0,0,0,.05)', maxWidth:220 }}>
+                      <img src={settings.donation_qr_url} alt="QR Code Pix" style={{ width:'100%', aspectRatio:'1 / 1', objectFit:'contain' }} />
+                      <div style={{ marginTop:10, textAlign:'center', fontSize:11, fontWeight:800, color:'var(--gold)', textTransform:'uppercase', letterSpacing:'0.08em' }}>Pix QR Code</div>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
