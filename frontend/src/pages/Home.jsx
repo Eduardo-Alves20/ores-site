@@ -167,15 +167,18 @@ export default function Home() {
               <div style={{ padding:'12px 18px', background:'var(--navy)', color:'#fff', fontSize:11, fontWeight:800, letterSpacing:'0.14em', textTransform:'uppercase' }}>
                 Palavra do Dia
               </div>
-              <div style={{ padding:'20px 22px' }}>
-                <h3 style={{ fontFamily:'Playfair Display,serif', fontSize:'clamp(20px,3vw,28px)', color:'var(--navy)', marginBottom:8 }}>{wordDay.title}</h3>
-                {wordDay.subtitle && <p style={{ fontSize:14, color:'var(--text-soft)', lineHeight:1.7, marginBottom:12 }}>{wordDay.subtitle}</p>}
-                {wordDay.content_html && <div style={{ fontSize:14, color:'var(--text-mid)', lineHeight:1.72 }} dangerouslySetInnerHTML={{ __html: wordDay.content_html }} />}
-                {wordDay.link_url && (
-                  <a href={wordDay.link_url} target="_blank" rel="noreferrer" style={{ display:'inline-block', marginTop:14, fontSize:13, color:'var(--gold)', fontWeight:700 }}>
-                    Fonte original →
-                  </a>
-                )}
+              <div style={{ padding:'22px', display:'flex', alignItems:'center', justifyContent:'space-between', gap:20, flexWrap:'wrap' }}>
+                <div style={{ minWidth: 0 }}>
+                  <h3 style={{ fontFamily:'Playfair Display,serif', fontSize:'clamp(20px,3vw,28px)', color:'var(--navy)', marginBottom:8 }}>
+                    {wordDay.title || 'Palavra do Dia'}
+                  </h3>
+                  <p style={{ fontSize:14, color:'var(--text-soft)', lineHeight:1.7 }}>
+                    {wordDay.subtitle || 'Acesse as leituras completas e a reflexão do dia em um espaço dedicado.'}
+                  </p>
+                </div>
+                <Link to="/palavra-do-dia" style={{ padding:'11px 18px', borderRadius:10, background:'var(--gold)', color:'#fff', fontSize:13, fontWeight:700, whiteSpace:'nowrap' }}>
+                  Abrir Palavra do Dia
+                </Link>
               </div>
             </div>
           </section>

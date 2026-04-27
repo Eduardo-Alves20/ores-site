@@ -19,6 +19,7 @@ import WebRadio from './pages/Radio';
 import Homilias from './pages/Homilias';
 import ObraSocial from './pages/ObraSocial';
 import Contato from './pages/Contato';
+import PalavraDoDia from './pages/PalavraDoDia';
 
 import AdminLogin from './pages/admin/AdminLogin';
 import AdminLayout from './pages/admin/AdminLayout';
@@ -113,6 +114,7 @@ export default function App() {
             <Route path="servicos" element={<ObraSocial />} />
             <Route path="cursos" element={<ObraSocial />} />
             <Route path="contato" element={<Contato />} />
+            <Route path="palavra-do-dia" element={<PalavraDoDia />} />
             <Route path="*" element={<Navigate to="/" replace />} />
           </Route>
         </Routes>
