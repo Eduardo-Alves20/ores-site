@@ -3,7 +3,7 @@ import PageHeader from '../components/PageHeader';
 import Reveal from '../components/Reveal';
 import { useFetch } from '../hooks/useFetch';
 import api from '../lib/api';
-import { Mail, Phone, MapPin, Clock } from 'lucide-react';
+import { Mail, Phone, MapPin, Clock, AtSign, Users, Play, MessageCircle } from 'lucide-react';
 import { useAppAlert } from '../components/AppAlert';
 
 export default function Contato() {
@@ -32,6 +32,16 @@ export default function Contato() {
   };
 
   const info = siteInfo || {};
+  const normalizeUrl = (value) => {
+    if (!value) return '';
+    return /^https?:\/\//i.test(value) ? value : `https://${value}`;
+  };
+  const socialLinks = [
+    info.site_instagram && { key: 'instagram', href: normalizeUrl(info.site_instagram), icon: <AtSign size={14} />, label: 'Instagram' },
+    info.site_facebook && { key: 'facebook', href: normalizeUrl(info.site_facebook), icon: <Users size={14} />, label: 'Facebook' },
+    info.site_youtube && { key: 'youtube', href: normalizeUrl(info.site_youtube), icon: <Play size={14} />, label: 'YouTube' },
+    info.site_whatsapp && { key: 'whatsapp', href: `https://wa.me/${String(info.site_whatsapp).replace(/\D/g, '')}`, icon: <MessageCircle size={14} />, label: 'WhatsApp' },
+  ].filter(Boolean);
 
   return (
     <div className="animate-page">
@@ -107,6 +117,23 @@ export default function Contato() {
                     <Clock size={16} style={{ color:'var(--gold)', flexShrink:0, marginTop:2 }} />
                     <div><div style={{ fontSize:11, fontWeight:700, textTransform:'uppercase', letterSpacing:'0.06em', color:'var(--text-soft)', marginBottom:3 }}>Funcionamento</div><div style={{ fontSize:14, color:'var(--navy)', lineHeight:1.7 }}>{info.secretary_hours || 'Seg–Sex 8h–17h30\nSáb 8h–12h'}</div></div>
                   </div>
+                  {socialLinks.length > 0 && (
+                    <div style={{ display:'flex', gap:8, flexWrap:'wrap', paddingTop:4 }}>
+                      {socialLinks.map((s) => (
+                        <a
+                          key={s.key}
+                          href={s.href}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          title={s.label}
+                          aria-label={s.label}
+                          style={{ width:32, height:32, borderRadius:8, border:'1px solid var(--border)', background:'#fff', color:'var(--navy)', display:'inline-flex', alignItems:'center', justifyContent:'center' }}
+                        >
+                          {s.icon}
+                        </a>
+                      ))}
+                    </div>
+                  )}
                 </div>
               </div>
             </Reveal>

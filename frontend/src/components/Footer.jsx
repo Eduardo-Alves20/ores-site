@@ -1,9 +1,18 @@
 import { Link } from 'react-router-dom';
-import { Mail, Phone } from 'lucide-react';
+import { Mail, Phone, AtSign, Users, Play } from 'lucide-react';
 import { getConhecaLabel, getSiteName } from '../lib/branding';
 
 export default function Footer({ siteInfo = {} }) {
   const siteName = getSiteName(siteInfo);
+  const normalizeUrl = (value) => {
+    if (!value) return '';
+    return /^https?:\/\//i.test(value) ? value : `https://${value}`;
+  };
+  const socialLinks = [
+    siteInfo.site_instagram && { key: 'instagram', href: normalizeUrl(siteInfo.site_instagram), icon: <AtSign size={14} />, label: 'Instagram' },
+    siteInfo.site_facebook && { key: 'facebook', href: normalizeUrl(siteInfo.site_facebook), icon: <Users size={14} />, label: 'Facebook' },
+    siteInfo.site_youtube && { key: 'youtube', href: normalizeUrl(siteInfo.site_youtube), icon: <Play size={14} />, label: 'YouTube' },
+  ].filter(Boolean);
 
   return (
     <footer style={{ background: 'var(--navy)', color: '#fff', paddingTop: 64, paddingBottom: 32, marginTop: 96 }}>
@@ -40,6 +49,23 @@ export default function Footer({ siteInfo = {} }) {
               <div style={{ display: 'flex', alignItems: 'center', gap: 9, fontSize: 13, color: 'rgba(255,255,255,.65)', marginBottom: 10 }}>
                 <Phone size={14} style={{ color: 'var(--gold-light)', opacity: 0.8 }} />
                 {siteInfo.site_phone}
+              </div>
+            )}
+            {socialLinks.length > 0 && (
+              <div style={{ display:'flex', gap:8, marginTop:8 }}>
+                {socialLinks.map((s) => (
+                  <a
+                    key={s.key}
+                    href={s.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    title={s.label}
+                    aria-label={s.label}
+                    style={{ width:28, height:28, borderRadius:8, border:'1px solid rgba(255,255,255,.18)', color:'var(--gold-light)', display:'inline-flex', alignItems:'center', justifyContent:'center' }}
+                  >
+                    {s.icon}
+                  </a>
+                ))}
               </div>
             )}
           </div>
