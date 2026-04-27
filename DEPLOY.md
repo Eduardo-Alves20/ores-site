@@ -72,7 +72,10 @@ CSRF_SECRET=gere_um_hex_de_32_bytes
 FRONTEND_URL=https://seudominio.com.br
 COOKIE_DOMAIN=seudominio.com.br
 COOKIE_SECURE=true
+UPLOADS_DIR=/home/SEU_USUARIO/domains/seudominio.com/public_html/uploads
 ```
+
+Sem `UPLOADS_DIR`, as imagens enviadas pelo painel podem sumir em novos deploys/rebuilds.
 
 Para gerar segredos:
 

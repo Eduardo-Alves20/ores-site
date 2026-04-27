@@ -5,12 +5,10 @@ import { sanitizeText, sanitizeRichText } from '../middleware/validate.js';
 import multer from 'multer';
 import path from 'path';
 import fs from 'fs';
-import { fileURLToPath } from 'url';
 import { randomUUID } from 'crypto';
 import { refreshWordOfDayCache } from '../services/wordOfDayService.js';
+import { uploadsDir } from '../utils/uploads.js';
 
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const uploadsDir = path.join(__dirname, '../../public/uploads');
 fs.mkdirSync(uploadsDir, { recursive: true });
 
 const upload = multer({

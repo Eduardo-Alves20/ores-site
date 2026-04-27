@@ -11,6 +11,7 @@ import fs from 'fs';
 import { securityHeaders, globalRateLimit, sanitizeRequest } from './middleware/security.js';
 import publicRoutes from './routes/public.js';
 import adminRoutes from './routes/admin.js';
+import { uploadsDir } from './utils/uploads.js';
 
 dotenv.config();
 
@@ -18,8 +19,6 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const app = express();
 const PORT = process.env.PORT || 3001;
 const isDev = process.env.NODE_ENV !== 'production';
-const uploadsDir = path.join(__dirname, '../public/uploads');
-
 fs.mkdirSync(uploadsDir, { recursive: true });
 
 // ── Trust proxy (Hostinger / nginx) ─────────────────────────────────────────
