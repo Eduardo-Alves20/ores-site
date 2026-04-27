@@ -27,31 +27,58 @@ function groupBy(parents, details, fk, field) {
   return parents;
 }
 
+async function safeQuery(sql, params = [], fallback = []) {
+  try {
+    return await query(sql, params);
+  } catch (err) {
+    console.error('safeQuery failed:', err?.message || err);
+    return fallback;
+  }
+}
+
+async function queryNewsList(limit = 20) {
+  try {
+    return await query(
+      `SELECT id, title, slug, category, summary, image_url, external_url, published_at
+       FROM news WHERE published = 1 ORDER BY published_at DESC LIMIT ?`,
+      [limit]
+    );
+  } catch (err) {
+    // Compatibilidade com bancos ainda sem a coluna external_url.
+    if (err?.code === 'ER_BAD_FIELD_ERROR') {
+      const rows = await query(
+        `SELECT id, title, slug, category, summary, image_url, published_at
+         FROM news WHERE published = 1 ORDER BY published_at DESC LIMIT ?`,
+        [limit]
+      );
+      return rows.map((r) => ({ ...r, external_url: null }));
+    }
+    throw err;
+  }
+}
+
 // ── Home data ────────────────────────────────────────────────────────────────
 export async function getHomeData(req, res) {
   try {
-    const settingsRows = await query(`SELECT \`key\`, value FROM site_settings`);
+    const settingsRows = await safeQuery(`SELECT \`key\`, value FROM site_settings`);
     const settings = Object.fromEntries(settingsRows.map(r => [r.key, r.value]));
 
-    const events = await query(
+    const events = await safeQuery(
       `SELECT id, title, event_date, start_time, end_time, location, category
        FROM events WHERE active = 1 AND event_date >= CURDATE()
        ORDER BY event_date, start_time LIMIT 6`
     );
 
     const [massScheduleRaw, massTimes, confessions] = await Promise.all([
-      query(`SELECT id, day_name, day_short, day_order FROM mass_schedule ORDER BY day_order`),
-      query(`SELECT schedule_id, time_value AS time, priest_sigla AS sigla FROM mass_times`),
-      query(`SELECT day_name, times FROM confession_schedule ORDER BY display_order`),
+      safeQuery(`SELECT id, day_name, day_short, day_order FROM mass_schedule ORDER BY day_order`),
+      safeQuery(`SELECT schedule_id, time_value AS time, priest_sigla AS sigla FROM mass_times`),
+      safeQuery(`SELECT day_name, times FROM confession_schedule ORDER BY display_order`),
     ]);
     const massSchedule = groupBy(massScheduleRaw, massTimes, 'schedule_id', 'times');
 
-    const news = await query(
-      `SELECT id, title, slug, category, summary, image_url, external_url, published_at
-       FROM news WHERE published = 1 ORDER BY published_at DESC LIMIT 3`
-    );
+    const news = await queryNewsList(3);
 
-    const heroSlides = await query(
+    const heroSlides = await safeQuery(
       `SELECT id, eyebrow, title, subtitle, image_url, primary_label, primary_url,
               secondary_label, secondary_url, duration_ms, display_order
        FROM hero_slides WHERE active = 1 ORDER BY display_order, id`
@@ -122,10 +149,7 @@ export async function getPriests(req, res) {
 // ── News ─────────────────────────────────────────────────────────────────────
 export async function getNews(req, res) {
   try {
-    const news = await query(
-      `SELECT id, title, slug, category, summary, image_url, external_url, published_at
-       FROM news WHERE published = 1 ORDER BY published_at DESC LIMIT 20`
-    );
+    const news = await queryNewsList(20);
     return res.json(news);
   } catch (err) {
     return res.status(500).json({ error: 'Erro interno.' });
