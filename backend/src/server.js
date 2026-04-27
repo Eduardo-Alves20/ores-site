@@ -11,7 +11,7 @@ import fs from 'fs';
 import { securityHeaders, globalRateLimit, sanitizeRequest } from './middleware/security.js';
 import publicRoutes from './routes/public.js';
 import adminRoutes from './routes/admin.js';
-import { uploadsDir } from './utils/uploads.js';
+import { uploadsDir, syncLegacyUploads } from './utils/uploads.js';
 import { ensureRuntimeSchema } from './database/runtimeSchema.js';
 
 dotenv.config();
@@ -94,6 +94,10 @@ app.use((err, req, res, _next) => {
 });
 
 async function startServer() {
+  const sync = syncLegacyUploads();
+  if (sync.copied > 0) {
+    console.log(`Legacy uploads synced: ${sync.copied} copied, ${sync.skipped} skipped`);
+  }
   await ensureRuntimeSchema();
   app.listen(PORT, () => {
     console.log(`Site server running on port ${PORT} [${process.env.NODE_ENV || 'development'}]`);
