@@ -3,6 +3,7 @@ import { useFetch } from '../hooks/useFetch';
 import PageHeader from '../components/PageHeader';
 import Reveal from '../components/Reveal';
 import { ChevronLeft, ChevronRight, Clock, MapPin, Search, X } from 'lucide-react';
+import { normalizeMediaUrl } from '../lib/media';
 
 function mediaFallback(name) {
   return (
@@ -28,6 +29,7 @@ function PastoralModal({ pastoral, onClose }) {
   if (!pastoral) return null;
   const time = [pastoral.meeting_day, pastoral.meeting_time].filter(Boolean).join(', ');
   const hasMap = Boolean(pastoral.map_url);
+  const pastoralImage = normalizeMediaUrl(pastoral.image_url);
 
   return (
     <div
@@ -52,8 +54,8 @@ function PastoralModal({ pastoral, onClose }) {
           <div style={{ borderRadius: 12, overflow: 'hidden', border: '1px solid var(--border)', marginBottom: 18, background: 'var(--cream)' }}>
             {hasMap ? (
               <iframe title={`Mapa ${pastoral.name}`} src={pastoral.map_url} style={{ width: '100%', height: 180, border: 0, display: 'block' }} loading="lazy" />
-            ) : pastoral.image_url ? (
-              <img src={pastoral.image_url} alt="" style={{ width: '100%', height: 180, objectFit: 'cover', display: 'block' }} />
+            ) : pastoralImage ? (
+              <img src={pastoralImage} alt="" onError={(e) => { e.currentTarget.style.display = 'none'; }} style={{ width: '100%', height: 180, objectFit: 'cover', display: 'block' }} />
             ) : mediaFallback(pastoral.name)}
           </div>
 
@@ -112,6 +114,7 @@ function PastoralCarousel({ slides }) {
   if (!total) return null;
 
   const current = slides[index];
+  const currentImage = normalizeMediaUrl(current.image_url);
 
   return (
     <Reveal>
@@ -133,7 +136,11 @@ function PastoralCarousel({ slides }) {
         </div>
 
         <div style={{ borderRadius: 16, overflow: 'hidden', border: '1px solid var(--border)', background: '#0f1d3f', position: 'relative' }}>
-          <img src={current.image_url} alt={current.title || 'Slide da pastoral'} style={{ width: '100%', height: 'clamp(260px,38vw,420px)', objectFit: 'cover', display: 'block' }} />
+          {currentImage ? (
+            <img src={currentImage} alt={current.title || 'Slide da pastoral'} onError={(e) => { e.currentTarget.style.display = 'none'; }} style={{ width: '100%', height: 'clamp(260px,38vw,420px)', objectFit: 'cover', display: 'block' }} />
+          ) : (
+            <div style={{ width: '100%', height: 'clamp(260px,38vw,420px)', background: 'linear-gradient(135deg,var(--navy),var(--navy-light))' }} />
+          )}
           <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(180deg, rgba(10,20,42,.14) 0%, rgba(10,20,42,.72) 100%)' }} />
           <div style={{ position: 'absolute', left: 20, right: 20, bottom: 20 }}>
             {current.title && <h4 style={{ fontFamily: 'Playfair Display,serif', fontSize: 'clamp(22px,3vw,34px)', color: '#fff', marginBottom: 6 }}>{current.title}</h4>}
@@ -204,6 +211,7 @@ export default function Pastorais() {
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(300px,1fr))', gap: 22 }}>
             {filtered.map((p, i) => {
               const time = [p.meeting_day, p.meeting_time].filter(Boolean).join(', ');
+              const pastoralThumb = normalizeMediaUrl(p.image_url);
               return (
                 <Reveal key={p.id} delay={i * 50}>
                   <button
@@ -219,7 +227,7 @@ export default function Pastorais() {
                       e.currentTarget.style.boxShadow = '0 4px 14px rgba(0,0,0,.04)';
                     }}
                   >
-                    {p.image_url ? <img src={p.image_url} alt="" style={{ width: '100%', height: 132, objectFit: 'cover', display: 'block' }} /> : mediaFallback(p.name)}
+                    {pastoralThumb ? <img src={pastoralThumb} alt="" onError={(e) => { e.currentTarget.style.display = 'none'; }} style={{ width: '100%', height: 132, objectFit: 'cover', display: 'block' }} /> : mediaFallback(p.name)}
                     <div style={{ padding: '20px' }}>
                       <div style={{ display: 'flex', justifyContent: 'space-between', gap: 12, alignItems: 'flex-start', marginBottom: 10 }}>
                         <h3 style={{ fontFamily: 'Playfair Display,serif', fontSize: 19, fontWeight: 700, color: 'var(--navy)', lineHeight: 1.25 }}>{p.name}</h3>

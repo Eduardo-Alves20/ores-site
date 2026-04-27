@@ -3,6 +3,7 @@ import { useFetch } from '../hooks/useFetch';
 import PageHeader from '../components/PageHeader';
 import Reveal from '../components/Reveal';
 import { CalendarDays, Church, X } from 'lucide-react';
+import { normalizeMediaUrl } from '../lib/media';
 
 function initials(priest) {
   return priest.sigla || priest.name?.replace(/^Pe\.?\s*/i, '').slice(0, 2).toUpperCase() || 'P';
@@ -15,12 +16,13 @@ function PriestPhoto({ priest, size = 118 }) {
     </div>
   );
 
-  if (!priest.photo_url) return fallback;
+  const photoUrl = normalizeMediaUrl(priest.photo_url);
+  if (!photoUrl) return fallback;
 
   return (
     <div style={{ position:'relative', width:size, height:size }}>
       <img
-        src={priest.photo_url}
+        src={photoUrl}
         alt={priest.name}
         onError={e => {
           e.currentTarget.style.display = 'none';

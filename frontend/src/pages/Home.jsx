@@ -7,6 +7,7 @@ import EventsSidebar from '../components/EventsSidebar';
 import { Calendar, Users, Radio, Heart, BookOpen, Clock, MapPin, Copy, Gift, ChevronLeft, ChevronRight } from 'lucide-react';
 import { parseDateOnly } from '../lib/date';
 import { useAppAlert } from '../components/AppAlert';
+import { normalizeMediaUrl } from '../lib/media';
 
 const MONTHS_PT = ['JAN','FEV','MAR','ABR','MAI','JUN','JUL','AGO','SET','OUT','NOV','DEZ'];
 
@@ -54,7 +55,10 @@ export default function Home() {
     secondary_url: settings.hero_secondary_url || '/contato',
     duration_ms: 6000,
   };
-  const slides = heroSlides.length ? heroSlides : [fallbackSlide];
+  const slides = (heroSlides.length ? heroSlides : [fallbackSlide]).map((slide) => ({
+    ...slide,
+    image_url: normalizeMediaUrl(slide.image_url),
+  }));
   const hero = slides[currentSlide] || slides[0] || fallbackSlide;
 
   useEffect(() => {
@@ -73,9 +77,11 @@ export default function Home() {
     { icon: <BookOpen size={22} />, label: 'Homilias', to: '/homilias' },
   ];
   const donationSlides = [1, 2, 3]
-    .map(i => ({ url: settings[`donation_gallery_${i}_url`], caption: settings[`donation_gallery_${i}_caption`] }))
+    .map(i => ({ url: normalizeMediaUrl(settings[`donation_gallery_${i}_url`]), caption: settings[`donation_gallery_${i}_caption`] }))
     .filter(item => item.url);
   const [donationSlide, setDonationSlide] = useState(0);
+  const donationBackgroundUrl = normalizeMediaUrl(settings.donation_background_url);
+  const donationQrUrl = normalizeMediaUrl(settings.donation_qr_url);
 
   useEffect(() => {
     if (donationSlides.length < 2) return undefined;
@@ -101,12 +107,15 @@ export default function Home() {
   return (
     <div className="animate-page">
       {/* ── Hero ── */}
-      <section style={{ background:'#000',minHeight:'100vh',display:'flex',alignItems:'center',position:'relative',overflow:'hidden' }}>
+      <section className="home-hero" style={{ background:'#000',minHeight:'100vh',display:'flex',alignItems:'center',position:'relative',overflow:'hidden' }}>
         {slides.map((slide, i) => slide.image_url && (
           <img
             key={slide.id || i}
             src={slide.image_url}
             alt=""
+            onError={(e) => {
+              e.currentTarget.style.display = 'none';
+            }}
             style={{ position:'absolute',inset:0,width:'100%',height:'100%',objectFit:'cover',opacity:i === currentSlide ? 1 : 0,transform:i === currentSlide ? 'scale(1.03)' : 'scale(1)',transition:'opacity .9s ease, transform 7s ease' }}
           />
         ))}
@@ -117,12 +126,12 @@ export default function Home() {
         <div style={{ position:'absolute',top:'50%',left:'50%',width:320,height:320,borderRadius:'50%',border:'1px solid rgba(184,148,90,.18)',transform:'translate(-50%,-50%)',animation:'ringPulse 6s ease-in-out infinite',animationDelay:'2s' }} />
         <div style={{ position:'absolute',inset:0,background:'radial-gradient(ellipse at 60% 40%,rgba(184,148,90,.08) 0%,transparent 60%)' }} />
 
-        <div style={{ maxWidth:1200,margin:'0 auto',padding:'120px 24px 80px',width:'100%',position:'relative',zIndex:1 }}>
+        <div className="home-hero-inner" style={{ maxWidth:1200,margin:'0 auto',padding:'120px 24px 80px',width:'100%',position:'relative',zIndex:1 }}>
           <div style={{ maxWidth:680 }}>
             <div className="animate-fade-up" style={{ fontSize:11,fontWeight:600,letterSpacing:'0.2em',textTransform:'uppercase',color:'var(--gold-light)',marginBottom:22 }}>
               {hero.eyebrow || 'Bem-vindo à'}
             </div>
-            <h1 className="animate-fade-up" style={{ fontFamily:'Playfair Display,serif',fontSize:'clamp(44px,7vw,84px)',fontWeight:700,color:'#fff',lineHeight:1.08,marginBottom:20,animationDelay:'.1s' }}>
+            <h1 className="animate-fade-up home-hero-title" style={{ fontFamily:'Playfair Display,serif',fontSize:'clamp(44px,7vw,84px)',fontWeight:700,color:'#fff',lineHeight:1.08,marginBottom:20,animationDelay:'.1s' }}>
               {hero.title ? hero.title.split('Espírito Santo').map((part, i, arr) =>
                 i < arr.length - 1 ? [part, <em key={i} style={{ color:'var(--gold-light)',fontStyle:'italic' }}>Espírito Santo</em>] : part
               ) : <><em style={{ color:'var(--gold-light)',fontStyle:'italic' }}>Espírito</em> Santo</>}
@@ -130,7 +139,7 @@ export default function Home() {
             <p className="animate-fade-up" style={{ fontSize:17,color:'rgba(255,255,255,.65)',lineHeight:1.7,fontWeight:300,marginBottom:40,animationDelay:'.2s' }}>
               {hero.subtitle || 'Venha fazer parte desta família de fé. Missas, grupos, pastorais e muito mais para toda a família.'}
             </p>
-            <div className="animate-fade-up" style={{ display:'flex',gap:16,flexWrap:'wrap',animationDelay:'.3s' }}>
+            <div className="animate-fade-up home-hero-actions" style={{ display:'flex',gap:16,flexWrap:'wrap',animationDelay:'.3s' }}>
               <Link to={hero.primary_url || '/conheca'} className="btn-gold" style={{ display:'inline-flex',alignItems:'center',gap:6,padding:'13px 28px',borderRadius:100,background:'var(--gold)',color:'#fff',fontWeight:600,fontSize:14,boxShadow:'0 4px 18px rgba(184,148,90,.35)',transition:'transform .2s,box-shadow .2s' }}
                 onMouseEnter={e => { e.currentTarget.style.transform='translateY(-2px)'; e.currentTarget.style.boxShadow='0 8px 26px rgba(184,148,90,.45)'; }}
                 onMouseLeave={e => { e.currentTarget.style.transform=''; e.currentTarget.style.boxShadow='0 4px 18px rgba(184,148,90,.35)'; }}>
@@ -203,7 +212,7 @@ export default function Home() {
               <h2 style={{ fontFamily:'Playfair Display,serif',fontSize:'clamp(26px,4vw,40px)',fontWeight:700,color:'var(--navy)' }}>{settings.home_quick_title || 'O que você está procurando?'}</h2>
             </div>
           </Reveal>
-          <div style={{ display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(160px,1fr))',gap:16 }}>
+          <div className="quick-links-grid" style={{ display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(160px,1fr))',gap:16 }}>
             {quickLinks.map((ql, i) => (
               <Reveal key={ql.label} delay={i * 60}>
                 <Link to={ql.to} style={{ background:'#fff',borderRadius:12,border:'1px solid var(--border)',padding:'28px 20px',textAlign:'center',display:'block',transition:'transform .2s,box-shadow .2s',boxShadow:'0 1px 4px rgba(0,0,0,.03)' }}
@@ -224,14 +233,14 @@ export default function Home() {
         <Reveal>
           <section style={{ padding:'0 24px 72px' }}>
             <div style={{ maxWidth:1200, margin:'0 auto', background:'#fff', border:'1px solid var(--border)', borderRadius:18, overflow:'hidden', boxShadow:'0 18px 60px rgba(26,39,68,.08)', position:'relative' }}>
-              {settings.donation_background_url && (
+              {donationBackgroundUrl && (
                 <>
-                  <img src={settings.donation_background_url} alt="" style={{ position:'absolute', inset:0, width:'100%', height:'100%', objectFit:'cover', opacity:.2 }} />
+                  <img src={donationBackgroundUrl} alt="" onError={(e) => { e.currentTarget.style.display = 'none'; }} style={{ position:'absolute', inset:0, width:'100%', height:'100%', objectFit:'cover', opacity:.2 }} />
                   <div style={{ position:'absolute', inset:0, background:'linear-gradient(90deg,rgba(26,39,68,.92) 0%,rgba(26,39,68,.82) 49%,rgba(249,247,244,.88) 50%,rgba(249,247,244,.94) 100%)' }} />
                 </>
               )}
               <div className="donation-grid" style={{ display:'grid', gridTemplateColumns:'1.05fr .95fr', alignItems:'stretch', position:'relative' }}>
-                <div style={{ padding:'44px 48px', background:settings.donation_background_url ? 'transparent' : 'var(--navy)', color:'#fff', position:'relative', overflow:'hidden' }}>
+                <div style={{ padding:'44px 48px', background:donationBackgroundUrl ? 'transparent' : 'var(--navy)', color:'#fff', position:'relative', overflow:'hidden' }}>
                   <div style={{ position:'absolute', right:-90, top:-90, width:260, height:260, borderRadius:'50%', border:'1px solid rgba(212,170,114,.16)' }} />
                   <div style={{ position:'absolute', right:40, bottom:-120, width:300, height:300, borderRadius:'50%', border:'1px solid rgba(212,170,114,.1)' }} />
                   <div style={{ position:'relative' }}>
@@ -245,10 +254,10 @@ export default function Home() {
                     {settings.donation_pix_key && <div style={{ marginTop:14, fontSize:12, color:'rgba(255,255,255,.55)', wordBreak:'break-word' }}>Pix: {settings.donation_pix_key}</div>}
                   </div>
                 </div>
-                <div className="donation-media" style={{ padding:'32px', display:'grid', gap:16, alignContent:'space-between', background:settings.donation_background_url ? 'rgba(249,247,244,.72)' : 'var(--cream)' }}>
-                  {false && settings.donation_qr_url && (
+                <div className="donation-media" style={{ padding:'32px', display:'grid', gap:16, alignContent:'space-between', background:donationBackgroundUrl ? 'rgba(249,247,244,.72)' : 'var(--cream)' }}>
+                  {false && donationQrUrl && (
                     <div style={{ background:'#fff', border:'1px solid var(--border)', borderRadius:14, padding:14, boxShadow:'0 10px 30px rgba(0,0,0,.06)' }}>
-                      <img src={settings.donation_qr_url} alt="QR Code Pix" style={{ width:'100%', aspectRatio:'1 / 1', objectFit:'contain' }} />
+                      <img src={donationQrUrl} alt="QR Code Pix" onError={(e) => { e.currentTarget.style.display = 'none'; }} style={{ width:'100%', aspectRatio:'1 / 1', objectFit:'contain' }} />
                       <div style={{ marginTop:10, textAlign:'center', fontSize:11, fontWeight:800, color:'var(--gold)', textTransform:'uppercase', letterSpacing:'0.08em' }}>Pix QR Code</div>
                     </div>
                   )}
@@ -278,6 +287,9 @@ export default function Home() {
                             key={`${item.url}-${i}`}
                             src={item.url}
                             alt={item.caption || 'Foto da doacao'}
+                            onError={(e) => {
+                              e.currentTarget.style.display = 'none';
+                            }}
                             style={{ position:'absolute', inset:0, width:'100%', height:'100%', objectFit:'cover', opacity:i === donationSlide ? 1 : 0, transform:i === donationSlide ? 'scale(1.02)' : 'scale(1)', transition:'opacity .45s ease, transform 3.6s ease' }}
                           />
                         ))}
@@ -306,7 +318,7 @@ export default function Home() {
                   <div style={{ display:'none' }}>
                     {donationSlides.length ? donationSlides.map((item, i) => (
                       <div key={i} style={{ display:'grid', gridTemplateColumns:item.url ? '84px 1fr' : '1fr', gap:12, alignItems:'center', background:'#fff', border:'1px solid var(--border)', borderRadius:12, padding:10 }}>
-                        {item.url && <img src={item.url} alt="" style={{ width:84, height:64, objectFit:'cover', borderRadius:8 }} />}
+                        {item.url && <img src={item.url} alt="" onError={(e) => { e.currentTarget.style.display = 'none'; }} style={{ width:84, height:64, objectFit:'cover', borderRadius:8 }} />}
                         <div style={{ fontSize:13, lineHeight:1.55, color:'var(--navy)', fontWeight:600 }}>{item.caption || 'Doação aplicada nas ações da comunidade'}</div>
                       </div>
                     )) : (
@@ -316,9 +328,9 @@ export default function Home() {
                       </div>
                     )}
                   </div>
-                  {settings.donation_qr_url && (
+                  {donationQrUrl && (
                     <div style={{ background:'#fff', border:'1px solid var(--border)', borderRadius:14, padding:14, boxShadow:'0 6px 22px rgba(0,0,0,.05)', maxWidth:220 }}>
-                      <img src={settings.donation_qr_url} alt="QR Code Pix" style={{ width:'100%', aspectRatio:'1 / 1', objectFit:'contain' }} />
+                      <img src={donationQrUrl} alt="QR Code Pix" onError={(e) => { e.currentTarget.style.display = 'none'; }} style={{ width:'100%', aspectRatio:'1 / 1', objectFit:'contain' }} />
                       <div style={{ marginTop:10, textAlign:'center', fontSize:11, fontWeight:800, color:'var(--gold)', textTransform:'uppercase', letterSpacing:'0.08em' }}>Pix QR Code</div>
                     </div>
                   )}
@@ -331,7 +343,7 @@ export default function Home() {
 
       {/* ── Main content + sidebar ── */}
       <section style={{ padding:'0 24px 72px' }}>
-        <div style={{ maxWidth:1200,margin:'0 auto',display:'grid',gridTemplateColumns:'1fr 340px',gap:32,alignItems:'start' }}>
+        <div className="home-main-grid" style={{ maxWidth:1200,margin:'0 auto',display:'grid',gridTemplateColumns:'1fr 340px',gap:32,alignItems:'start' }}>
           {/* Events */}
           <div>
             <Reveal>
@@ -348,7 +360,7 @@ export default function Home() {
                 const month = d ? MONTHS_PT[d.getMonth()] : '';
                 return (
                   <Reveal key={ev.id} delay={i * 80}>
-                    <div style={{ background:'#fff',borderRadius:12,border:'1px solid var(--border)',padding:'20px 24px',display:'flex',gap:20,alignItems:'flex-start',transition:'transform .2s,box-shadow .2s',boxShadow:'0 1px 4px rgba(0,0,0,.03)' }}
+                    <div className="event-card" style={{ background:'#fff',borderRadius:12,border:'1px solid var(--border)',padding:'20px 24px',display:'flex',gap:20,alignItems:'flex-start',transition:'transform .2s,box-shadow .2s',boxShadow:'0 1px 4px rgba(0,0,0,.03)' }}
                       onMouseEnter={e => { e.currentTarget.style.transform='translateY(-2px)'; e.currentTarget.style.boxShadow='0 6px 20px rgba(0,0,0,.07)'; }}
                       onMouseLeave={e => { e.currentTarget.style.transform=''; e.currentTarget.style.boxShadow='0 1px 4px rgba(0,0,0,.03)'; }}>
                       <div style={{ textAlign:'center',minWidth:52,background:'var(--navy)',borderRadius:10,padding:'10px 8px',flexShrink:0 }}>
@@ -358,7 +370,7 @@ export default function Home() {
                       <div style={{ flex:1 }}>
                         <span style={{ display:'inline-block',fontSize:10,fontWeight:700,letterSpacing:'0.08em',textTransform:'uppercase',padding:'2px 8px',borderRadius:100,background:'rgba(184,148,90,.1)',color:'var(--gold)',marginBottom:6 }}>{ev.category}</span>
                         <div style={{ fontWeight:700,fontSize:15,color:'var(--navy)',marginBottom:6,lineHeight:1.3 }}>{ev.title}</div>
-                        <div style={{ display:'flex',gap:16,fontSize:12,color:'var(--text-soft)' }}>
+                        <div className="event-meta" style={{ display:'flex',gap:16,fontSize:12,color:'var(--text-soft)' }}>
                           {ev.start_time && <span style={{ display:'flex',alignItems:'center',gap:4 }}><Clock size={12} />{ev.start_time.slice(0,5)}h{ev.end_time && `–${ev.end_time.slice(0,5)}h`}</span>}
                           {ev.location && <span style={{ display:'flex',alignItems:'center',gap:4 }}><MapPin size={12} />{ev.location}</span>}
                         </div>
@@ -441,7 +453,7 @@ export default function Home() {
       <Reveal>
         <section style={{ padding:'0 24px 96px' }}>
           <div style={{ maxWidth:1200,margin:'0 auto' }}>
-            <div style={{ background:'var(--navy)',borderRadius:20,padding:'56px 64px',display:'grid',gridTemplateColumns:'1fr auto',gap:48,alignItems:'center' }}>
+            <div className="mission-card" style={{ background:'var(--navy)',borderRadius:20,padding:'56px 64px',display:'grid',gridTemplateColumns:'1fr auto',gap:48,alignItems:'center' }}>
               <div>
                 <div style={{ fontSize:11,fontWeight:600,letterSpacing:'0.2em',textTransform:'uppercase',color:'var(--gold-light)',marginBottom:16 }}>{settings.home_mission_eyebrow || 'Nossa Missão'}</div>
                 <h2 style={{ fontFamily:'Playfair Display,serif',fontSize:'clamp(24px,3.5vw,38px)',fontWeight:700,color:'#fff',lineHeight:1.25,marginBottom:20 }}>
@@ -470,11 +482,50 @@ export default function Home() {
 
       <style>{`
         @media (max-width: 900px) {
-          section > div > [style*="grid-template-columns: 1fr 340px"] {
-            grid-template-columns: 1fr !important;
+          .home-hero {
+            min-height: 86svh !important;
+            align-items: flex-end !important;
           }
-          section > div > div > [style*="grid-template-columns: 1fr auto"] {
+          .home-hero-inner {
+            padding: 106px 20px 44px !important;
+          }
+          .home-hero-title {
+            font-size: 38px !important;
+            line-height: 1.08 !important;
+          }
+          .home-hero-actions {
+            gap: 10px !important;
+          }
+          .home-hero-actions a {
+            flex: 1 1 140px;
+            justify-content: center;
+            padding-left: 16px !important;
+            padding-right: 16px !important;
+          }
+          .quick-links-grid {
+            grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+          }
+          .quick-links-grid a {
+            padding: 20px 12px !important;
+            min-height: 128px;
+          }
+          .home-main-grid {
             grid-template-columns: 1fr !important;
+            gap: 24px !important;
+          }
+          .event-card {
+            padding: 16px !important;
+            gap: 14px !important;
+          }
+          .event-meta {
+            flex-direction: column !important;
+            gap: 6px !important;
+          }
+          .mission-card {
+            grid-template-columns: 1fr !important;
+            padding: 32px 24px !important;
+            gap: 24px !important;
+            border-radius: 14px !important;
           }
           .donation-grid,
           .donation-media {
@@ -482,6 +533,14 @@ export default function Home() {
           }
           .donation-grid > div {
             padding: 28px 24px !important;
+          }
+        }
+        @media (max-width: 420px) {
+          .home-hero-title {
+            font-size: 34px !important;
+          }
+          .quick-links-grid {
+            grid-template-columns: 1fr !important;
           }
         }
       `}</style>

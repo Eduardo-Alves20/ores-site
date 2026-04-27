@@ -22,6 +22,14 @@ const app = express();
 const PORT = process.env.PORT || 3001;
 const isDev = process.env.NODE_ENV !== 'production';
 fs.mkdirSync(uploadsDir, { recursive: true });
+const uploadStaticDirs = [
+  uploadsDir,
+  path.resolve(process.cwd(), 'uploads'),
+  path.resolve(process.cwd(), 'backend/public/uploads'),
+  path.resolve(__dirname, '../../uploads'),
+]
+  .map((dir) => path.resolve(dir))
+  .filter((dir, index, all) => all.indexOf(dir) === index && fs.existsSync(dir));
 
 // ── Trust proxy (Hostinger / nginx) ─────────────────────────────────────────
 app.set('trust proxy', 1);
@@ -51,7 +59,12 @@ if (isDev) app.use(morgan('dev'));
 // ── Global rate limit + sanitizer ────────────────────────────────────────────
 app.use(globalRateLimit);
 app.use(sanitizeRequest);
-app.use('/uploads', express.static(uploadsDir, { maxAge: '30d', etag: true }));
+for (const dir of uploadStaticDirs) {
+  app.use('/uploads', express.static(dir, { maxAge: '30d', etag: true }));
+}
+app.use('/uploads', (_req, res) => {
+  res.status(404).type('text/plain').send('Arquivo nao encontrado.');
+});
 
 // ── API routes ────────────────────────────────────────────────────────────────
 app.use('/api', publicRoutes);

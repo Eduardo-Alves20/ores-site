@@ -2,6 +2,7 @@ import { useState, useRef, useEffect, useMemo } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Menu, X, ChevronDown } from 'lucide-react';
 import { getConhecaLabel, getSiteName } from '../lib/branding';
+import { normalizeMediaUrl } from '../lib/media';
 
 export default function Navbar({ siteInfo = {} }) {
   const location = useLocation();
@@ -9,6 +10,7 @@ export default function Navbar({ siteInfo = {} }) {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [mobileExp, setMobileExp] = useState(null);
   const [scrolled, setScrolled] = useState(false);
+  const [logoFailed, setLogoFailed] = useState(false);
   const closeTimer = useRef(null);
   const isHome = location.pathname === '/';
 
@@ -62,6 +64,10 @@ export default function Navbar({ siteInfo = {} }) {
   }, [location.pathname]);
 
   useEffect(() => {
+    setLogoFailed(false);
+  }, [siteInfo.site_logo_url]);
+
+  useEffect(() => {
     document.body.style.overflow = mobileOpen ? 'hidden' : '';
     return () => {
       document.body.style.overflow = '';
@@ -83,13 +89,19 @@ export default function Navbar({ siteInfo = {} }) {
   const border = solid ? '1px solid var(--border)' : '1px solid transparent';
   const [line1, ...rest] = siteName.split(' ');
   const line2 = rest.join(' ');
+  const logoUrl = normalizeMediaUrl(siteInfo.site_logo_url);
 
   return (
     <nav style={{ position: 'fixed', top: 0, left: 0, right: 0, zIndex: 1000, background: bg, borderBottom: border, backdropFilter: solid ? 'blur(12px)' : 'none', transition: 'background .35s,border-color .35s' }}>
       <div style={{ maxWidth: 1200, margin: '0 auto', padding: '0 24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', height: 68 }}>
         <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-          {siteInfo.site_logo_url ? (
-            <img src={siteInfo.site_logo_url} alt="" style={{ width: 34, height: 34, borderRadius: '50%', objectFit: 'cover', flexShrink: 0 }} />
+          {logoUrl && !logoFailed ? (
+            <img
+              src={logoUrl}
+              alt=""
+              onError={() => setLogoFailed(true)}
+              style={{ width: 34, height: 34, borderRadius: '50%', objectFit: 'cover', flexShrink: 0 }}
+            />
           ) : (
             <div style={{ width: 34, height: 34, borderRadius: '50%', background: 'var(--gold)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 16, color: '#fff', fontFamily: 'Playfair Display,serif', fontWeight: 700, flexShrink: 0 }}>✦</div>
           )}
@@ -209,15 +221,21 @@ export default function Navbar({ siteInfo = {} }) {
           top: 68px;
           left: 0;
           right: 0;
+          z-index: 1002;
           height: calc(100vh - 68px);
+          height: calc(100dvh - 68px);
           background: rgba(26,39,68,.28);
           border-top: 1px solid var(--border);
         }
         .mobile-menu-panel {
           background: #fff;
-          max-height: min(78vh, 620px);
+          width: min(100%, 390px);
+          margin-left: auto;
+          min-height: 100%;
+          max-height: 100%;
           overflow-y: auto;
-          box-shadow: 0 18px 48px rgba(0,0,0,.18);
+          box-shadow: -18px 0 48px rgba(0,0,0,.18);
+          animation: mobileMenuIn .2s ease both;
         }
         .mobile-menu-group {
           border-bottom: 1px solid var(--cream-dark);
@@ -257,6 +275,10 @@ export default function Navbar({ siteInfo = {} }) {
         }
         @media (min-width: 861px) {
           .mobile-menu-shell { display: none; }
+        }
+        @keyframes mobileMenuIn {
+          from { opacity: .4; transform: translateX(18px); }
+          to { opacity: 1; transform: translateX(0); }
         }
       `}</style>
     </nav>

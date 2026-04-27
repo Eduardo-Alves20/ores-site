@@ -1,4 +1,6 @@
+import { useEffect, useState } from 'react';
 import { useFetch } from '../hooks/useFetch';
+import { normalizeMediaUrl } from '../lib/media';
 
 const HEADER_KEYS = {
   'Conheca a Paroquia': 'conheca',
@@ -34,13 +36,24 @@ export default function PageHeader({ eyebrow, title, subtitle, headerKey, childr
   const e = prefix ? data?.[`${prefix}_eyebrow`] || eyebrow : eyebrow;
   const t = prefix ? data?.[`${prefix}_title`] || title : title;
   const s = prefix ? data?.[`${prefix}_subtitle`] || subtitle : subtitle;
-  const image = prefix ? data?.[`${prefix}_image_url`] : null;
+  const image = normalizeMediaUrl(prefix ? data?.[`${prefix}_image_url`] : null);
+  const [imageFailed, setImageFailed] = useState(false);
+  const showImage = image && !imageFailed;
+
+  useEffect(() => {
+    setImageFailed(false);
+  }, [image]);
 
   return (
-    <div style={{ background: '#111', padding: '96px 24px 80px', position: 'relative', overflow: 'hidden' }}>
-      {image ? (
+    <div className="page-header" style={{ background: '#111', padding: '96px 24px 80px', position: 'relative', overflow: 'hidden' }}>
+      {showImage ? (
         <>
-          <img src={image} alt="" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', opacity: 1 }} />
+          <img
+            src={image}
+            alt=""
+            onError={() => setImageFailed(true)}
+            style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', opacity: 1 }}
+          />
           <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(180deg,rgba(0,0,0,.05),rgba(0,0,0,.12))' }} />
         </>
       ) : (
@@ -55,6 +68,16 @@ export default function PageHeader({ eyebrow, title, subtitle, headerKey, childr
         {s && <p style={{ fontSize: 16, color: 'rgba(255,255,255,.85)', textShadow: '0 1px 8px rgba(0,0,0,.34)', lineHeight: 1.7, maxWidth: 600, margin: '0 auto' }}>{s}</p>}
         {children}
       </div>
+      <style>{`
+        @media (max-width: 700px) {
+          .page-header {
+            padding: 72px 20px 58px !important;
+            min-height: 224px;
+            display: flex;
+            align-items: center;
+          }
+        }
+      `}</style>
     </div>
   );
 }

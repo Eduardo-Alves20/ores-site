@@ -15,12 +15,13 @@
 }
 
 *, *::before, *::after { box-sizing: border-box; }
-html { scroll-behavior: smooth; }
+html { scroll-behavior: smooth; overflow-x: hidden; }
 body {
   font-family: 'Plus Jakarta Sans', sans-serif;
   background: var(--cream);
   color: var(--text);
   -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
 }
 ::selection { background: var(--gold-light); color: var(--navy); }
 a { text-decoration: none; color: inherit; }
