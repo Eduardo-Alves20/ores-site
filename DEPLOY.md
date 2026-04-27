@@ -36,6 +36,18 @@ Node.js version: 18+ ou 20+
 O comando `npm run build` instala dependencias do frontend e gera `frontend/dist/`.
 O comando `npm start` inicia `backend/src/server.js`.
 
+## Observacao importante sobre cache (tela branca / MIME)
+
+Se a home abrir em branco com erro de MIME no console (`/assets/*.js` retornando `text/html`), isso normalmente e cache antigo do HTML na CDN/navegador.
+
+Checklist:
+
+1. No hPanel, limpe/desative cache de pagina/CDN para este dominio.
+2. Reinicie a aplicacao Node.
+3. No navegador, faca hard refresh (`Ctrl+Shift+R`) e limpe os dados do site.
+
+O build ja esta configurado com `emptyOutDir: false` para manter assets antigos e reduzir esse problema em deploys novos.
+
 ## Variaveis de ambiente
 
 Configure no painel da Hostinger:
