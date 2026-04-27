@@ -61,11 +61,29 @@ app.get('/api/health', (_, res) => res.json({ status: 'ok', timestamp: new Date(
 
 // ── Serve React build (production) ───────────────────────────────────────────
 const frontendBuild = path.join(__dirname, '../../frontend/dist');
-app.use(express.static(frontendBuild, { maxAge: '7d', etag: true }));
+app.use('/assets', express.static(path.join(frontendBuild, 'assets'), {
+  maxAge: '30d',
+  etag: true,
+  immutable: true,
+}));
+app.use(express.static(frontendBuild, {
+  maxAge: 0,
+  etag: true,
+  setHeaders: (res, filePath) => {
+    if (filePath.endsWith('.html')) {
+      res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+      res.setHeader('Pragma', 'no-cache');
+      res.setHeader('Expires', '0');
+    }
+  },
+}));
 app.get('*', (req, res) => {
   if (req.path.startsWith('/api/')) {
     return res.status(404).json({ error: 'Rota não encontrada.' });
   }
+  res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+  res.setHeader('Pragma', 'no-cache');
+  res.setHeader('Expires', '0');
   res.sendFile(path.join(frontendBuild, 'index.html'));
 });
 
