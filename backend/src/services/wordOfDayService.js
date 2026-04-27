@@ -34,8 +34,19 @@ function extractSectionContent(html, heading) {
 
 function cleanHtml(content) {
   return sanitizeHtml(content || '', {
-    allowedTags: ['p', 'br', 'strong', 'em', 'b', 'i', 'ul', 'ol', 'li'],
-    allowedAttributes: {},
+    allowedTags: ['h2', 'h3', 'h4', 'p', 'br', 'strong', 'em', 'b', 'i', 'ul', 'ol', 'li', 'blockquote', 'a'],
+    allowedAttributes: { a: ['href', 'target', 'rel'] },
+    allowedSchemes: ['http', 'https', 'mailto'],
+    transformTags: {
+      a: (tagName, attribs) => ({
+        tagName,
+        attribs: {
+          href: attribs.href,
+          target: '_blank',
+          rel: 'noreferrer noopener',
+        },
+      }),
+    },
   }).trim();
 }
 
