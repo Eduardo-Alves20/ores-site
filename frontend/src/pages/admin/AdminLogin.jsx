@@ -1,9 +1,13 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth.jsx';
+import { useFetch } from '../../hooks/useFetch';
+import { getSiteName } from '../../lib/branding';
 
 export default function AdminLogin() {
   const { login } = useAuth();
+  const { data: siteInfo } = useFetch('/site-info');
+  const siteName = getSiteName(siteInfo || {});
   const navigate = useNavigate();
   const [form, setForm] = useState({ email:'', password:'' });
   const [error, setError] = useState('');
@@ -29,7 +33,7 @@ export default function AdminLogin() {
         <div style={{ textAlign:'center', marginBottom:40 }}>
           <div style={{ width:56, height:56, borderRadius:'50%', background:'var(--gold)', display:'flex', alignItems:'center', justifyContent:'center', fontSize:24, color:'#fff', fontFamily:'Playfair Display,serif', fontWeight:700, margin:'0 auto 16px' }}>✦</div>
           <h1 style={{ fontFamily:'Playfair Display,serif', fontSize:26, color:'#fff', fontWeight:700, marginBottom:4 }}>Painel Administrativo</h1>
-          <p style={{ fontSize:13, color:'rgba(255,255,255,.45)' }}>Paróquia Espírito Santo</p>
+          <p style={{ fontSize:13, color:'rgba(255,255,255,.45)' }}>{siteName}</p>
         </div>
 
         <div style={{ background:'rgba(255,255,255,.04)', border:'1px solid rgba(255,255,255,.1)', borderRadius:16, padding:'40px 36px' }}>
@@ -58,7 +62,7 @@ export default function AdminLogin() {
           </form>
         </div>
         <p style={{ textAlign:'center', fontSize:12, color:'rgba(255,255,255,.2)', marginTop:24 }}>
-          Acesso restrito · Paróquia Espírito Santo
+          Acesso restrito · {siteName}
         </p>
       </div>
     </div>

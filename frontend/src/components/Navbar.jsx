@@ -1,43 +1,7 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useMemo } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Menu, X, ChevronDown } from 'lucide-react';
-
-const NAV = [
-  { label: 'Home', to: '/' },
-  {
-    label: 'Paróquia', children: [
-      { label: 'Conheça a PES', to: '/conheca' },
-      { label: 'Padres e Diáconos', to: '/padres' },
-      { label: 'Instalações', to: '/instalacoes' },
-      { label: 'Calendário de Eventos', to: '/calendario' },
-      { label: 'Agendamento de Salas', to: '/salas' },
-    ],
-  },
-  {
-    label: 'Comunidade', children: [
-      { label: 'Grupos de Oração', to: '/grupos' },
-      { label: 'Pastorais e Movimentos', to: '/pastorais' },
-      { label: 'Comunidades (Setores)', to: '/comunidades' },
-      { label: 'Pastoral Familiar', to: '/familiar' },
-      { label: 'Quero ser Voluntário', to: '/voluntario' },
-    ],
-  },
-  {
-    label: 'Comunicação', children: [
-      { label: 'Notícias', to: '/noticias' },
-      { label: 'Web Rádio', to: '/radio' },
-      { label: 'Homilias e Reflexões', to: '/homilias' },
-    ],
-  },
-  {
-    label: 'Obra Social', children: [
-      { label: 'Conheça a Obra Social', to: '/obra-social' },
-      { label: 'Serviços Oferecidos', to: '/servicos' },
-      { label: 'Cursos Gratuitos', to: '/cursos' },
-    ],
-  },
-  { label: 'Contato', to: '/contato' },
-];
+import { getConhecaLabel, getSiteName } from '../lib/branding';
 
 export default function Navbar({ siteInfo = {} }) {
   const location = useLocation();
@@ -48,70 +12,130 @@ export default function Navbar({ siteInfo = {} }) {
   const closeTimer = useRef(null);
   const isHome = location.pathname === '/';
 
+  const siteName = getSiteName(siteInfo);
+  const nav = useMemo(() => [
+    { label: 'Home', to: '/' },
+    {
+      label: 'Paroquia', children: [
+        { label: getConhecaLabel(siteInfo), to: '/conheca' },
+        { label: 'Padres e Diaconos', to: '/padres' },
+        { label: 'Instalacoes', to: '/instalacoes' },
+        { label: 'Calendario de Eventos', to: '/calendario' },
+        { label: 'Agendamento de Salas', to: '/salas' },
+      ],
+    },
+    {
+      label: 'Comunidade', children: [
+        { label: 'Grupos de Oracao', to: '/grupos' },
+        { label: 'Pastorais e Movimentos', to: '/pastorais' },
+        { label: 'Comunidades (Setores)', to: '/comunidades' },
+        { label: 'Pastoral Familiar', to: '/familiar' },
+        { label: 'Quero ser Voluntario', to: '/voluntario' },
+      ],
+    },
+    {
+      label: 'Comunicacao', children: [
+        { label: 'Noticias', to: '/noticias' },
+        { label: 'Web Radio', to: '/radio' },
+        { label: 'Homilias e Reflexoes', to: '/homilias' },
+      ],
+    },
+    {
+      label: 'Obra Social', children: [
+        { label: 'Conheca a Obra Social', to: '/obra-social' },
+        { label: 'Servicos Oferecidos', to: '/servicos' },
+        { label: 'Cursos Gratuitos', to: '/cursos' },
+      ],
+    },
+    { label: 'Contato', to: '/contato' },
+  ], [siteInfo]);
+
   useEffect(() => {
     const h = () => setScrolled(window.scrollY > 50);
     window.addEventListener('scroll', h, { passive: true });
     return () => window.removeEventListener('scroll', h);
   }, []);
 
-  useEffect(() => { setMobileOpen(false); setOpen(null); }, [location.pathname]);
+  useEffect(() => {
+    setMobileOpen(false);
+    setOpen(null);
+  }, [location.pathname]);
 
   useEffect(() => {
     document.body.style.overflow = mobileOpen ? 'hidden' : '';
-    return () => { document.body.style.overflow = ''; };
+    return () => {
+      document.body.style.overflow = '';
+    };
   }, [mobileOpen]);
 
-  const openDrop = (l) => { clearTimeout(closeTimer.current); setOpen(l); };
-  const closeDrop = () => { closeTimer.current = setTimeout(() => setOpen(null), 420); };
+  const openDrop = (label) => {
+    clearTimeout(closeTimer.current);
+    setOpen(label);
+  };
+
+  const closeDrop = () => {
+    closeTimer.current = setTimeout(() => setOpen(null), 420);
+  };
 
   const solid = scrolled || !isHome || mobileOpen;
   const bg = solid ? 'rgba(255,255,255,0.98)' : 'transparent';
   const tc = solid ? 'var(--navy)' : '#fff';
   const border = solid ? '1px solid var(--border)' : '1px solid transparent';
+  const [line1, ...rest] = siteName.split(' ');
+  const line2 = rest.join(' ');
 
   return (
-    <nav style={{ position:'fixed',top:0,left:0,right:0,zIndex:1000, background:bg, borderBottom:border, backdropFilter:solid?'blur(12px)':'none', transition:'background .35s,border-color .35s' }}>
-      <div style={{ maxWidth:1200,margin:'0 auto',padding:'0 24px',display:'flex',alignItems:'center',justifyContent:'space-between',height:68 }}>
-
-        {/* Logo */}
-        <Link to="/" style={{ display:'flex',alignItems:'center',gap:10 }}>
+    <nav style={{ position: 'fixed', top: 0, left: 0, right: 0, zIndex: 1000, background: bg, borderBottom: border, backdropFilter: solid ? 'blur(12px)' : 'none', transition: 'background .35s,border-color .35s' }}>
+      <div style={{ maxWidth: 1200, margin: '0 auto', padding: '0 24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', height: 68 }}>
+        <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
           {siteInfo.site_logo_url ? (
-            <img src={siteInfo.site_logo_url} alt="" style={{ width:34,height:34,borderRadius:'50%',objectFit:'cover',flexShrink:0 }} />
+            <img src={siteInfo.site_logo_url} alt="" style={{ width: 34, height: 34, borderRadius: '50%', objectFit: 'cover', flexShrink: 0 }} />
           ) : (
-            <div style={{ width:34,height:34,borderRadius:'50%',background:'var(--gold)',display:'flex',alignItems:'center',justifyContent:'center',fontSize:16,color:'#fff',fontFamily:'Playfair Display,serif',fontWeight:700,flexShrink:0 }}>✦</div>
+            <div style={{ width: 34, height: 34, borderRadius: '50%', background: 'var(--gold)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 16, color: '#fff', fontFamily: 'Playfair Display,serif', fontWeight: 700, flexShrink: 0 }}>✦</div>
           )}
           <div>
-            <div style={{ fontFamily:'Playfair Display,serif',fontWeight:700,fontSize:15,color:tc,lineHeight:1.1,transition:'color .35s' }}>{siteInfo.site_name?.split(' ')[0] || 'Paróquia'}</div>
-            <div style={{ fontFamily:'Playfair Display,serif',fontWeight:400,fontSize:12,color:solid?'var(--gold)':'rgba(255,255,255,.75)',letterSpacing:'0.06em',transition:'color .35s' }}>{siteInfo.site_name?.split(' ').slice(1).join(' ') || 'Espírito Santo'}</div>
+            <div style={{ fontFamily: 'Playfair Display,serif', fontWeight: 700, fontSize: 15, color: tc, lineHeight: 1.1, transition: 'color .35s' }}>{line1 || 'Paroquia'}</div>
+            <div style={{ fontFamily: 'Playfair Display,serif', fontWeight: 400, fontSize: 12, color: solid ? 'var(--gold)' : 'rgba(255,255,255,.75)', letterSpacing: '0.06em', transition: 'color .35s' }}>{line2 || 'Comunidade'}</div>
           </div>
         </Link>
 
-        {/* Desktop nav */}
-        <div className="desk-nav" style={{ display:'flex',alignItems:'center',gap:2 }}>
-          {NAV.map(item => (
-            <div key={item.label} style={{ position:'relative',padding:'14px 0' }}
+        <div className="desk-nav" style={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+          {nav.map((item) => (
+            <div
+              key={item.label}
+              style={{ position: 'relative', padding: '14px 0' }}
               onMouseEnter={() => item.children && openDrop(item.label)}
-              onMouseLeave={closeDrop}>
+              onMouseLeave={closeDrop}
+            >
               {item.to ? (
-                <Link to={item.to} style={{ display:'flex',alignItems:'center',gap:5,padding:'8px 11px',borderRadius:7,fontSize:13,fontWeight:500,color:tc,transition:'color .35s',opacity:location.pathname===item.to?1:0.88 }}>
+                <Link to={item.to} style={{ display: 'flex', alignItems: 'center', gap: 5, padding: '8px 11px', borderRadius: 7, fontSize: 13, fontWeight: 500, color: tc, transition: 'color .35s', opacity: location.pathname === item.to ? 1 : 0.88 }}>
                   {item.label}
                 </Link>
               ) : (
-                <button type="button" onClick={() => setOpen(open===item.label?null:item.label)}
-                  style={{ display:'flex',alignItems:'center',gap:5,padding:'8px 11px',borderRadius:7,fontSize:13,fontWeight:500,color:tc,transition:'color .35s',background:open===item.label?(solid?'var(--cream)':'rgba(255,255,255,.1)'):'transparent' }}>
-                  {item.label} <ChevronDown size={12} style={{ transform:open===item.label?'rotate(0)':'rotate(-90deg)',transition:'transform .2s' }} />
+                <button
+                  type="button"
+                  onClick={() => setOpen(open === item.label ? null : item.label)}
+                  style={{ display: 'flex', alignItems: 'center', gap: 5, padding: '8px 11px', borderRadius: 7, fontSize: 13, fontWeight: 500, color: tc, transition: 'color .35s', background: open === item.label ? (solid ? 'var(--cream)' : 'rgba(255,255,255,.1)') : 'transparent' }}
+                >
+                  {item.label} <ChevronDown size={12} style={{ transform: open === item.label ? 'rotate(0)' : 'rotate(-90deg)', transition: 'transform .2s' }} />
                 </button>
               )}
               {item.children && open === item.label && (
-                <div onMouseEnter={() => openDrop(item.label)}
-                  style={{ position:'absolute',top:'100%',left:-12,minWidth:244,padding:'8px 12px 12px',animation:'fadeDown .15s ease' }}>
-                  <div style={{ background:'#fff',borderRadius:12,boxShadow:'0 12px 48px rgba(0,0,0,.12)',border:'1px solid var(--border)',overflow:'hidden' }}>
-                    {item.children.map(c => (
-                      <Link key={c.label} to={c.to}
-                        style={{ display:'block',padding:'11px 18px',fontSize:13.5,fontWeight:500,color:location.pathname===c.to?'var(--gold)':'var(--navy)',borderBottom:'1px solid var(--cream-dark)',transition:'background .12s' }}
-                        onMouseEnter={e => e.currentTarget.style.background='var(--cream)'}
-                        onMouseLeave={e => e.currentTarget.style.background='transparent'}>
-                        {c.label}
+                <div onMouseEnter={() => openDrop(item.label)} style={{ position: 'absolute', top: '100%', left: -12, minWidth: 244, padding: '8px 12px 12px', animation: 'fadeDown .15s ease' }}>
+                  <div style={{ background: '#fff', borderRadius: 12, boxShadow: '0 12px 48px rgba(0,0,0,.12)', border: '1px solid var(--border)', overflow: 'hidden' }}>
+                    {item.children.map((child) => (
+                      <Link
+                        key={child.label}
+                        to={child.to}
+                        style={{ display: 'block', padding: '11px 18px', fontSize: 13.5, fontWeight: 500, color: location.pathname === child.to ? 'var(--gold)' : 'var(--navy)', borderBottom: '1px solid var(--cream-dark)', transition: 'background .12s' }}
+                        onMouseEnter={(e) => {
+                          e.currentTarget.style.background = 'var(--cream)';
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.background = 'transparent';
+                        }}
+                      >
+                        {child.label}
                       </Link>
                     ))}
                   </div>
@@ -121,42 +145,41 @@ export default function Navbar({ siteInfo = {} }) {
           ))}
         </div>
 
-        {/* Mobile toggle */}
-        <button type="button" aria-label={mobileOpen ? 'Fechar menu' : 'Abrir menu'} aria-expanded={mobileOpen}
+        <button
+          type="button"
+          aria-label={mobileOpen ? 'Fechar menu' : 'Abrir menu'}
+          aria-expanded={mobileOpen}
           onClick={() => setMobileOpen(!mobileOpen)}
-          style={{ color:tc }}
-          className="mobile-toggle">
+          style={{ color: tc }}
+          className="mobile-toggle"
+        >
           {mobileOpen ? <X size={22} /> : <Menu size={22} />}
         </button>
       </div>
 
-      {/* Mobile menu */}
       {mobileOpen && (
         <div className="mobile-menu-shell">
           <div className="mobile-menu-panel">
-            {NAV.map(item => (
+            {nav.map((item) => (
               <div key={item.label} className="mobile-menu-group">
                 {item.children ? (
                   <>
-                    <button type="button" onClick={() => setMobileExp(mobileExp===item.label?null:item.label)}
-                      className="mobile-menu-row">
+                    <button type="button" onClick={() => setMobileExp(mobileExp === item.label ? null : item.label)} className="mobile-menu-row">
                       <span>{item.label}</span>
-                      <ChevronDown size={16} style={{ transform:mobileExp===item.label?'rotate(180deg)':'rotate(0)',transition:'transform .2s' }} />
+                      <ChevronDown size={16} style={{ transform: mobileExp === item.label ? 'rotate(180deg)' : 'rotate(0)', transition: 'transform .2s' }} />
                     </button>
                     {mobileExp === item.label && (
                       <div className="mobile-submenu">
-                        {item.children.map(c => (
-                          <Link key={c.label} to={c.to} onClick={() => setMobileOpen(false)}
-                            className={location.pathname===c.to ? 'mobile-submenu-link active' : 'mobile-submenu-link'}>
-                            {c.label}
+                        {item.children.map((child) => (
+                          <Link key={child.label} to={child.to} onClick={() => setMobileOpen(false)} className={location.pathname === child.to ? 'mobile-submenu-link active' : 'mobile-submenu-link'}>
+                            {child.label}
                           </Link>
                         ))}
                       </div>
                     )}
                   </>
                 ) : (
-                  <Link to={item.to} onClick={() => setMobileOpen(false)}
-                    className={location.pathname===item.to ? 'mobile-menu-link active' : 'mobile-menu-link'}>
+                  <Link to={item.to} onClick={() => setMobileOpen(false)} className={location.pathname === item.to ? 'mobile-menu-link active' : 'mobile-menu-link'}>
                     {item.label}
                   </Link>
                 )}

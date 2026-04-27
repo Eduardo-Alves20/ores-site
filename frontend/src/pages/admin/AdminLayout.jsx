@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { Link, useLocation, useNavigate, Outlet } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth.jsx';
+import { useFetch } from '../../hooks/useFetch';
+import { getSiteName } from '../../lib/branding';
 import {
   LayoutDashboard, Calendar, Newspaper, Users, Clock, BookOpen,
   Church, MapPin, Heart, GraduationCap, Headphones, MessageSquare,
@@ -35,6 +37,8 @@ const MENU = [
 
 export default function AdminLayout() {
   const { user, logout } = useAuth();
+  const { data: siteInfo } = useFetch('/site-info');
+  const siteName = getSiteName(siteInfo || {});
   const location = useLocation();
   const navigate = useNavigate();
   const [sidebarOpen, setSidebarOpen] = useState(true);
@@ -51,7 +55,7 @@ export default function AdminLayout() {
       <div style={{ padding:'20px 16px', borderBottom:'1px solid rgba(255,255,255,.08)', display:'flex', alignItems:'center', gap:10 }}>
         <div style={{ width:36, height:36, borderRadius:'50%', background:'var(--gold)', display:'flex', alignItems:'center', justifyContent:'center', fontSize:16, color:'#fff', fontFamily:'Playfair Display,serif', fontWeight:700, flexShrink:0 }}>✦</div>
         {(sidebarOpen || mobile) && <div>
-          <div style={{ fontFamily:'Playfair Display,serif', fontWeight:700, fontSize:14, color:'#fff', lineHeight:1.1 }}>Paróquia PES</div>
+          <div style={{ fontFamily:'Playfair Display,serif', fontWeight:700, fontSize:14, color:'#fff', lineHeight:1.1 }}>{siteName}</div>
           <div style={{ fontSize:11, color:'var(--gold-light)', opacity:.7 }}>Painel Admin</div>
         </div>}
       </div>

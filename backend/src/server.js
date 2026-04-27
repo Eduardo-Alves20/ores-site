@@ -76,7 +76,7 @@ app.use((err, req, res, _next) => {
 });
 
 app.listen(PORT, () => {
-  console.log(`PES Server running on port ${PORT} [${process.env.NODE_ENV || 'development'}]`);
+  console.log(`Site server running on port ${PORT} [${process.env.NODE_ENV || 'development'}]`);
 });
 
 export default app;

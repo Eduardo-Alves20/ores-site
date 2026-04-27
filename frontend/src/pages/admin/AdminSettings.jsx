@@ -71,7 +71,7 @@ const sections = [
     ],
   },
   {
-    title: 'Conheca a PES',
+    title: 'Conheca a Paroquia',
     fields: [
       ['conheca_eyebrow', 'Etiqueta'],
       ['conheca_title', 'Titulo'],

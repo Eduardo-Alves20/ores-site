@@ -13,7 +13,7 @@ async function seed() {
 
   // Site settings
   const settings = [
-    ['site_name', 'Paróquia Espírito Santo'],
+    ['site_name', 'Paróquia Sagrada Família'],
     ['site_tagline', 'Painel Admin'],
     ['site_logo_url', ''],
     ['site_address', 'Av. Cassiopéia, 461 — Jardim Satélite, São José dos Campos/SP — 12230-011'],
@@ -57,7 +57,7 @@ async function seed() {
     ['donation_gallery_3_url', ''],
     ['donation_gallery_3_caption', 'Eventos, formações e evangelização da comunidade'],
     ['conheca_eyebrow', 'Paróquia'],
-    ['conheca_title', 'Conheça a PES'],
+    ['conheca_title', 'Conheça a Paróquia'],
     ['conheca_subtitle', 'Tudo sobre a Paróquia Espírito Santo de São José dos Campos.'],
     ['conheca_image_url', ''],
     ['conheca_history_title', 'Nossa História'],
