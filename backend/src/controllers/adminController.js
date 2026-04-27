@@ -235,10 +235,18 @@ export async function listNews(req, res) {
 
 export async function createNews(req, res) {
   try {
-    const { title, slug, category, summary, content, image_url } = req.body;
+    const { title, slug, category, summary, content, image_url, external_url } = req.body;
     const [result] = await pool.execute(
-      `INSERT INTO news (title, slug, category, summary, content, image_url) VALUES (?, ?, ?, ?, ?, ?)`,
-      [sanitizeText(title), sanitizeText(slug), sanitizeText(category), sanitizeText(summary), sanitizeRichText(content), sanitizeText(image_url)]
+      `INSERT INTO news (title, slug, category, summary, content, image_url, external_url) VALUES (?, ?, ?, ?, ?, ?, ?)`,
+      [
+        sanitizeText(title),
+        sanitizeText(slug),
+        sanitizeText(category),
+        sanitizeText(summary),
+        sanitizeRichText(content),
+        sanitizeText(image_url),
+        sanitizeText(external_url),
+      ]
     );
     await auditLog(req.adminUser.id, 'CREATE_NEWS', 'news', result.insertId, null, req.body, req.ip);
     return res.status(201).json({ id: result.insertId });
@@ -249,7 +257,7 @@ export async function createNews(req, res) {
 }
 
 export async function updateNews(req, res) {
-  return updateRecord(req, res, 'news', ['title', 'slug', 'category', 'summary', 'content', 'image_url', 'published'], parseInt(req.params.id));
+  return updateRecord(req, res, 'news', ['title', 'slug', 'category', 'summary', 'content', 'image_url', 'external_url', 'published'], parseInt(req.params.id));
 }
 
 export async function deleteNews(req, res) {

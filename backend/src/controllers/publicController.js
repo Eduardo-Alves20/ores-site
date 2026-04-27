@@ -46,7 +46,7 @@ export async function getHomeData(req, res) {
     const massSchedule = groupBy(massScheduleRaw, massTimes, 'schedule_id', 'times');
 
     const news = await query(
-      `SELECT id, title, slug, category, summary, image_url, published_at
+      `SELECT id, title, slug, category, summary, image_url, external_url, published_at
        FROM news WHERE published = 1 ORDER BY published_at DESC LIMIT 3`
     );
 
@@ -122,7 +122,7 @@ export async function getPriests(req, res) {
 export async function getNews(req, res) {
   try {
     const news = await query(
-      `SELECT id, title, slug, category, summary, image_url, published_at
+      `SELECT id, title, slug, category, summary, image_url, external_url, published_at
        FROM news WHERE published = 1 ORDER BY published_at DESC LIMIT 20`
     );
     return res.json(news);

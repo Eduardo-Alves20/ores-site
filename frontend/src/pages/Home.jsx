@@ -331,7 +331,11 @@ export default function Home() {
                       <span style={{ fontSize:10,fontWeight:700,letterSpacing:'0.08em',textTransform:'uppercase',padding:'2px 8px',borderRadius:100,background:'rgba(26,39,68,.08)',color:'var(--navy)',display:'inline-block',marginBottom:10 }}>{n.category}</span>
                       <h3 style={{ fontFamily:'Playfair Display,serif',fontSize:17,fontWeight:700,color:'var(--navy)',marginBottom:10,lineHeight:1.35 }}>{n.title}</h3>
                       <p style={{ fontSize:13,color:'var(--text-mid)',lineHeight:1.65,marginBottom:16 }}>{n.summary}</p>
-                      <Link to={`/noticias/${n.slug}`} style={{ fontSize:13,color:'var(--gold)',fontWeight:600 }}>Ler mais →</Link>
+                      {n.external_url ? (
+                        <a href={n.external_url} target="_blank" rel="noreferrer" style={{ fontSize:13,color:'var(--gold)',fontWeight:600 }}>Saiba mais →</a>
+                      ) : (
+                        <Link to={`/noticias/${n.slug}`} style={{ fontSize:13,color:'var(--gold)',fontWeight:600 }}>Ler mais →</Link>
+                      )}
                     </div>
                   </div>
                 </Reveal>

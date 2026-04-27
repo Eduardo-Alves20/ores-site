@@ -118,6 +118,7 @@ const migrations = [
     summary TEXT,
     content LONGTEXT,
     image_url VARCHAR(500),
+    external_url VARCHAR(700),
     published TINYINT(1) DEFAULT 1,
     published_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -307,6 +308,7 @@ const alterMigrations = [
   `ALTER TABLE pastorals ADD COLUMN IF NOT EXISTS address VARCHAR(300) AFTER location`,
   `ALTER TABLE pastorals ADD COLUMN IF NOT EXISTS map_url VARCHAR(700) AFTER address`,
   `ALTER TABLE pastorals ADD COLUMN IF NOT EXISTS image_url VARCHAR(500) AFTER map_url`,
+  `ALTER TABLE news ADD COLUMN IF NOT EXISTS external_url VARCHAR(700) AFTER image_url`,
 ];
 
 async function runMigrations() {
