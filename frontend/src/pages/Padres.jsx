@@ -28,6 +28,7 @@ function PriestPhoto({ priest, size = 118 }) {
           e.currentTarget.style.display = 'none';
           e.currentTarget.nextElementSibling.style.display = 'flex';
         }}
+        className="priest-photo-img"
         style={{ width:size, height:size, borderRadius:'50%', objectFit:'cover', border:'4px solid var(--gold)', display:'block', background:'var(--cream)' }}
       />
       <div style={{ display:'none', position:'absolute', inset:0, borderRadius:'50%', background:'var(--gold)', alignItems:'center', justifyContent:'center', fontSize:Math.max(24, size * .28), color:'#fff', fontFamily:'Playfair Display,serif', fontWeight:700, border:'4px solid var(--gold)' }}>
@@ -128,6 +129,14 @@ export default function Padres() {
         )}
       </section>
       <PriestModal priest={selected} masses={selectedMasses} onClose={() => setSelected(null)} />
+      <style>{`
+        @media (min-width: 901px) {
+          .priest-photo-img {
+            object-fit: contain !important;
+            background: var(--cream-dark) !important;
+          }
+        }
+      `}</style>
     </div>
   );
 }
