@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate, useLocation, Outlet } from 'react-router-dom';
 import { AuthProvider, useAuth } from './hooks/useAuth';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
@@ -48,30 +48,7 @@ function PublicLayout() {
   return (
     <>
       <Navbar siteInfo={siteInfo || {}} />
-      <main style={{ paddingTop: isHome ? 0 : 68, minHeight:'80vh' }}>
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/conheca" element={<Conheca />} />
-          <Route path="/padres" element={<Padres />} />
-          <Route path="/instalacoes" element={<Instalacoes />} />
-          <Route path="/calendario" element={<Calendario />} />
-          <Route path="/salas" element={<Salas />} />
-          <Route path="/grupos" element={<Grupos />} />
-          <Route path="/pastorais" element={<Pastorais />} />
-          <Route path="/comunidades" element={<Comunidades />} />
-          <Route path="/familiar" element={<Pastorais />} />
-          <Route path="/voluntario" element={<Voluntario />} />
-          <Route path="/noticias" element={<NoticiasList />} />
-          <Route path="/noticias/:slug" element={<NoticiaDetalhe />} />
-          <Route path="/radio" element={<WebRadio />} />
-          <Route path="/homilias" element={<Homilias />} />
-          <Route path="/obra-social" element={<ObraSocial />} />
-          <Route path="/servicos" element={<ObraSocial />} />
-          <Route path="/cursos" element={<ObraSocial />} />
-          <Route path="/contato" element={<Contato />} />
-          <Route path="*" element={<Navigate to="/" replace />} />
-        </Routes>
-      </main>
+      <main style={{ paddingTop: isHome ? 0 : 68, minHeight:'80vh' }}><Outlet /></main>
       <Footer siteInfo={siteInfo || {}} />
     </>
   );
@@ -116,7 +93,28 @@ export default function App() {
             <Route path="users" element={<AdminUsers />} />
             <Route path="audit" element={<AdminAudit />} />
           </Route>
-          <Route path="/*" element={<PublicLayout />} />
+          <Route path="/" element={<PublicLayout />}>
+            <Route index element={<Home />} />
+            <Route path="conheca" element={<Conheca />} />
+            <Route path="padres" element={<Padres />} />
+            <Route path="instalacoes" element={<Instalacoes />} />
+            <Route path="calendario" element={<Calendario />} />
+            <Route path="salas" element={<Salas />} />
+            <Route path="grupos" element={<Grupos />} />
+            <Route path="pastorais" element={<Pastorais />} />
+            <Route path="comunidades" element={<Comunidades />} />
+            <Route path="familiar" element={<Pastorais />} />
+            <Route path="voluntario" element={<Voluntario />} />
+            <Route path="noticias" element={<NoticiasList />} />
+            <Route path="noticias/:slug" element={<NoticiaDetalhe />} />
+            <Route path="radio" element={<WebRadio />} />
+            <Route path="homilias" element={<Homilias />} />
+            <Route path="obra-social" element={<ObraSocial />} />
+            <Route path="servicos" element={<ObraSocial />} />
+            <Route path="cursos" element={<ObraSocial />} />
+            <Route path="contato" element={<Contato />} />
+            <Route path="*" element={<Navigate to="/" replace />} />
+          </Route>
         </Routes>
       </AuthProvider>
     </BrowserRouter>
