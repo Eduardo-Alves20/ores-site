@@ -13,6 +13,7 @@ import publicRoutes from './routes/public.js';
 import adminRoutes from './routes/admin.js';
 import { uploadsDir, syncLegacyUploads } from './utils/uploads.js';
 import { ensureRuntimeSchema } from './database/runtimeSchema.js';
+import { runStartupBackup } from './utils/backup.js';
 
 dotenv.config();
 
@@ -97,6 +98,12 @@ async function startServer() {
   const sync = syncLegacyUploads();
   if (sync.copied > 0) {
     console.log(`Legacy uploads synced: ${sync.copied} copied, ${sync.skipped} skipped`);
+  }
+  const backup = runStartupBackup(uploadsDir);
+  if (backup.ran) {
+    console.log(`Backup snapshot created at ${backup.snapshotDir} (${backup.copied} copied, ${backup.skipped} skipped)`);
+  } else if (backup.reason === 'interval') {
+    console.log(`Backup skipped (interval): ${backup.rootDir}`);
   }
   await ensureRuntimeSchema();
   app.listen(PORT, () => {

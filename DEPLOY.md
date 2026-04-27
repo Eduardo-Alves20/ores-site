@@ -73,9 +73,16 @@ FRONTEND_URL=https://seudominio.com.br
 COOKIE_DOMAIN=seudominio.com.br
 COOKIE_SECURE=true
 UPLOADS_DIR=/home/SEU_USUARIO/domains/seudominio.com/public_html/uploads
+
+BACKUP_ENABLED=true
+BACKUP_DIR=/home/SEU_USUARIO/backups_pes
+BACKUP_PATHS=/home/SEU_USUARIO/uploads_pes
+BACKUP_KEEP_DAYS=14
+BACKUP_MIN_INTERVAL_HOURS=6
 ```
 
 Sem `UPLOADS_DIR`, as imagens enviadas pelo painel podem sumir em novos deploys/rebuilds.
+Com `BACKUP_ENABLED=true`, o servidor cria snapshots periodicos de pastas criticas no startup.
 
 Para gerar segredos:
 
