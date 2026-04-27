@@ -12,6 +12,7 @@ import { securityHeaders, globalRateLimit, sanitizeRequest } from './middleware/
 import publicRoutes from './routes/public.js';
 import adminRoutes from './routes/admin.js';
 import { uploadsDir } from './utils/uploads.js';
+import { ensureRuntimeSchema } from './database/runtimeSchema.js';
 
 dotenv.config();
 
@@ -92,8 +93,13 @@ app.use((err, req, res, _next) => {
   res.status(500).json({ error: isDev ? err.message : 'Erro interno do servidor.' });
 });
 
-app.listen(PORT, () => {
-  console.log(`Site server running on port ${PORT} [${process.env.NODE_ENV || 'development'}]`);
-});
+async function startServer() {
+  await ensureRuntimeSchema();
+  app.listen(PORT, () => {
+    console.log(`Site server running on port ${PORT} [${process.env.NODE_ENV || 'development'}]`);
+  });
+}
+
+startServer();
 
 export default app;
