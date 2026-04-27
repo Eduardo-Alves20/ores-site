@@ -71,6 +71,16 @@ const sections = [
     ],
   },
   {
+    title: 'Palavra do Dia',
+    fields: [
+      ['word_day_mode', 'Modo (auto ou manual)'],
+      ['word_day_manual_title', 'Titulo manual'],
+      ['word_day_manual_subtitle', 'Subtitulo manual'],
+      ['word_day_manual_content', 'Conteudo manual', 'textarea'],
+      ['word_day_manual_link', 'Link manual (opcional)'],
+    ],
+  },
+  {
     title: 'Conheca a Paroquia',
     fields: [
       ['conheca_eyebrow', 'Etiqueta'],
@@ -237,6 +247,15 @@ export default function AdminSettings() {
     }
   };
 
+  const refreshWordOfDay = async () => {
+    try {
+      await api.post('/admin/word-of-day/refresh');
+      notify({ type:'success', title:'Palavra do Dia atualizada', message:'Conteudo do Vatican News atualizado com sucesso.' });
+    } catch {
+      notify({ type:'error', title:'Falha na atualizacao', message:'Nao foi possivel buscar a Palavra do Dia agora.' });
+    }
+  };
+
   const Input = ({ field }) => {
     const [key, label, type] = field;
     if (type === 'image') return <MediaField label={label} value={form[key] || ''} onChange={v => set(key, v)} />;
@@ -266,9 +285,14 @@ export default function AdminSettings() {
           <h1 style={{ fontFamily:'Playfair Display,serif', fontSize:26, fontWeight:700, color:'var(--navy)', marginBottom:4 }}>Aparencia e Paginas</h1>
           <p style={{ fontSize:13, color:'var(--text-soft)' }}>Edite textos, links e imagens mantendo o layout do site.</p>
         </div>
-        <button onClick={save} disabled={loading} style={{ display:'flex', alignItems:'center', gap:8, padding:'10px 24px', borderRadius:10, background:'var(--gold)', color:'#fff', fontWeight:600, fontSize:14, flexShrink:0 }}>
-          <Save size={16}/>{loading ? 'Salvando...' : 'Salvar'}
-        </button>
+        <div style={{ display:'flex', gap:10 }}>
+          <button onClick={refreshWordOfDay} type="button" style={{ padding:'10px 18px', borderRadius:10, border:'1px solid var(--border)', color:'var(--navy)', fontWeight:600, fontSize:14, background:'#fff', flexShrink:0 }}>
+            Atualizar Palavra do Dia
+          </button>
+          <button onClick={save} disabled={loading} style={{ display:'flex', alignItems:'center', gap:8, padding:'10px 24px', borderRadius:10, background:'var(--gold)', color:'#fff', fontWeight:600, fontSize:14, flexShrink:0 }}>
+            <Save size={16}/>{loading ? 'Salvando...' : 'Salvar'}
+          </button>
+        </div>
       </div>
 
       {msg && <p style={{ marginBottom:18, fontSize:14, color:msg.includes('sucesso')?'#16a34a':'#dc2626', fontWeight:600 }}>{msg}</p>}

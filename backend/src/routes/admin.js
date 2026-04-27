@@ -38,6 +38,7 @@ router.get('/dashboard', adm.getDashboardStats);
 router.get('/settings', adm.getSettings);
 router.put('/settings', adm.updateSettings);
 router.post('/media', adm.uploadMedia);
+router.post('/word-of-day/refresh', adm.refreshWordOfDay);
 
 router.get('/hero-slides', adm.listHeroSlides);
 router.post('/hero-slides', [

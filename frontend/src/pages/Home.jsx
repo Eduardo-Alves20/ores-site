@@ -34,6 +34,7 @@ function Counter({ target, suffix = '' }) {
 
 export default function Home() {
   const { data } = useFetch('/home');
+  const { data: wordDay } = useFetch('/word-of-day');
   const { notify } = useAppAlert();
   const settings = data?.settings || {};
   const heroSlides = data?.heroSlides || [];
@@ -156,6 +157,28 @@ export default function Home() {
               "{settings.daily_message}"
             </p>
           </div>
+        </Reveal>
+      )}
+
+      {wordDay && (
+        <Reveal>
+          <section style={{ padding:'20px 24px 0' }}>
+            <div style={{ maxWidth:1200, margin:'0 auto', background:'#fff', border:'1px solid var(--border)', borderRadius:16, overflow:'hidden', boxShadow:'0 10px 34px rgba(26,39,68,.08)' }}>
+              <div style={{ padding:'12px 18px', background:'var(--navy)', color:'#fff', fontSize:11, fontWeight:800, letterSpacing:'0.14em', textTransform:'uppercase' }}>
+                Palavra do Dia
+              </div>
+              <div style={{ padding:'20px 22px' }}>
+                <h3 style={{ fontFamily:'Playfair Display,serif', fontSize:'clamp(20px,3vw,28px)', color:'var(--navy)', marginBottom:8 }}>{wordDay.title}</h3>
+                {wordDay.subtitle && <p style={{ fontSize:14, color:'var(--text-soft)', lineHeight:1.7, marginBottom:12 }}>{wordDay.subtitle}</p>}
+                {wordDay.content_html && <div style={{ fontSize:14, color:'var(--text-mid)', lineHeight:1.72 }} dangerouslySetInnerHTML={{ __html: wordDay.content_html }} />}
+                {wordDay.link_url && (
+                  <a href={wordDay.link_url} target="_blank" rel="noreferrer" style={{ display:'inline-block', marginTop:14, fontSize:13, color:'var(--gold)', fontWeight:700 }}>
+                    Fonte original →
+                  </a>
+                )}
+              </div>
+            </div>
+          </section>
         </Reveal>
       )}
 

@@ -7,6 +7,7 @@ import path from 'path';
 import fs from 'fs';
 import { fileURLToPath } from 'url';
 import { randomUUID } from 'crypto';
+import { refreshWordOfDayCache } from '../services/wordOfDayService.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const uploadsDir = path.join(__dirname, '../../public/uploads');
@@ -61,6 +62,8 @@ const SETTINGS_KEYS = [
   'news_image_url', 'radio_image_url', 'homilies_image_url', 'contact_image_url',
   'priests_image_url', 'facilities_image_url', 'calendar_image_url', 'rooms_image_url',
   'groups_image_url', 'pastorals_image_url', 'communities_image_url',
+  'word_day_mode', 'word_day_manual_title', 'word_day_manual_subtitle',
+  'word_day_manual_content', 'word_day_manual_link',
 ];
 
 // ── Generic CRUD helpers ─────────────────────────────────────────────────────
@@ -199,6 +202,16 @@ export async function updateHeroSlide(req, res) {
 
 export async function deleteHeroSlide(req, res) {
   return deleteRecord(req, res, 'hero_slides', parseInt(req.params.id));
+}
+
+export async function refreshWordOfDay(req, res) {
+  try {
+    const row = await refreshWordOfDayCache();
+    await auditLog(req.adminUser.id, 'REFRESH_WORD_OF_DAY', 'word_of_day_cache', null, null, { date: row.date_key }, req.ip);
+    return res.json({ message: 'Palavra do dia atualizada.', date: row.date_key, source_url: row.source_url });
+  } catch {
+    return res.status(500).json({ error: 'Falha ao atualizar a Palavra do dia.' });
+  }
 }
 
 // ── Events ───────────────────────────────────────────────────────────────────

@@ -1,4 +1,5 @@
 import { query, queryOne } from '../database/connection.js';
+import { getWordOfDayPayload } from '../services/wordOfDayService.js';
 
 // ── Helpers ──────────────────────────────────────────────────────────────────
 async function getSetting(key) {
@@ -300,6 +301,15 @@ export async function getHeroSlides(req, res) {
     );
     return res.json(rows);
   } catch (err) {
+    return res.status(500).json({ error: 'Erro interno.' });
+  }
+}
+
+export async function getWordOfDay(req, res) {
+  try {
+    const payload = await getWordOfDayPayload();
+    return res.json(payload);
+  } catch {
     return res.status(500).json({ error: 'Erro interno.' });
   }
 }

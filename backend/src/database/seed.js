@@ -91,6 +91,11 @@ async function seed() {
     ['groups_image_url', ''],
     ['pastorals_image_url', ''],
     ['communities_image_url', ''],
+    ['word_day_mode', 'auto'],
+    ['word_day_manual_title', 'Palavra do Dia'],
+    ['word_day_manual_subtitle', ''],
+    ['word_day_manual_content', ''],
+    ['word_day_manual_link', ''],
   ];
   for (const [k, v] of settings) {
     await query(`INSERT INTO site_settings (\`key\`, value) VALUES (?, ?) ON DUPLICATE KEY UPDATE value = VALUES(value)`, [k, v]);

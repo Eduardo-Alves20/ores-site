@@ -9,6 +9,7 @@ const router = Router();
 router.get('/home', pub.getHomeData);
 router.get('/site-info', pub.getSiteInfo);
 router.get('/hero-slides', pub.getHeroSlides);
+router.get('/word-of-day', pub.getWordOfDay);
 router.get('/mass-schedule', pub.getMassSchedule);
 router.get('/events', pub.getEvents);
 router.get('/priests', pub.getPriests);

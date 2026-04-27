@@ -61,6 +61,23 @@ const migrations = [
     INDEX idx_active_order (active, display_order)
   ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci`,
 
+  // Palavra do Dia (cache automático)
+  `CREATE TABLE IF NOT EXISTS word_of_day_cache (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    date_key DATE NOT NULL UNIQUE,
+    source_url VARCHAR(700) NOT NULL,
+    source_title VARCHAR(300),
+    source_description TEXT,
+    reading_html LONGTEXT,
+    gospel_html LONGTEXT,
+    pope_words_html LONGTEXT,
+    fetched_at DATETIME NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    INDEX idx_fetched_at (fetched_at),
+    INDEX idx_date_key (date_key)
+  ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci`,
+
   // Mass schedule
   `CREATE TABLE IF NOT EXISTS mass_schedule (
     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -309,6 +326,10 @@ const alterMigrations = [
   `ALTER TABLE pastorals ADD COLUMN IF NOT EXISTS map_url VARCHAR(700) AFTER address`,
   `ALTER TABLE pastorals ADD COLUMN IF NOT EXISTS image_url VARCHAR(500) AFTER map_url`,
   `ALTER TABLE news ADD COLUMN IF NOT EXISTS external_url VARCHAR(700) AFTER image_url`,
+  `ALTER TABLE word_of_day_cache ADD COLUMN IF NOT EXISTS source_description TEXT AFTER source_title`,
+  `ALTER TABLE word_of_day_cache ADD COLUMN IF NOT EXISTS reading_html LONGTEXT AFTER source_description`,
+  `ALTER TABLE word_of_day_cache ADD COLUMN IF NOT EXISTS gospel_html LONGTEXT AFTER reading_html`,
+  `ALTER TABLE word_of_day_cache ADD COLUMN IF NOT EXISTS pope_words_html LONGTEXT AFTER gospel_html`,
 ];
 
 async function runMigrations() {
