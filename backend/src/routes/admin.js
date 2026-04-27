@@ -93,6 +93,10 @@ router.get('/pastorals', adm.listPastorals);
 router.post('/pastorals', adm.createPastoral);
 router.put('/pastorals/:id', adm.updatePastoral);
 router.delete('/pastorals/:id', adm.deletePastoral);
+router.get('/pastoral-slides', adm.listPastoralSlides);
+router.post('/pastoral-slides', adm.createPastoralSlide);
+router.put('/pastoral-slides/:id', adm.updatePastoralSlide);
+router.delete('/pastoral-slides/:id', adm.deletePastoralSlide);
 
 // ── Communities ──────────────────────────────────────────────────────────────
 router.get('/communities', adm.listCommunities);

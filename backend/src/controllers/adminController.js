@@ -367,6 +367,38 @@ export async function deletePastoral(req, res) {
   return deleteRecord(req, res, 'pastorals', parseInt(req.params.id));
 }
 
+export async function listPastoralSlides(req, res) {
+  return res.json(await list('pastoral_slides', 'display_order, id'));
+}
+
+export async function createPastoralSlide(req, res) {
+  try {
+    const { title, subtitle, image_url, display_order, active } = req.body;
+    const [result] = await pool.execute(
+      `INSERT INTO pastoral_slides (title, subtitle, image_url, display_order, active) VALUES (?, ?, ?, ?, ?)`,
+      [
+        sanitizeText(title),
+        sanitizeText(subtitle),
+        sanitizeText(image_url),
+        display_order || 0,
+        active === undefined ? 1 : Number(active) ? 1 : 0,
+      ]
+    );
+    await auditLog(req.adminUser.id, 'CREATE_PASTORAL_SLIDE', 'pastoral_slides', result.insertId, null, req.body, req.ip);
+    return res.status(201).json({ id: result.insertId });
+  } catch (err) {
+    return res.status(500).json({ error: 'Erro interno.' });
+  }
+}
+
+export async function updatePastoralSlide(req, res) {
+  return updateRecord(req, res, 'pastoral_slides', ['title', 'subtitle', 'image_url', 'display_order', 'active'], parseInt(req.params.id));
+}
+
+export async function deletePastoralSlide(req, res) {
+  return deleteRecord(req, res, 'pastoral_slides', parseInt(req.params.id));
+}
+
 // ── Communities ──────────────────────────────────────────────────────────────
 export async function listCommunities(req, res) {
   return res.json(await list('communities', 'display_order'));

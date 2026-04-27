@@ -168,6 +168,20 @@ export async function getPastorals(req, res) {
   }
 }
 
+export async function getPastoralSlides(req, res) {
+  try {
+    const slides = await query(
+      `SELECT id, title, subtitle, image_url, display_order
+       FROM pastoral_slides
+       WHERE active = 1
+       ORDER BY display_order, id`
+    );
+    return res.json(slides);
+  } catch (err) {
+    return res.status(500).json({ error: 'Erro interno.' });
+  }
+}
+
 // ── Communities ──────────────────────────────────────────────────────────────
 export async function getCommunities(req, res) {
   try {
