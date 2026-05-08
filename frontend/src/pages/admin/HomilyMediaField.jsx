@@ -14,12 +14,12 @@ function SingleMediaInput({ label, icon: Icon, accept, mediaType, value, onChang
     try {
       const fd = new FormData();
       fd.append('file', file);
-      const res = await api.post('/admin/homilies/media', fd, {
-        headers: { 'Content-Type': 'multipart/form-data' },
-      });
+      // Não definir Content-Type manualmente — o browser adiciona o boundary automaticamente
+      const res = await api.post('/admin/homilies/media', fd);
       onChange(res.data.url);
     } catch (err) {
-      setError(err.response?.data?.error || 'Erro no upload.');
+      const msg = err.response?.data?.error || err.message || 'Erro no upload.';
+      setError(msg);
     } finally {
       setUploading(false);
     }
