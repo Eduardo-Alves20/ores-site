@@ -69,10 +69,10 @@ JWT_REFRESH_EXPIRES=7d
 
 CSRF_SECRET=gere_um_hex_de_32_bytes
 
-FRONTEND_URL=https://seudominio.com.br
-COOKIE_DOMAIN=seudominio.com.br
+FRONTEND_URL=https://paroquiasagradafamilia.com.br
+COOKIE_DOMAIN=paroquiasagradafamilia.com.br
 COOKIE_SECURE=true
-UPLOADS_DIR=/home/SEU_USUARIO/domains/seudominio.com/public_html/uploads
+UPLOADS_DIR=/home/SEU_USUARIO/domains/paroquiasagradafamilia.com.br/public_html/uploads
 
 BACKUP_ENABLED=true
 BACKUP_DIR=/home/SEU_USUARIO/backups_pes
@@ -113,13 +113,13 @@ npm run seed
 Site:
 
 ```txt
-https://seudominio.com.br
+https://paroquiasagradafamilia.com.br
 ```
 
 Admin:
 
 ```txt
-https://seudominio.com.br/admin
+https://paroquiasagradafamilia.com.br/admin
 ```
 
 Credenciais iniciais:
