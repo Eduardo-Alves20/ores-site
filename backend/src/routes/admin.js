@@ -114,6 +114,7 @@ router.get('/bookings', adm.listBookings);
 router.put('/bookings/:id', adm.updateBookingStatus);
 
 // ── Homilies ─────────────────────────────────────────────────────────────────
+router.post('/homilies/media', adm.uploadHomilyMedia);
 router.get('/homilies', adm.listHomilies);
 router.post('/homilies', adm.createHomily);
 router.put('/homilies/:id', adm.updateHomily);

@@ -28,6 +28,23 @@ const upload = multer({
   },
 }).single('file');
 
+const uploadAudioVideo = multer({
+  storage: multer.diskStorage({
+    destination: (_req, _file, cb) => cb(null, uploadsDir),
+    filename: (_req, file, cb) => {
+      const ext = path.extname(file.originalname || '').toLowerCase();
+      cb(null, `${Date.now()}-${randomUUID()}${ext}`);
+    },
+  }),
+  limits: { fileSize: 500 * 1024 * 1024 },
+  fileFilter: (_req, file, cb) => {
+    if (!/^(audio|video)\//.test(file.mimetype)) {
+      return cb(new Error('Formato inválido. Envie um arquivo de áudio ou vídeo.'));
+    }
+    cb(null, true);
+  },
+}).single('file');
+
 const SETTINGS_KEYS = [
   'site_name', 'site_tagline', 'site_logo_url', 'site_address', 'site_email', 'site_whatsapp',
   'site_phone', 'site_facebook', 'site_instagram', 'site_youtube', 'radio_stream_url',
@@ -159,6 +176,17 @@ export async function uploadMedia(req, res) {
     const url = `/uploads/${req.file.filename}`;
     await auditLog(req.adminUser.id, 'UPLOAD_MEDIA', 'uploads', null, null, { url, name: req.file.originalname }, req.ip);
     return res.status(201).json({ url });
+  });
+}
+
+export async function uploadHomilyMedia(req, res) {
+  uploadAudioVideo(req, res, async (err) => {
+    if (err) return res.status(400).json({ error: err.message || 'Erro no upload.' });
+    if (!req.file) return res.status(400).json({ error: 'Arquivo obrigatório.' });
+    const url = `/uploads/${req.file.filename}`;
+    const mediaType = req.file.mimetype.startsWith('audio/') ? 'audio' : 'video';
+    await auditLog(req.adminUser.id, 'UPLOAD_HOMILY_MEDIA', 'uploads', null, null, { url, name: req.file.originalname, mediaType }, req.ip);
+    return res.status(201).json({ url, mediaType });
   });
 }
 
@@ -478,10 +506,10 @@ export async function listHomilies(req, res) {
 
 export async function createHomily(req, res) {
   try {
-    const { title, priest_name, type, duration, audio_url, published_at } = req.body;
+    const { title, priest_name, type, duration, audio_url, video_url, published_at } = req.body;
     const [result] = await pool.execute(
-      `INSERT INTO homilies (title, priest_name, type, duration, audio_url, published_at) VALUES (?, ?, ?, ?, ?, ?)`,
-      [sanitizeText(title), sanitizeText(priest_name), type, sanitizeText(duration), sanitizeText(audio_url), published_at || null]
+      `INSERT INTO homilies (title, priest_name, type, duration, audio_url, video_url, published_at) VALUES (?, ?, ?, ?, ?, ?, ?)`,
+      [sanitizeText(title), sanitizeText(priest_name), type, sanitizeText(duration), sanitizeText(audio_url), sanitizeText(video_url), published_at || null]
     );
     await auditLog(req.adminUser.id, 'CREATE_HOMILY', 'homilies', result.insertId, null, req.body, req.ip);
     return res.status(201).json({ id: result.insertId });
@@ -491,7 +519,7 @@ export async function createHomily(req, res) {
 }
 
 export async function updateHomily(req, res) {
-  return updateRecord(req, res, 'homilies', ['title', 'priest_name', 'type', 'duration', 'audio_url', 'published_at', 'active'], parseInt(req.params.id));
+  return updateRecord(req, res, 'homilies', ['title', 'priest_name', 'type', 'duration', 'audio_url', 'video_url', 'published_at', 'active'], parseInt(req.params.id));
 }
 
 export async function deleteHomily(req, res) {

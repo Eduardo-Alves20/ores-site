@@ -1,5 +1,7 @@
 import { BrowserRouter, Routes, Route, Navigate, useLocation, Outlet } from 'react-router-dom';
 import { AuthProvider, useAuth } from './hooks/useAuth';
+import { AudioPlayerProvider } from './contexts/AudioPlayerContext';
+import PersistentAudioPlayer from './components/PersistentAudioPlayer';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import { useFetch } from './hooks/useFetch';
@@ -71,6 +73,7 @@ export default function App() {
   return (
     <BrowserRouter>
       <AuthProvider>
+        <AudioPlayerProvider>
         <Routes>
           <Route path="/admin/login" element={<AdminLogin />} />
           <Route path="/admin" element={<RequireAuth><AdminLayout /></RequireAuth>}>
@@ -118,6 +121,8 @@ export default function App() {
             <Route path="*" element={<Navigate to="/" replace />} />
           </Route>
         </Routes>
+        <PersistentAudioPlayer />
+        </AudioPlayerProvider>
       </AuthProvider>
     </BrowserRouter>
   );
