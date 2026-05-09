@@ -188,11 +188,41 @@ export async function getSettings(req, res) {
 
 export async function updateSettings(req, res) {
   try {
+    const richTextKeys = new Set([
+      'site_address',
+      'hero_subtitle',
+      'daily_message',
+      'home_mission_text',
+      'donation_text',
+      'word_day_manual_content',
+      'conheca_subtitle',
+      'conheca_history_text_1',
+      'conheca_history_text_2',
+      'priests_subtitle',
+      'facilities_subtitle',
+      'calendar_subtitle',
+      'rooms_subtitle',
+      'groups_subtitle',
+      'pastorals_subtitle',
+      'communities_subtitle',
+      'news_subtitle',
+      'radio_subtitle',
+      'homilies_subtitle',
+      'obra_social_subtitle',
+      'obra_social_mission_text',
+      'voluntario_subtitle',
+      'voluntario_cta_text',
+      'contact_subtitle',
+    ]);
+
     for (const key of SETTINGS_KEYS) {
       if (req.body[key] !== undefined) {
+        const cleanValue = richTextKeys.has(key)
+          ? sanitizeRichText(String(req.body[key]))
+          : sanitizeText(String(req.body[key]));
         await query(
           `INSERT INTO site_settings (\`key\`, value) VALUES (?, ?) ON DUPLICATE KEY UPDATE value = VALUES(value)`,
-          [key, sanitizeText(String(req.body[key]))]
+          [key, cleanValue]
         );
       }
     }
