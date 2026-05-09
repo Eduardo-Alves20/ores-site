@@ -392,7 +392,7 @@ export default function AdminSettings() {
       {msg && <p style={{ marginBottom:18, fontSize:14, color:msg.includes('sucesso')?'#16a34a':'#dc2626', fontWeight:600 }}>{msg}</p>}
 
       <div style={{ display:'grid', gridTemplateColumns:'240px 1fr', gap:24, alignItems:'start' }}>
-        <div style={{ background:'#fff', border:'1px solid var(--border)', borderRadius:12, overflow:'hidden', maxHeight:'72vh', overflowY:'auto' }}>
+        <div style={{ background:'#fff', border:'1px solid var(--border)', borderRadius:12, overflow:'hidden', maxHeight:'72vh', overflowY:'auto', position:'sticky', top:12 }}>
           {sections.map(s => (
             <button key={s.title} onClick={() => setActive(s.title)}
               style={{ display:'block', width:'100%', textAlign:'left', padding:'12px 14px', fontSize:12.5, fontWeight:active===s.title?700:500, color:active===s.title?'var(--gold)':'var(--navy)', background:active===s.title?'var(--cream)':'#fff', borderBottom:'1px solid var(--cream-dark)' }}>
