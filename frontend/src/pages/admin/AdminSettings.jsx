@@ -299,11 +299,13 @@ const sections = [
 
 export default function AdminSettings() {
   const { data, refetch } = useFetch('/admin/settings');
-  const { notify } = useAppAlert();
+  const { notify, confirm } = useAppAlert();
   const [form, setForm] = useState({});
   const [active, setActive] = useState(sections[0].title);
   const [msg, setMsg] = useState('');
   const [loading, setLoading] = useState(false);
+  const [editingMenuItem, setEditingMenuItem] = useState(null);
+  const [editingMenuLabel, setEditingMenuLabel] = useState('');
   const hydratedRef = useRef(false);
 
   useEffect(() => {
@@ -344,8 +346,20 @@ export default function AdminSettings() {
     set(enabledKey(item.key), '1');
   };
 
-  const hideMenuItem = (item) => {
-    const ok = window.confirm(`Tem certeza que deseja excluir "${form[item.key] || item.defaultLabel}" do menu?`);
+  const openMenuEditor = (item) => {
+    setEditingMenuItem(item);
+    setEditingMenuLabel(form[item.key] || item.defaultLabel);
+  };
+
+  const saveMenuEditor = () => {
+    if (!editingMenuItem) return;
+    updateMenuLabel(editingMenuItem, editingMenuLabel.trim() || editingMenuItem.defaultLabel);
+    setEditingMenuItem(null);
+    setEditingMenuLabel('');
+  };
+
+  const hideMenuItem = async (item) => {
+    const ok = await confirm({ title:'Excluir item do menu?', message:`"${form[item.key] || item.defaultLabel}" sera ocultado do menu.`, confirmText:'Excluir' });
     if (!ok) return;
     set(enabledKey(item.key), '0');
   };
@@ -375,11 +389,7 @@ export default function AdminSettings() {
                   <div style={{ display: 'flex', gap: 8 }}>
                     <button
                       type="button"
-                      onClick={() => {
-                        const next = window.prompt('Novo nome do item:', label);
-                        if (next === null) return;
-                        updateMenuLabel(item, next.trim() || item.defaultLabel);
-                      }}
+                      onClick={() => openMenuEditor(item)}
                       style={{ padding: '7px 12px', borderRadius: 8, border: '1px solid var(--border)', fontSize: 12.5, fontWeight: 600, color: 'var(--navy)', background: '#fff' }}
                     >
                       Editar
@@ -474,6 +484,38 @@ export default function AdminSettings() {
           </div>
         </div>
       </div>
+
+      {editingMenuItem && (
+        <div
+          style={{ position:'fixed', inset:0, background:'rgba(0,0,0,.45)', zIndex:3000, display:'flex', alignItems:'center', justifyContent:'center', padding:24 }}
+          onClick={() => setEditingMenuItem(null)}
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            style={{ background:'#fff', borderRadius:14, width:'100%', maxWidth:520, boxShadow:'0 24px 64px rgba(0,0,0,.2)', border:'1px solid var(--border)' }}
+          >
+            <div style={{ padding:'18px 22px', borderBottom:'1px solid var(--border)' }}>
+              <h3 style={{ fontFamily:'Playfair Display,serif', fontSize:20, fontWeight:700, color:'var(--navy)' }}>Editar Nome do Menu</h3>
+            </div>
+            <div style={{ padding:'22px' }}>
+              <label style={{ display:'block', fontSize:12, fontWeight:700, color:'var(--text-soft)', marginBottom:6, textTransform:'uppercase', letterSpacing:'0.04em' }}>
+                Novo nome
+              </label>
+              <input
+                value={editingMenuLabel}
+                onChange={(e) => setEditingMenuLabel(e.target.value)}
+                style={{ width:'100%', padding:'10px 14px', borderRadius:8, border:'1px solid var(--border)', fontSize:14, outline:'none' }}
+                onFocus={(e) => { e.target.style.borderColor = 'var(--gold)'; }}
+                onBlur={(e) => { e.target.style.borderColor = 'var(--border)'; }}
+              />
+              <div style={{ display:'flex', justifyContent:'flex-end', gap:10, marginTop:18 }}>
+                <button onClick={() => setEditingMenuItem(null)} style={{ padding:'9px 20px', borderRadius:8, border:'1px solid var(--border)', fontSize:13, color:'var(--text-mid)' }}>Cancelar</button>
+                <button onClick={saveMenuEditor} style={{ padding:'9px 20px', borderRadius:8, background:'var(--gold)', color:'#fff', fontWeight:600, fontSize:13 }}>Salvar</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       <style>{`
         @media (max-width: 900px) {
