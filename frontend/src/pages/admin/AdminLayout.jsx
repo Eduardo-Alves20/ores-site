@@ -110,7 +110,7 @@ export default function AdminLayout() {
   );
 
   return (
-    <div style={{ display:'flex', minHeight:'100vh', background:'var(--cream)', fontFamily:'Plus Jakarta Sans,sans-serif' }}>
+    <div style={{ display:'flex', height:'100dvh', overflow:'hidden', background:'var(--cream)', fontFamily:'Plus Jakarta Sans,sans-serif' }}>
       {/* Desktop sidebar */}
       <div style={{ display:'flex' }} className="desk-sidebar">
         <Sidebar />
