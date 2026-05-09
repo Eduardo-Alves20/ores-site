@@ -20,7 +20,7 @@ export function sanitizeText(value) {
 export function sanitizeRichText(value) {
   if (typeof value !== 'string') return value;
   return sanitizeHtml(value, {
-    allowedTags: ['p', 'br', 'strong', 'em', 'ul', 'ol', 'li', 'h2', 'h3', 'blockquote', 'a'],
+    allowedTags: ['p', 'br', 'strong', 'em', 'b', 'i', 'u', 'ul', 'ol', 'li', 'h2', 'h3', 'blockquote', 'a', 'div'],
     allowedAttributes: { a: ['href', 'target'] },
     allowedSchemes: ['http', 'https', 'mailto'],
   });
