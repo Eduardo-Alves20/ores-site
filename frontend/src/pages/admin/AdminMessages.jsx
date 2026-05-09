@@ -4,6 +4,10 @@ import api from '../../lib/api';
 import { Trash2 } from 'lucide-react';
 import { useAppAlert } from '../../components/AppAlert';
 
+const BR_TZ = 'America/Sao_Paulo';
+const formatDate = (value) => new Date(value).toLocaleDateString('pt-BR', { timeZone: BR_TZ });
+const formatDateTime = (value) => new Date(value).toLocaleString('pt-BR', { timeZone: BR_TZ });
+
 export default function AdminMessages() {
   const { data: messages, loading, refetch } = useFetch('/admin/messages');
   const { notify, confirm } = useAppAlert();
@@ -42,7 +46,7 @@ export default function AdminMessages() {
                     {!m.read_at && <span style={{ fontSize:9, background:'#ef4444', color:'#fff', padding:'2px 6px', borderRadius:100, fontWeight:700 }}>NOVO</span>}
                   </div>
                   <div style={{ fontSize:12, color:'var(--text-soft)', marginBottom:2 }}>{m.subject || '(Sem assunto)'}</div>
-                  <div style={{ fontSize:11, color:'var(--text-soft)' }}>{m.email} · {new Date(m.created_at).toLocaleDateString('pt-BR')}</div>
+                  <div style={{ fontSize:11, color:'var(--text-soft)' }}>{m.email} · {formatDate(m.created_at)}</div>
                 </button>
               ))
           )}
@@ -59,7 +63,7 @@ export default function AdminMessages() {
             </div>
             {selected.subject && <div style={{ fontSize:13, fontWeight:600, color:'var(--navy)', marginBottom:12 }}>Assunto: {selected.subject}</div>}
             <div style={{ fontSize:14, color:'var(--text-mid)', lineHeight:1.7, background:'var(--cream)', borderRadius:8, padding:16 }}>{selected.message}</div>
-            <div style={{ fontSize:11, color:'var(--text-soft)', marginTop:12 }}>Recebido em {new Date(selected.created_at).toLocaleString('pt-BR')}</div>
+            <div style={{ fontSize:11, color:'var(--text-soft)', marginTop:12 }}>Recebido em {formatDateTime(selected.created_at)}</div>
           </div>
         ) : (
           <div style={{ background:'var(--cream)', borderRadius:12, border:'1px solid var(--border)', display:'flex', alignItems:'center', justifyContent:'center', minHeight:200 }}>
