@@ -8,6 +8,7 @@ import { Calendar, Users, Radio, Heart, BookOpen, Clock, MapPin, Copy, Gift, Che
 import { parseDateOnly } from '../lib/date';
 import { useAppAlert } from '../components/AppAlert';
 import { normalizeMediaUrl } from '../lib/media';
+import { getPublicMenuLabels } from '../lib/menuLabels';
 
 const MONTHS_PT = ['JAN','FEV','MAR','ABR','MAI','JUN','JUL','AGO','SET','OUT','NOV','DEZ'];
 
@@ -38,6 +39,7 @@ export default function Home() {
   const { data: wordDay } = useFetch('/word-of-day');
   const { notify } = useAppAlert();
   const settings = data?.settings || {};
+  const menuLabels = getPublicMenuLabels(settings);
   const heroSlides = data?.heroSlides || [];
   const events = data?.events || [];
   const massSchedule = data?.massSchedule || [];
@@ -69,12 +71,12 @@ export default function Home() {
   }, [currentSlide, hero.duration_ms, slides.length]);
 
   const quickLinks = [
-    { icon: <Calendar size={22} />, label: 'Agenda de Eventos', to: '/calendario' },
+    { icon: <Calendar size={22} />, label: menuLabels.menu_public_calendar, to: '/calendario' },
     { icon: <Clock size={22} />, label: 'Horários de Missa', to: '/conheca' },
-    { icon: <Users size={22} />, label: 'Grupos de Oração', to: '/grupos' },
-    { icon: <Heart size={22} />, label: 'Obra Social', to: '/obra-social' },
-    { icon: <Radio size={22} />, label: 'Web Rádio', to: '/radio' },
-    { icon: <BookOpen size={22} />, label: 'Homilias', to: '/homilias' },
+    { icon: <Users size={22} />, label: menuLabels.menu_public_groups, to: '/grupos' },
+    { icon: <Heart size={22} />, label: menuLabels.menu_public_social, to: '/obra-social' },
+    { icon: <Radio size={22} />, label: menuLabels.menu_public_radio, to: '/radio' },
+    { icon: <BookOpen size={22} />, label: menuLabels.menu_public_homilies, to: '/homilias' },
   ];
   const donationSlides = [1, 2, 3]
     .map(i => ({ url: normalizeMediaUrl(settings[`donation_gallery_${i}_url`]), caption: settings[`donation_gallery_${i}_caption`] }))

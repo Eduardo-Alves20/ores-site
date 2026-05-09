@@ -1,9 +1,11 @@
 import { Link } from 'react-router-dom';
 import { Mail, Phone, AtSign, Users, Play } from 'lucide-react';
 import { getConhecaLabel, getSiteName } from '../lib/branding';
+import { getPublicMenuLabels } from '../lib/menuLabels';
 
 export default function Footer({ siteInfo = {} }) {
   const siteName = getSiteName(siteInfo);
+  const menuLabels = getPublicMenuLabels(siteInfo);
   const normalizeUrl = (value) => {
     if (!value) return '';
     return /^https?:\/\//i.test(value) ? value : `https://${value}`;
@@ -80,11 +82,11 @@ export default function Footer({ siteInfo = {} }) {
           <div>
             <div style={{ fontWeight: 700, fontSize: 11, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'rgba(255,255,255,.35)', marginBottom: 16 }}>Links</div>
             {[
-              { label: getConhecaLabel(siteInfo), to: '/conheca' },
+              { label: siteInfo?.menu_public_about || getConhecaLabel(siteInfo), to: '/conheca' },
               { label: 'Horarios de Missa', to: '/conheca' },
-              { label: 'Grupos de Oracao', to: '/grupos' },
-              { label: 'Obra Social', to: '/obra-social' },
-              { label: 'Contato', to: '/contato' },
+              { label: menuLabels.menu_public_groups, to: '/grupos' },
+              { label: menuLabels.menu_public_social, to: '/obra-social' },
+              { label: menuLabels.menu_public_contact, to: '/contato' },
             ].map((link) => (
               <Link
                 key={link.label}
