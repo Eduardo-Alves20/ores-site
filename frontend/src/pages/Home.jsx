@@ -104,6 +104,33 @@ export default function Home() {
     }
   };
 
+  const stats = [
+    {
+      value: Number(settings.home_stat_1_value || 35),
+      suffix: settings.home_stat_1_suffix ?? '+',
+      label: settings.home_stat_1_label || 'Grupos e Pastorais',
+      noCount: settings.home_stat_1_no_count === '1',
+    },
+    {
+      value: Number(settings.home_stat_2_value || 11),
+      suffix: settings.home_stat_2_suffix ?? '',
+      label: settings.home_stat_2_label || 'Comunidades',
+      noCount: settings.home_stat_2_no_count === '1',
+    },
+    {
+      value: Number(settings.home_stat_3_value || 5),
+      suffix: settings.home_stat_3_suffix ?? '',
+      label: settings.home_stat_3_label || 'Missas por semana',
+      noCount: settings.home_stat_3_no_count === '1',
+    },
+    {
+      value: Number(settings.home_stat_4_value || 1992),
+      suffix: settings.home_stat_4_suffix ?? '',
+      label: settings.home_stat_4_label || 'Ano de fundacao',
+      noCount: settings.home_stat_4_no_count !== '0',
+    },
+  ];
+
   return (
     <div className="animate-page">
       {/* ── Hero ── */}
@@ -396,12 +423,7 @@ export default function Home() {
       <Reveal>
         <section style={{ background:'var(--navy)',padding:'72px 24px' }}>
           <div style={{ maxWidth:1200,margin:'0 auto',display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(200px,1fr))',gap:48,textAlign:'center' }}>
-            {[
-              { value:35, suffix:'+', label:'Grupos e Pastorais' },
-              { value:11, suffix:'', label:'Comunidades' },
-              { value:5, suffix:'', label:'Missas por semana' },
-              { value:1992, suffix:'', label:'Ano de fundação', noCount:true },
-            ].map(s => (
+            {stats.map(s => (
               <div key={s.label}>
                 <div style={{ fontFamily:'Playfair Display,serif',fontSize:'clamp(36px,5vw,56px)',fontWeight:700,color:'var(--gold-light)',lineHeight:1,marginBottom:12 }}>
                   {s.noCount ? s.value : <Counter target={s.value} suffix={s.suffix} />}
