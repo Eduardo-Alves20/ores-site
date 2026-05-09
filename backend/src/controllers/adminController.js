@@ -438,10 +438,10 @@ export async function listGroups(req, res) {
 
 export async function createGroup(req, res) {
   try {
-    const { name, day_of_week, time_value, location, description, coordinator_phone, display_order } = req.body;
+    const { name, day_of_week, time_value, location, description, coordinator_phone, image_url, display_order } = req.body;
     const [result] = await pool.execute(
-      `INSERT INTO prayer_groups (name, day_of_week, time_value, location, description, coordinator_phone, display_order) VALUES (?, ?, ?, ?, ?, ?, ?)`,
-      [sanitizeText(name), sanitizeText(day_of_week), sanitizeText(time_value), sanitizeText(location), sanitizeText(description), sanitizeText(coordinator_phone), display_order || 0]
+      `INSERT INTO prayer_groups (name, day_of_week, time_value, location, description, coordinator_phone, image_url, display_order) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+      [sanitizeText(name), sanitizeText(day_of_week), sanitizeText(time_value), sanitizeText(location), sanitizeRichText(description), sanitizeText(coordinator_phone), sanitizeText(image_url), display_order || 0]
     );
     await auditLog(req.adminUser.id, 'CREATE_GROUP', 'prayer_groups', result.insertId, null, req.body, req.ip);
     return res.status(201).json({ id: result.insertId });
@@ -451,7 +451,14 @@ export async function createGroup(req, res) {
 }
 
 export async function updateGroup(req, res) {
-  return updateRecord(req, res, 'prayer_groups', ['name', 'day_of_week', 'time_value', 'location', 'description', 'coordinator_phone', 'display_order', 'active'], parseInt(req.params.id));
+  return updateRecord(
+    req,
+    res,
+    'prayer_groups',
+    ['name', 'day_of_week', 'time_value', 'location', 'description', 'coordinator_phone', 'image_url', 'display_order', 'active'],
+    parseInt(req.params.id),
+    { richTextFields: ['description'] }
+  );
 }
 
 export async function deleteGroup(req, res) {
@@ -531,10 +538,10 @@ export async function listCommunities(req, res) {
 
 export async function createCommunity(req, res) {
   try {
-    const { name, neighborhood, coordinator_name, coordinator_phone, display_order } = req.body;
+    const { name, neighborhood, description, image_url, coordinator_name, coordinator_phone, display_order } = req.body;
     const [result] = await pool.execute(
-      `INSERT INTO communities (name, neighborhood, coordinator_name, coordinator_phone, display_order) VALUES (?, ?, ?, ?, ?)`,
-      [sanitizeText(name), sanitizeText(neighborhood), sanitizeText(coordinator_name), sanitizeText(coordinator_phone), display_order || 0]
+      `INSERT INTO communities (name, neighborhood, description, image_url, coordinator_name, coordinator_phone, display_order) VALUES (?, ?, ?, ?, ?, ?, ?)`,
+      [sanitizeText(name), sanitizeText(neighborhood), sanitizeRichText(description), sanitizeText(image_url), sanitizeText(coordinator_name), sanitizeText(coordinator_phone), display_order || 0]
     );
     await auditLog(req.adminUser.id, 'CREATE_COMMUNITY', 'communities', result.insertId, null, req.body, req.ip);
     return res.status(201).json({ id: result.insertId });
@@ -544,7 +551,14 @@ export async function createCommunity(req, res) {
 }
 
 export async function updateCommunity(req, res) {
-  return updateRecord(req, res, 'communities', ['name', 'neighborhood', 'coordinator_name', 'coordinator_phone', 'display_order', 'active'], parseInt(req.params.id));
+  return updateRecord(
+    req,
+    res,
+    'communities',
+    ['name', 'neighborhood', 'description', 'image_url', 'coordinator_name', 'coordinator_phone', 'display_order', 'active'],
+    parseInt(req.params.id),
+    { richTextFields: ['description'] }
+  );
 }
 
 export async function deleteCommunity(req, res) {

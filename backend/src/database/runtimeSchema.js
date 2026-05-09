@@ -52,6 +52,9 @@ const runtimeMigrations = [
   `ALTER TABLE pastorals ADD COLUMN IF NOT EXISTS address VARCHAR(300) AFTER location`,
   `ALTER TABLE pastorals ADD COLUMN IF NOT EXISTS map_url VARCHAR(700) AFTER address`,
   `ALTER TABLE pastorals ADD COLUMN IF NOT EXISTS image_url VARCHAR(500) AFTER map_url`,
+  `ALTER TABLE prayer_groups ADD COLUMN IF NOT EXISTS image_url VARCHAR(500) AFTER coordinator_phone`,
+  `ALTER TABLE communities ADD COLUMN IF NOT EXISTS description TEXT AFTER neighborhood`,
+  `ALTER TABLE communities ADD COLUMN IF NOT EXISTS image_url VARCHAR(500) AFTER description`,
   `ALTER TABLE homilies ADD COLUMN IF NOT EXISTS video_url VARCHAR(500) AFTER audio_url`,
 ];
 
@@ -64,4 +67,3 @@ export async function ensureRuntimeSchema() {
     }
   }
 }
-
