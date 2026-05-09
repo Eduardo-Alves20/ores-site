@@ -19,7 +19,58 @@ function Modal({ title, children, onClose }) {
   );
 }
 
-function Field({ label, type='text', value, onChange, options, required, textarea, upload }) {
+function RichTextField({ value, onChange }) {
+  const style = {
+    width: '100%',
+    minHeight: 170,
+    padding: '10px 12px',
+    borderRadius: 8,
+    border: '1px solid var(--border)',
+    fontSize: 14,
+    outline: 'none',
+    fontFamily: 'Plus Jakarta Sans,sans-serif',
+    lineHeight: 1.7,
+    color: 'var(--text-mid)',
+  };
+
+  const apply = (command, arg) => {
+    document.execCommand(command, false, arg);
+  };
+
+  const toolbarBtn = {
+    padding: '6px 10px',
+    borderRadius: 8,
+    border: '1px solid var(--border)',
+    background: '#fff',
+    fontSize: 12,
+    color: 'var(--text-mid)',
+    fontWeight: 700,
+  };
+
+  return (
+    <div>
+      <div style={{ display: 'flex', gap: 8, marginBottom: 8, flexWrap: 'wrap' }}>
+        <button type="button" onClick={() => apply('bold')} style={toolbarBtn}>Negrito</button>
+        <button type="button" onClick={() => apply('italic')} style={toolbarBtn}>Italico</button>
+        <button type="button" onClick={() => apply('insertUnorderedList')} style={toolbarBtn}>Lista</button>
+        <button type="button" onClick={() => apply('insertOrderedList')} style={toolbarBtn}>Numerada</button>
+        <button type="button" onClick={() => apply('formatBlock', 'p')} style={toolbarBtn}>Paragrafo</button>
+        <button type="button" onClick={() => apply('insertParagraph')} style={toolbarBtn}>Quebra</button>
+      </div>
+      <div
+        contentEditable
+        suppressContentEditableWarning
+        style={style}
+        onInput={(e) => onChange(e.currentTarget.innerHTML)}
+        onFocus={(e) => { e.currentTarget.style.borderColor = 'var(--gold)'; }}
+        onBlur={(e) => { e.currentTarget.style.borderColor = 'var(--border)'; }}
+        dangerouslySetInnerHTML={{ __html: value || '' }}
+      />
+    </div>
+  );
+}
+
+function Field({ label, type='text', value, onChange, options, required, textarea, upload, richText }) {
   const style = { width:'100%', padding:'9px 12px', borderRadius:8, border:'1px solid var(--border)', fontSize:14, outline:'none', fontFamily:'Plus Jakarta Sans,sans-serif', transition:'border-color .2s' };
   const events = { onFocus:e=>e.target.style.borderColor='var(--gold)', onBlur:e=>e.target.style.borderColor='var(--border)' };
   if (upload) return <MediaField label={label} value={value} onChange={onChange} />;
@@ -32,6 +83,8 @@ function Field({ label, type='text', value, onChange, options, required, textare
           <option value="">Selecionar...</option>
           {options.map(o => <option key={o.value||o} value={o.value||o}>{o.label||o}</option>)}
         </select>
+      ) : richText ? (
+        <RichTextField value={value} onChange={onChange} />
       ) : textarea ? (
         <textarea rows={3} value={value||''} onChange={e=>onChange(e.target.value)} style={{ ...style, resize:'vertical' }} {...events} />
       ) : (
@@ -162,7 +215,7 @@ export default function CrudTable({
       {modal && (
         <Modal title={modal==='create'?`Novo ${title}`:`Editar`} onClose={()=>setModal(null)}>
           {fields.map(f => (
-            <Field key={f.key} label={f.label} type={f.type} value={form[f.key]} onChange={v=>set(f.key,v)} options={f.options} required={f.required} textarea={f.textarea} upload={f.upload} />
+            <Field key={f.key} label={f.label} type={f.type} value={form[f.key]} onChange={v=>set(f.key,v)} options={f.options} required={f.required} textarea={f.textarea} upload={f.upload} richText={f.richText} />
           ))}
           {error && <p style={{ fontSize:13, color:'#dc2626', marginBottom:14 }}>{error}</p>}
           <div style={{ display:'flex', gap:10, justifyContent:'flex-end', paddingTop:8 }}>

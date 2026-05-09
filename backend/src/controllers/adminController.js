@@ -86,7 +86,8 @@ async function list(table, orderBy = 'id') {
   return query(`SELECT * FROM ${table} ORDER BY ${orderBy}`);
 }
 
-async function updateRecord(req, res, table, allowedFields, recordId) {
+async function updateRecord(req, res, table, allowedFields, recordId, options = {}) {
+  const richTextFields = new Set(options.richTextFields || []);
   const old = await queryOne(`SELECT * FROM ${table} WHERE id = ?`, [recordId]);
   if (!old) return res.status(404).json({ error: 'Registro não encontrado.' });
 
@@ -95,7 +96,11 @@ async function updateRecord(req, res, table, allowedFields, recordId) {
   for (const field of allowedFields) {
     if (req.body[field] !== undefined) {
       updates.push(`\`${field}\` = ?`);
-      values.push(typeof req.body[field] === 'string' ? sanitizeText(req.body[field]) : req.body[field]);
+      if (typeof req.body[field] === 'string') {
+        values.push(richTextFields.has(field) ? sanitizeRichText(req.body[field]) : sanitizeText(req.body[field]));
+      } else {
+        values.push(req.body[field]);
+      }
     }
   }
   if (!updates.length) return res.status(400).json({ error: 'Nenhum campo para atualizar.' });
@@ -296,7 +301,14 @@ export async function createNews(req, res) {
 }
 
 export async function updateNews(req, res) {
-  return updateRecord(req, res, 'news', ['title', 'slug', 'category', 'summary', 'content', 'image_url', 'external_url', 'published'], parseInt(req.params.id));
+  return updateRecord(
+    req,
+    res,
+    'news',
+    ['title', 'slug', 'category', 'summary', 'content', 'image_url', 'external_url', 'published'],
+    parseInt(req.params.id),
+    { richTextFields: ['content'] }
+  );
 }
 
 export async function deleteNews(req, res) {
@@ -397,7 +409,7 @@ export async function createPastoral(req, res) {
     const { name, category, description, coordinator, phone, meeting_day, meeting_time, location, address, map_url, image_url, display_order } = req.body;
     const [result] = await pool.execute(
       `INSERT INTO pastorals (name, category, description, coordinator, phone, meeting_day, meeting_time, location, address, map_url, image_url, display_order) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-      [sanitizeText(name), sanitizeText(category), sanitizeText(description), sanitizeText(coordinator), sanitizeText(phone), sanitizeText(meeting_day), sanitizeText(meeting_time), sanitizeText(location), sanitizeText(address), sanitizeText(map_url), sanitizeText(image_url), display_order || 0]
+      [sanitizeText(name), sanitizeText(category), sanitizeRichText(description), sanitizeText(coordinator), sanitizeText(phone), sanitizeText(meeting_day), sanitizeText(meeting_time), sanitizeText(location), sanitizeText(address), sanitizeText(map_url), sanitizeText(image_url), display_order || 0]
     );
     await auditLog(req.adminUser.id, 'CREATE_PASTORAL', 'pastorals', result.insertId, null, req.body, req.ip);
     return res.status(201).json({ id: result.insertId });
@@ -407,7 +419,14 @@ export async function createPastoral(req, res) {
 }
 
 export async function updatePastoral(req, res) {
-  return updateRecord(req, res, 'pastorals', ['name', 'category', 'description', 'coordinator', 'phone', 'meeting_day', 'meeting_time', 'location', 'address', 'map_url', 'image_url', 'display_order', 'active'], parseInt(req.params.id));
+  return updateRecord(
+    req,
+    res,
+    'pastorals',
+    ['name', 'category', 'description', 'coordinator', 'phone', 'meeting_day', 'meeting_time', 'location', 'address', 'map_url', 'image_url', 'display_order', 'active'],
+    parseInt(req.params.id),
+    { richTextFields: ['description'] }
+  );
 }
 
 export async function deletePastoral(req, res) {

@@ -18,7 +18,7 @@ export default function AdminPastorals() {
           { key: 'name', label: 'Nome', required: true },
           { key: 'category', label: 'Categoria' },
           { key: 'image_url', label: 'Foto da pastoral', upload: true },
-          { key: 'description', label: 'Descrição', textarea: true },
+          { key: 'description', label: 'Descrição', richText: true },
           { key: 'coordinator', label: 'Coordenador' },
           { key: 'phone', label: 'Telefone' },
           { key: 'meeting_day', label: 'Dia do encontro' },

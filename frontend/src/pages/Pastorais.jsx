@@ -59,7 +59,13 @@ function PastoralModal({ pastoral, onClose }) {
             ) : mediaFallback(pastoral.name)}
           </div>
 
-          {pastoral.description && <p style={{ fontSize: 14, color: 'var(--text-mid)', lineHeight: 1.75, marginBottom: 18 }}>{pastoral.description}</p>}
+          {pastoral.description && (
+            <div
+              className="pastoral-description"
+              style={{ fontSize: 14, color: 'var(--text-mid)', lineHeight: 1.75, marginBottom: 18 }}
+              dangerouslySetInnerHTML={{ __html: pastoral.description }}
+            />
+          )}
 
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 12 }}>
             <div style={{ border: '1px solid var(--border)', borderRadius: 10, padding: '16px', background: 'var(--cream)' }}>
@@ -86,6 +92,12 @@ function PastoralModal({ pastoral, onClose }) {
         </div>
       </div>
       <style>{`
+        .pastoral-description p { margin: 0 0 12px 0; }
+        .pastoral-description ul,
+        .pastoral-description ol { margin: 0 0 12px 20px; }
+        .pastoral-description li { margin-bottom: 6px; }
+        .pastoral-description strong { color: var(--navy); }
+
         @media (max-width: 700px) {
           .pastoral-modal { max-height: calc(100dvh - 28px) !important; }
           .pastoral-modal [style*="grid-template-columns: 1fr 1fr"] { grid-template-columns: 1fr !important; }
