@@ -36,7 +36,6 @@ const uploadAudioVideo = multer({
       cb(null, `${Date.now()}-${randomUUID()}${ext}`);
     },
   }),
-  limits: { fileSize: 500 * 1024 * 1024 },
   fileFilter: (_req, file, cb) => {
     if (!/^(audio|video)\//.test(file.mimetype)) {
       return cb(new Error('Formato inválido. Envie um arquivo de áudio ou vídeo.'));
