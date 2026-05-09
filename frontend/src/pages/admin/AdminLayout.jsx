@@ -3,42 +3,47 @@ import { Link, useLocation, useNavigate, Outlet } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth.jsx';
 import { useFetch } from '../../hooks/useFetch';
 import { getSiteName } from '../../lib/branding';
+import { getAdminMenuLabels } from '../../lib/menuLabels';
 import {
   LayoutDashboard, Calendar, Newspaper, Users, Clock, BookOpen,
   Church, MapPin, Heart, GraduationCap, Headphones, MessageSquare,
   Settings, LogOut, Menu, X, Shield, ChevronRight, Handshake, Images
 } from 'lucide-react';
 
-const MENU = [
-  { label:'Dashboard', to:'/admin/dashboard', icon:<LayoutDashboard size={18}/> },
-  { label:'Aparência e Páginas', to:'/admin/settings', icon:<Settings size={18}/> },
-  { label:'Carrossel Home', to:'/admin/hero-slides', icon:<Images size={18}/> },
-  { divider: true, label:'Conteúdo' },
-  { label:'Notícias', to:'/admin/news', icon:<Newspaper size={18}/> },
-  { label:'Eventos', to:'/admin/events', icon:<Calendar size={18}/> },
-  { label:'Homilias', to:'/admin/homilies', icon:<Headphones size={18}/> },
-  { divider: true, label:'Paróquia' },
-  { label:'Padres & Diáconos', to:'/admin/priests', icon:<Church size={18}/> },
-  { label:'Horários de Missa', to:'/admin/mass', icon:<Clock size={18}/> },
-  { label:'Instalações', to:'/admin/facilities', icon:<MapPin size={18}/> },
-  { label:'Agendamentos de Salas', to:'/admin/bookings', icon:<Calendar size={18}/> },
-  { divider: true, label:'Comunidade' },
-  { label:'Grupos de Oração', to:'/admin/groups', icon:<Heart size={18}/> },
-  { label:'Pastorais', to:'/admin/pastorals', icon:<BookOpen size={18}/> },
-  { label:'Comunidades', to:'/admin/communities', icon:<Users size={18}/> },
-  { divider: true, label:'Obra Social' },
-  { label:'Serviços Sociais', to:'/admin/services', icon:<Handshake size={18}/> },
-  { label:'Cursos', to:'/admin/courses', icon:<GraduationCap size={18}/> },
-  { divider: true, label:'Sistema' },
-  { label:'Mensagens', to:'/admin/messages', icon:<MessageSquare size={18}/> },
-  { label:'Usuários Admin', to:'/admin/users', icon:<Shield size={18}/> },
-  { label:'Log de Auditoria', to:'/admin/audit', icon:<Shield size={18}/> },
-];
+function buildMenu(labels) {
+  return [
+    { label: labels.menu_admin_dashboard, to:'/admin/dashboard', icon:<LayoutDashboard size={18}/> },
+    { label: labels.menu_admin_settings, to:'/admin/settings', icon:<Settings size={18}/> },
+    { label: labels.menu_admin_hero_slides, to:'/admin/hero-slides', icon:<Images size={18}/> },
+    { divider: true, label: labels.menu_admin_divider_content },
+    { label: labels.menu_admin_news, to:'/admin/news', icon:<Newspaper size={18}/> },
+    { label: labels.menu_admin_events, to:'/admin/events', icon:<Calendar size={18}/> },
+    { label: labels.menu_admin_homilies, to:'/admin/homilies', icon:<Headphones size={18}/> },
+    { divider: true, label: labels.menu_admin_divider_parish },
+    { label: labels.menu_admin_priests, to:'/admin/priests', icon:<Church size={18}/> },
+    { label: labels.menu_admin_mass, to:'/admin/mass', icon:<Clock size={18}/> },
+    { label: labels.menu_admin_facilities, to:'/admin/facilities', icon:<MapPin size={18}/> },
+    { label: labels.menu_admin_bookings, to:'/admin/bookings', icon:<Calendar size={18}/> },
+    { divider: true, label: labels.menu_admin_divider_community },
+    { label: labels.menu_admin_groups, to:'/admin/groups', icon:<Heart size={18}/> },
+    { label: labels.menu_admin_pastorals, to:'/admin/pastorals', icon:<BookOpen size={18}/> },
+    { label: labels.menu_admin_communities, to:'/admin/communities', icon:<Users size={18}/> },
+    { divider: true, label: labels.menu_admin_divider_social },
+    { label: labels.menu_admin_services, to:'/admin/services', icon:<Handshake size={18}/> },
+    { label: labels.menu_admin_courses, to:'/admin/courses', icon:<GraduationCap size={18}/> },
+    { divider: true, label: labels.menu_admin_divider_system },
+    { label: labels.menu_admin_messages, to:'/admin/messages', icon:<MessageSquare size={18}/> },
+    { label: labels.menu_admin_users, to:'/admin/users', icon:<Shield size={18}/> },
+    { label: labels.menu_admin_audit, to:'/admin/audit', icon:<Shield size={18}/> },
+  ];
+}
 
 export default function AdminLayout() {
   const { user, logout } = useAuth();
   const { data: siteInfo } = useFetch('/site-info');
   const siteName = getSiteName(siteInfo || {});
+  const menuLabels = getAdminMenuLabels(siteInfo || {});
+  const MENU = buildMenu(menuLabels);
   const location = useLocation();
   const navigate = useNavigate();
   const [sidebarOpen, setSidebarOpen] = useState(true);

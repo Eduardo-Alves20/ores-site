@@ -3,6 +3,7 @@ import { Link, useLocation } from 'react-router-dom';
 import { Menu, X, ChevronDown } from 'lucide-react';
 import { getConhecaLabel, getSiteName } from '../lib/branding';
 import { normalizeMediaUrl } from '../lib/media';
+import { getPublicMenuLabels } from '../lib/menuLabels';
 
 export default function Navbar({ siteInfo = {} }) {
   const location = useLocation();
@@ -15,42 +16,43 @@ export default function Navbar({ siteInfo = {} }) {
   const isHome = location.pathname === '/';
 
   const siteName = getSiteName(siteInfo);
+  const labels = getPublicMenuLabels(siteInfo);
   const nav = useMemo(() => [
-    { label: 'Home', to: '/' },
+    { label: labels.menu_public_home, to: '/' },
     {
-      label: 'Paroquia', children: [
-        { label: getConhecaLabel(siteInfo), to: '/conheca' },
-        { label: 'Padres e Diaconos', to: '/padres' },
-        { label: 'Instalacoes', to: '/instalacoes' },
-        { label: 'Calendario de Eventos', to: '/calendario' },
-        { label: 'Agendamento de Salas', to: '/salas' },
+      label: labels.menu_public_parish, children: [
+        { label: siteInfo?.menu_public_about || getConhecaLabel(siteInfo), to: '/conheca' },
+        { label: labels.menu_public_priests, to: '/padres' },
+        { label: labels.menu_public_facilities, to: '/instalacoes' },
+        { label: labels.menu_public_calendar, to: '/calendario' },
+        { label: labels.menu_public_rooms, to: '/salas' },
       ],
     },
     {
-      label: 'Comunidade', children: [
-        { label: 'Grupos de Oracao', to: '/grupos' },
-        { label: 'Pastorais e Movimentos', to: '/pastorais' },
-        { label: 'Comunidades (Setores)', to: '/comunidades' },
-        { label: 'Pastoral Familiar', to: '/familiar' },
-        { label: 'Quero ser Voluntario', to: '/voluntario' },
+      label: labels.menu_public_community, children: [
+        { label: labels.menu_public_groups, to: '/grupos' },
+        { label: labels.menu_public_pastorals, to: '/pastorais' },
+        { label: labels.menu_public_communities, to: '/comunidades' },
+        { label: labels.menu_public_family, to: '/familiar' },
+        { label: labels.menu_public_volunteer, to: '/voluntario' },
       ],
     },
     {
-      label: 'Comunicacao', children: [
-        { label: 'Noticias', to: '/noticias' },
-        { label: 'Web Radio', to: '/radio' },
-        { label: 'Homilias e Reflexoes', to: '/homilias' },
+      label: labels.menu_public_media, children: [
+        { label: labels.menu_public_news, to: '/noticias' },
+        { label: labels.menu_public_radio, to: '/radio' },
+        { label: labels.menu_public_homilies, to: '/homilias' },
       ],
     },
     {
-      label: 'Obra Social', children: [
-        { label: 'Conheca a Obra Social', to: '/obra-social' },
-        { label: 'Servicos Oferecidos', to: '/servicos' },
-        { label: 'Cursos Gratuitos', to: '/cursos' },
+      label: labels.menu_public_social, children: [
+        { label: labels.menu_public_social_about, to: '/obra-social' },
+        { label: labels.menu_public_social_services, to: '/servicos' },
+        { label: labels.menu_public_social_courses, to: '/cursos' },
       ],
     },
-    { label: 'Contato', to: '/contato' },
-  ], [siteInfo]);
+    { label: labels.menu_public_contact, to: '/contato' },
+  ], [siteInfo, labels]);
 
   useEffect(() => {
     const h = () => setScrolled(window.scrollY > 50);
