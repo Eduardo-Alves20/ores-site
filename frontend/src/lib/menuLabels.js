@@ -1,67 +1,76 @@
-const PUBLIC_MENU_DEFAULTS = {
-  menu_public_home: 'Home',
-  menu_public_parish: 'Paroquia',
-  menu_public_about: 'Conheca a Paroquia',
-  menu_public_priests: 'Padres e Diaconos',
-  menu_public_facilities: 'Instalacoes',
-  menu_public_calendar: 'Calendario de Eventos',
-  menu_public_rooms: 'Agendamento de Salas',
-  menu_public_community: 'Comunidade',
-  menu_public_groups: 'Grupos de Oracao',
-  menu_public_pastorals: 'Pastorais e Movimentos',
-  menu_public_communities: 'Comunidades (Setores)',
-  menu_public_family: 'Pastoral Familiar',
-  menu_public_volunteer: 'Quero ser Voluntario',
-  menu_public_media: 'Comunicacao',
-  menu_public_news: 'Noticias',
-  menu_public_radio: 'Web Radio',
-  menu_public_homilies: 'Homilias e Reflexoes',
-  menu_public_social: 'Obra Social',
-  menu_public_social_about: 'Conheca a Obra Social',
-  menu_public_social_services: 'Servicos Oferecidos',
-  menu_public_social_courses: 'Cursos Gratuitos',
-  menu_public_contact: 'Contato',
-};
+export const PUBLIC_MENU_ITEMS = [
+  { key: 'menu_public_home', defaultLabel: 'Home' },
+  { key: 'menu_public_parish', defaultLabel: 'Paroquia' },
+  { key: 'menu_public_about', defaultLabel: 'Conheca a Paroquia' },
+  { key: 'menu_public_priests', defaultLabel: 'Padres e Diaconos' },
+  { key: 'menu_public_facilities', defaultLabel: 'Instalacoes' },
+  { key: 'menu_public_calendar', defaultLabel: 'Calendario de Eventos' },
+  { key: 'menu_public_rooms', defaultLabel: 'Agendamento de Salas' },
+  { key: 'menu_public_community', defaultLabel: 'Comunidade' },
+  { key: 'menu_public_groups', defaultLabel: 'Grupos de Oracao' },
+  { key: 'menu_public_pastorals', defaultLabel: 'Pastorais e Movimentos' },
+  { key: 'menu_public_communities', defaultLabel: 'Comunidades (Setores)' },
+  { key: 'menu_public_family', defaultLabel: 'Pastoral Familiar' },
+  { key: 'menu_public_volunteer', defaultLabel: 'Quero ser Voluntario' },
+  { key: 'menu_public_media', defaultLabel: 'Comunicacao' },
+  { key: 'menu_public_news', defaultLabel: 'Noticias' },
+  { key: 'menu_public_radio', defaultLabel: 'Web Radio' },
+  { key: 'menu_public_homilies', defaultLabel: 'Homilias e Reflexoes' },
+  { key: 'menu_public_social', defaultLabel: 'Obra Social' },
+  { key: 'menu_public_social_about', defaultLabel: 'Conheca a Obra Social' },
+  { key: 'menu_public_social_services', defaultLabel: 'Servicos Oferecidos' },
+  { key: 'menu_public_social_courses', defaultLabel: 'Cursos Gratuitos' },
+  { key: 'menu_public_contact', defaultLabel: 'Contato' },
+];
 
-const ADMIN_MENU_DEFAULTS = {
-  menu_admin_dashboard: 'Dashboard',
-  menu_admin_settings: 'Aparencia e Paginas',
-  menu_admin_hero_slides: 'Carrossel Home',
-  menu_admin_divider_content: 'Conteudo',
-  menu_admin_news: 'Noticias',
-  menu_admin_events: 'Eventos',
-  menu_admin_homilies: 'Homilias',
-  menu_admin_divider_parish: 'Paroquia',
-  menu_admin_priests: 'Padres & Diaconos',
-  menu_admin_mass: 'Horarios de Missa',
-  menu_admin_facilities: 'Instalacoes',
-  menu_admin_bookings: 'Agendamentos de Salas',
-  menu_admin_divider_community: 'Comunidade',
-  menu_admin_groups: 'Grupos de Oracao',
-  menu_admin_pastorals: 'Pastorais',
-  menu_admin_communities: 'Comunidades',
-  menu_admin_divider_social: 'Obra Social',
-  menu_admin_services: 'Servicos Sociais',
-  menu_admin_courses: 'Cursos',
-  menu_admin_divider_system: 'Sistema',
-  menu_admin_messages: 'Mensagens',
-  menu_admin_users: 'Usuarios Admin',
-  menu_admin_audit: 'Log de Auditoria',
-};
+export const ADMIN_MENU_ITEMS = [
+  { key: 'menu_admin_dashboard', defaultLabel: 'Dashboard', type: 'item' },
+  { key: 'menu_admin_settings', defaultLabel: 'Aparencia e Paginas', type: 'item' },
+  { key: 'menu_admin_hero_slides', defaultLabel: 'Carrossel Home', type: 'item' },
+  { key: 'menu_admin_divider_content', defaultLabel: 'Conteudo', type: 'divider' },
+  { key: 'menu_admin_news', defaultLabel: 'Noticias', type: 'item' },
+  { key: 'menu_admin_events', defaultLabel: 'Eventos', type: 'item' },
+  { key: 'menu_admin_homilies', defaultLabel: 'Homilias', type: 'item' },
+  { key: 'menu_admin_divider_parish', defaultLabel: 'Paroquia', type: 'divider' },
+  { key: 'menu_admin_priests', defaultLabel: 'Padres & Diaconos', type: 'item' },
+  { key: 'menu_admin_mass', defaultLabel: 'Horarios de Missa', type: 'item' },
+  { key: 'menu_admin_facilities', defaultLabel: 'Instalacoes', type: 'item' },
+  { key: 'menu_admin_bookings', defaultLabel: 'Agendamentos de Salas', type: 'item' },
+  { key: 'menu_admin_divider_community', defaultLabel: 'Comunidade', type: 'divider' },
+  { key: 'menu_admin_groups', defaultLabel: 'Grupos de Oracao', type: 'item' },
+  { key: 'menu_admin_pastorals', defaultLabel: 'Pastorais', type: 'item' },
+  { key: 'menu_admin_communities', defaultLabel: 'Comunidades', type: 'item' },
+  { key: 'menu_admin_divider_social', defaultLabel: 'Obra Social', type: 'divider' },
+  { key: 'menu_admin_services', defaultLabel: 'Servicos Sociais', type: 'item' },
+  { key: 'menu_admin_courses', defaultLabel: 'Cursos', type: 'item' },
+  { key: 'menu_admin_divider_system', defaultLabel: 'Sistema', type: 'divider' },
+  { key: 'menu_admin_messages', defaultLabel: 'Mensagens', type: 'item' },
+  { key: 'menu_admin_users', defaultLabel: 'Usuarios Admin', type: 'item' },
+  { key: 'menu_admin_audit', defaultLabel: 'Log de Auditoria', type: 'item' },
+];
 
-function withFallbacks(settings, defaults) {
-  const values = {};
-  for (const [key, defaultValue] of Object.entries(defaults)) {
-    values[key] = settings?.[key] || defaultValue;
+export function enabledKey(key) {
+  return `${key}_enabled`;
+}
+
+function isEnabled(settings, key) {
+  return settings?.[enabledKey(key)] !== '0';
+}
+
+function asLabels(settings, items) {
+  const out = {};
+  for (const item of items) {
+    out[item.key] = settings?.[item.key] || item.defaultLabel;
+    out[enabledKey(item.key)] = isEnabled(settings, item.key);
   }
-  return values;
+  return out;
 }
 
 export function getPublicMenuLabels(settings = {}) {
-  return withFallbacks(settings, PUBLIC_MENU_DEFAULTS);
+  return asLabels(settings, PUBLIC_MENU_ITEMS);
 }
 
 export function getAdminMenuLabels(settings = {}) {
-  return withFallbacks(settings, ADMIN_MENU_DEFAULTS);
+  return asLabels(settings, ADMIN_MENU_ITEMS);
 }
 

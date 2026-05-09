@@ -4,6 +4,7 @@ import { useFetch } from '../../hooks/useFetch';
 import { Save } from 'lucide-react';
 import MediaField from './MediaField';
 import { useAppAlert } from '../../components/AppAlert';
+import { PUBLIC_MENU_ITEMS, ADMIN_MENU_ITEMS, enabledKey } from '../../lib/menuLabels';
 
 const sections = [
   {
@@ -31,53 +32,7 @@ const sections = [
   },
   {
     title: 'Menus (Site e Admin)',
-    fields: [
-      ['menu_public_home', 'Site: Home'],
-      ['menu_public_parish', 'Site: Paroquia (grupo)'],
-      ['menu_public_about', 'Site: Conheca a Paroquia'],
-      ['menu_public_priests', 'Site: Padres e Diaconos'],
-      ['menu_public_facilities', 'Site: Instalacoes'],
-      ['menu_public_calendar', 'Site: Calendario de Eventos'],
-      ['menu_public_rooms', 'Site: Agendamento de Salas'],
-      ['menu_public_community', 'Site: Comunidade (grupo)'],
-      ['menu_public_groups', 'Site: Grupos de Oracao'],
-      ['menu_public_pastorals', 'Site: Pastorais e Movimentos'],
-      ['menu_public_communities', 'Site: Comunidades (Setores)'],
-      ['menu_public_family', 'Site: Pastoral Familiar'],
-      ['menu_public_volunteer', 'Site: Quero ser Voluntario'],
-      ['menu_public_media', 'Site: Comunicacao (grupo)'],
-      ['menu_public_news', 'Site: Noticias'],
-      ['menu_public_radio', 'Site: Web Radio'],
-      ['menu_public_homilies', 'Site: Homilias e Reflexoes'],
-      ['menu_public_social', 'Site: Obra Social (grupo)'],
-      ['menu_public_social_about', 'Site: Conheca a Obra Social'],
-      ['menu_public_social_services', 'Site: Servicos Oferecidos'],
-      ['menu_public_social_courses', 'Site: Cursos Gratuitos'],
-      ['menu_public_contact', 'Site: Contato'],
-      ['menu_admin_dashboard', 'Admin: Dashboard'],
-      ['menu_admin_settings', 'Admin: Aparencia e Paginas'],
-      ['menu_admin_hero_slides', 'Admin: Carrossel Home'],
-      ['menu_admin_divider_content', 'Admin: Divisor Conteudo'],
-      ['menu_admin_news', 'Admin: Noticias'],
-      ['menu_admin_events', 'Admin: Eventos'],
-      ['menu_admin_homilies', 'Admin: Homilias'],
-      ['menu_admin_divider_parish', 'Admin: Divisor Paroquia'],
-      ['menu_admin_priests', 'Admin: Padres & Diaconos'],
-      ['menu_admin_mass', 'Admin: Horarios de Missa'],
-      ['menu_admin_facilities', 'Admin: Instalacoes'],
-      ['menu_admin_bookings', 'Admin: Agendamentos de Salas'],
-      ['menu_admin_divider_community', 'Admin: Divisor Comunidade'],
-      ['menu_admin_groups', 'Admin: Grupos de Oracao'],
-      ['menu_admin_pastorals', 'Admin: Pastorais'],
-      ['menu_admin_communities', 'Admin: Comunidades'],
-      ['menu_admin_divider_social', 'Admin: Divisor Obra Social'],
-      ['menu_admin_services', 'Admin: Servicos Sociais'],
-      ['menu_admin_courses', 'Admin: Cursos'],
-      ['menu_admin_divider_system', 'Admin: Divisor Sistema'],
-      ['menu_admin_messages', 'Admin: Mensagens'],
-      ['menu_admin_users', 'Admin: Usuarios Admin'],
-      ['menu_admin_audit', 'Admin: Log de Auditoria'],
-    ],
+    fields: [['menu_manager', 'Gerenciador de Menus', 'menu_manager']],
   },
   {
     title: 'Home',
@@ -306,8 +261,81 @@ export default function AdminSettings() {
     }
   };
 
+  const updateMenuLabel = (item, value) => {
+    set(item.key, value);
+    set(enabledKey(item.key), '1');
+  };
+
+  const hideMenuItem = (item) => {
+    const ok = window.confirm(`Tem certeza que deseja excluir "${form[item.key] || item.defaultLabel}" do menu?`);
+    if (!ok) return;
+    set(enabledKey(item.key), '0');
+  };
+
+  const MenuManager = () => {
+    const groups = [
+      { title: 'Menu do Site', items: PUBLIC_MENU_ITEMS },
+      { title: 'Menu do Painel Admin', items: ADMIN_MENU_ITEMS },
+    ];
+
+    return (
+      <div style={{ display: 'grid', gap: 18 }}>
+        {groups.map((group) => (
+          <div key={group.title} style={{ border: '1px solid var(--border)', borderRadius: 12, overflow: 'hidden' }}>
+            <div style={{ padding: '12px 14px', background: 'var(--cream)', borderBottom: '1px solid var(--border)', fontSize: 12, fontWeight: 700, color: 'var(--navy)', textTransform: 'uppercase', letterSpacing: '0.06em' }}>
+              {group.title}
+            </div>
+            {group.items.map((item) => {
+              const label = form[item.key] || item.defaultLabel;
+              const activeItem = form[enabledKey(item.key)] !== '0';
+              return (
+                <div key={item.key} style={{ display: 'grid', gridTemplateColumns: '1fr auto', gap: 12, alignItems: 'center', padding: '11px 14px', borderBottom: '1px solid var(--cream-dark)', opacity: activeItem ? 1 : 0.55 }}>
+                  <div>
+                    <div style={{ fontSize: 13.5, fontWeight: 600, color: 'var(--navy)' }}>{label}</div>
+                    <div style={{ fontSize: 11.5, color: 'var(--text-soft)' }}>{activeItem ? 'Visivel no menu' : 'Oculto no menu'}</div>
+                  </div>
+                  <div style={{ display: 'flex', gap: 8 }}>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const next = window.prompt('Novo nome do item:', label);
+                        if (next === null) return;
+                        updateMenuLabel(item, next.trim() || item.defaultLabel);
+                      }}
+                      style={{ padding: '7px 12px', borderRadius: 8, border: '1px solid var(--border)', fontSize: 12.5, fontWeight: 600, color: 'var(--navy)', background: '#fff' }}
+                    >
+                      Editar
+                    </button>
+                    {activeItem ? (
+                      <button
+                        type="button"
+                        onClick={() => hideMenuItem(item)}
+                        style={{ padding: '7px 12px', borderRadius: 8, border: '1px solid #fecaca', fontSize: 12.5, fontWeight: 700, color: '#b91c1c', background: '#fff5f5' }}
+                      >
+                        Excluir
+                      </button>
+                    ) : (
+                      <button
+                        type="button"
+                        onClick={() => set(enabledKey(item.key), '1')}
+                        style={{ padding: '7px 12px', borderRadius: 8, border: '1px solid #bbf7d0', fontSize: 12.5, fontWeight: 700, color: '#166534', background: '#f0fdf4' }}
+                      >
+                        Reativar
+                      </button>
+                    )}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        ))}
+      </div>
+    );
+  };
+
   const Input = ({ field }) => {
     const [key, label, type] = field;
+    if (type === 'menu_manager') return <MenuManager />;
     if (type === 'image') return <MediaField label={label} value={form[key] || ''} onChange={v => set(key, v)} />;
     const common = {
       value: form[key] || '',
@@ -361,7 +389,7 @@ export default function AdminSettings() {
           <h2 style={{ fontFamily:'Playfair Display,serif', fontSize:20, fontWeight:700, color:'var(--navy)', marginBottom:22 }}>{section.title}</h2>
           <div style={{ display:'grid', gridTemplateColumns:'repeat(2,minmax(0,1fr))', gap:'0 18px' }}>
             {section.fields.map(field => (
-              <div key={field[0]} style={{ gridColumn:field[2] === 'textarea' || field[2] === 'image' ? '1 / -1' : 'auto' }}>
+              <div key={field[0]} style={{ gridColumn:field[2] === 'textarea' || field[2] === 'image' || field[2] === 'menu_manager' ? '1 / -1' : 'auto' }}>
                 <Input field={field} />
               </div>
             ))}

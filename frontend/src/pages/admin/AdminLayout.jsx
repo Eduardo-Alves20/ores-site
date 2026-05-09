@@ -11,31 +11,38 @@ import {
 } from 'lucide-react';
 
 function buildMenu(labels) {
-  return [
-    { label: labels.menu_admin_dashboard, to:'/admin/dashboard', icon:<LayoutDashboard size={18}/> },
-    { label: labels.menu_admin_settings, to:'/admin/settings', icon:<Settings size={18}/> },
-    { label: labels.menu_admin_hero_slides, to:'/admin/hero-slides', icon:<Images size={18}/> },
-    { divider: true, label: labels.menu_admin_divider_content },
-    { label: labels.menu_admin_news, to:'/admin/news', icon:<Newspaper size={18}/> },
-    { label: labels.menu_admin_events, to:'/admin/events', icon:<Calendar size={18}/> },
-    { label: labels.menu_admin_homilies, to:'/admin/homilies', icon:<Headphones size={18}/> },
-    { divider: true, label: labels.menu_admin_divider_parish },
-    { label: labels.menu_admin_priests, to:'/admin/priests', icon:<Church size={18}/> },
-    { label: labels.menu_admin_mass, to:'/admin/mass', icon:<Clock size={18}/> },
-    { label: labels.menu_admin_facilities, to:'/admin/facilities', icon:<MapPin size={18}/> },
-    { label: labels.menu_admin_bookings, to:'/admin/bookings', icon:<Calendar size={18}/> },
-    { divider: true, label: labels.menu_admin_divider_community },
-    { label: labels.menu_admin_groups, to:'/admin/groups', icon:<Heart size={18}/> },
-    { label: labels.menu_admin_pastorals, to:'/admin/pastorals', icon:<BookOpen size={18}/> },
-    { label: labels.menu_admin_communities, to:'/admin/communities', icon:<Users size={18}/> },
-    { divider: true, label: labels.menu_admin_divider_social },
-    { label: labels.menu_admin_services, to:'/admin/services', icon:<Handshake size={18}/> },
-    { label: labels.menu_admin_courses, to:'/admin/courses', icon:<GraduationCap size={18}/> },
-    { divider: true, label: labels.menu_admin_divider_system },
-    { label: labels.menu_admin_messages, to:'/admin/messages', icon:<MessageSquare size={18}/> },
-    { label: labels.menu_admin_users, to:'/admin/users', icon:<Shield size={18}/> },
-    { label: labels.menu_admin_audit, to:'/admin/audit', icon:<Shield size={18}/> },
-  ];
+  const raw = [
+    labels.menu_admin_dashboard_enabled && { label: labels.menu_admin_dashboard, to:'/admin/dashboard', icon:<LayoutDashboard size={18}/> },
+    labels.menu_admin_settings_enabled && { label: labels.menu_admin_settings, to:'/admin/settings', icon:<Settings size={18}/> },
+    labels.menu_admin_hero_slides_enabled && { label: labels.menu_admin_hero_slides, to:'/admin/hero-slides', icon:<Images size={18}/> },
+    labels.menu_admin_divider_content_enabled && { divider: true, label: labels.menu_admin_divider_content },
+    labels.menu_admin_news_enabled && { label: labels.menu_admin_news, to:'/admin/news', icon:<Newspaper size={18}/> },
+    labels.menu_admin_events_enabled && { label: labels.menu_admin_events, to:'/admin/events', icon:<Calendar size={18}/> },
+    labels.menu_admin_homilies_enabled && { label: labels.menu_admin_homilies, to:'/admin/homilies', icon:<Headphones size={18}/> },
+    labels.menu_admin_divider_parish_enabled && { divider: true, label: labels.menu_admin_divider_parish },
+    labels.menu_admin_priests_enabled && { label: labels.menu_admin_priests, to:'/admin/priests', icon:<Church size={18}/> },
+    labels.menu_admin_mass_enabled && { label: labels.menu_admin_mass, to:'/admin/mass', icon:<Clock size={18}/> },
+    labels.menu_admin_facilities_enabled && { label: labels.menu_admin_facilities, to:'/admin/facilities', icon:<MapPin size={18}/> },
+    labels.menu_admin_bookings_enabled && { label: labels.menu_admin_bookings, to:'/admin/bookings', icon:<Calendar size={18}/> },
+    labels.menu_admin_divider_community_enabled && { divider: true, label: labels.menu_admin_divider_community },
+    labels.menu_admin_groups_enabled && { label: labels.menu_admin_groups, to:'/admin/groups', icon:<Heart size={18}/> },
+    labels.menu_admin_pastorals_enabled && { label: labels.menu_admin_pastorals, to:'/admin/pastorals', icon:<BookOpen size={18}/> },
+    labels.menu_admin_communities_enabled && { label: labels.menu_admin_communities, to:'/admin/communities', icon:<Users size={18}/> },
+    labels.menu_admin_divider_social_enabled && { divider: true, label: labels.menu_admin_divider_social },
+    labels.menu_admin_services_enabled && { label: labels.menu_admin_services, to:'/admin/services', icon:<Handshake size={18}/> },
+    labels.menu_admin_courses_enabled && { label: labels.menu_admin_courses, to:'/admin/courses', icon:<GraduationCap size={18}/> },
+    labels.menu_admin_divider_system_enabled && { divider: true, label: labels.menu_admin_divider_system },
+    labels.menu_admin_messages_enabled && { label: labels.menu_admin_messages, to:'/admin/messages', icon:<MessageSquare size={18}/> },
+    labels.menu_admin_users_enabled && { label: labels.menu_admin_users, to:'/admin/users', icon:<Shield size={18}/> },
+    labels.menu_admin_audit_enabled && { label: labels.menu_admin_audit, to:'/admin/audit', icon:<Shield size={18}/> },
+  ].filter(Boolean);
+
+  return raw.filter((item, i) => {
+    if (!item.divider) return true;
+    const hasBefore = raw.slice(0, i).some((x) => !x.divider);
+    const hasAfter = raw.slice(i + 1).some((x) => !x.divider);
+    return hasBefore && hasAfter;
+  });
 }
 
 export default function AdminLayout() {

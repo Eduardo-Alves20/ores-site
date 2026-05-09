@@ -17,42 +17,41 @@ export default function Navbar({ siteInfo = {} }) {
 
   const siteName = getSiteName(siteInfo);
   const labels = getPublicMenuLabels(siteInfo);
-  const nav = useMemo(() => [
-    { label: labels.menu_public_home, to: '/' },
-    {
-      label: labels.menu_public_parish, children: [
-        { label: siteInfo?.menu_public_about || getConhecaLabel(siteInfo), to: '/conheca' },
-        { label: labels.menu_public_priests, to: '/padres' },
-        { label: labels.menu_public_facilities, to: '/instalacoes' },
-        { label: labels.menu_public_calendar, to: '/calendario' },
-        { label: labels.menu_public_rooms, to: '/salas' },
-      ],
-    },
-    {
-      label: labels.menu_public_community, children: [
-        { label: labels.menu_public_groups, to: '/grupos' },
-        { label: labels.menu_public_pastorals, to: '/pastorais' },
-        { label: labels.menu_public_communities, to: '/comunidades' },
-        { label: labels.menu_public_family, to: '/familiar' },
-        { label: labels.menu_public_volunteer, to: '/voluntario' },
-      ],
-    },
-    {
-      label: labels.menu_public_media, children: [
-        { label: labels.menu_public_news, to: '/noticias' },
-        { label: labels.menu_public_radio, to: '/radio' },
-        { label: labels.menu_public_homilies, to: '/homilias' },
-      ],
-    },
-    {
-      label: labels.menu_public_social, children: [
-        { label: labels.menu_public_social_about, to: '/obra-social' },
-        { label: labels.menu_public_social_services, to: '/servicos' },
-        { label: labels.menu_public_social_courses, to: '/cursos' },
-      ],
-    },
-    { label: labels.menu_public_contact, to: '/contato' },
-  ], [siteInfo, labels]);
+  const nav = useMemo(() => {
+    const childrenParish = [
+      labels.menu_public_about_enabled && { label: siteInfo?.menu_public_about || getConhecaLabel(siteInfo), to: '/conheca' },
+      labels.menu_public_priests_enabled && { label: labels.menu_public_priests, to: '/padres' },
+      labels.menu_public_facilities_enabled && { label: labels.menu_public_facilities, to: '/instalacoes' },
+      labels.menu_public_calendar_enabled && { label: labels.menu_public_calendar, to: '/calendario' },
+      labels.menu_public_rooms_enabled && { label: labels.menu_public_rooms, to: '/salas' },
+    ].filter(Boolean);
+    const childrenCommunity = [
+      labels.menu_public_groups_enabled && { label: labels.menu_public_groups, to: '/grupos' },
+      labels.menu_public_pastorals_enabled && { label: labels.menu_public_pastorals, to: '/pastorais' },
+      labels.menu_public_communities_enabled && { label: labels.menu_public_communities, to: '/comunidades' },
+      labels.menu_public_family_enabled && { label: labels.menu_public_family, to: '/familiar' },
+      labels.menu_public_volunteer_enabled && { label: labels.menu_public_volunteer, to: '/voluntario' },
+    ].filter(Boolean);
+    const childrenMedia = [
+      labels.menu_public_news_enabled && { label: labels.menu_public_news, to: '/noticias' },
+      labels.menu_public_radio_enabled && { label: labels.menu_public_radio, to: '/radio' },
+      labels.menu_public_homilies_enabled && { label: labels.menu_public_homilies, to: '/homilias' },
+    ].filter(Boolean);
+    const childrenSocial = [
+      labels.menu_public_social_about_enabled && { label: labels.menu_public_social_about, to: '/obra-social' },
+      labels.menu_public_social_services_enabled && { label: labels.menu_public_social_services, to: '/servicos' },
+      labels.menu_public_social_courses_enabled && { label: labels.menu_public_social_courses, to: '/cursos' },
+    ].filter(Boolean);
+
+    return [
+      labels.menu_public_home_enabled && { label: labels.menu_public_home, to: '/' },
+      labels.menu_public_parish_enabled && childrenParish.length > 0 && { label: labels.menu_public_parish, children: childrenParish },
+      labels.menu_public_community_enabled && childrenCommunity.length > 0 && { label: labels.menu_public_community, children: childrenCommunity },
+      labels.menu_public_media_enabled && childrenMedia.length > 0 && { label: labels.menu_public_media, children: childrenMedia },
+      labels.menu_public_social_enabled && childrenSocial.length > 0 && { label: labels.menu_public_social, children: childrenSocial },
+      labels.menu_public_contact_enabled && { label: labels.menu_public_contact, to: '/contato' },
+    ].filter(Boolean);
+  }, [siteInfo, labels]);
 
   useEffect(() => {
     const h = () => setScrolled(window.scrollY > 50);
