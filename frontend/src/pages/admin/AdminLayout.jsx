@@ -62,7 +62,7 @@ export default function AdminLayout() {
   };
 
   const Sidebar = ({ mobile = false }) => (
-    <div style={{ width: mobile ? '100%' : (sidebarOpen ? 240 : 64), background:'var(--navy)', height:'100vh', display:'flex', flexDirection:'column', transition:'width .25s', overflow:'hidden', flexShrink:0, position: mobile ? 'relative' : 'sticky', top:0 }}>
+    <div style={{ width: mobile ? '100%' : (sidebarOpen ? 240 : 64), background:'var(--navy)', height:'100dvh', display:'flex', flexDirection:'column', transition:'width .25s', overflow:'hidden', flexShrink:0, position: mobile ? 'relative' : 'sticky', top:0 }}>
       {/* Logo */}
       <div style={{ padding:'20px 16px', borderBottom:'1px solid rgba(255,255,255,.08)', display:'flex', alignItems:'center', gap:10 }}>
         <div style={{ width:36, height:36, borderRadius:'50%', background:'var(--gold)', display:'flex', alignItems:'center', justifyContent:'center', fontSize:16, color:'#fff', fontFamily:'Playfair Display,serif', fontWeight:700, flexShrink:0 }}>✦</div>
@@ -110,7 +110,7 @@ export default function AdminLayout() {
   );
 
   return (
-    <div style={{ display:'flex', height:'100dvh', overflow:'hidden', background:'var(--cream)', fontFamily:'Plus Jakarta Sans,sans-serif' }}>
+    <div style={{ display:'flex', minHeight:'100dvh', background:'var(--cream)', fontFamily:'Plus Jakarta Sans,sans-serif' }}>
       {/* Desktop sidebar */}
       <div style={{ display:'flex' }} className="desk-sidebar">
         <Sidebar />
@@ -119,7 +119,7 @@ export default function AdminLayout() {
       {/* Main */}
       <div style={{ flex:1, display:'flex', flexDirection:'column', minWidth:0 }}>
         {/* Topbar */}
-        <div style={{ background:'#fff', borderBottom:'1px solid var(--border)', padding:'0 24px', height:60, display:'flex', alignItems:'center', justifyContent:'space-between', flexShrink:0 }}>
+        <div style={{ background:'#fff', borderBottom:'1px solid var(--border)', padding:'0 24px', minHeight:60, display:'flex', alignItems:'center', justifyContent:'space-between', gap:12, flexShrink:0 }}>
           <div style={{ display:'flex', alignItems:'center', gap:12 }}>
             <button onClick={() => setSidebarOpen(!sidebarOpen)} style={{ color:'var(--text-soft)', padding:4 }} className="desk-only">
               {sidebarOpen ? <X size={20}/> : <Menu size={20}/>}
@@ -141,20 +141,28 @@ export default function AdminLayout() {
         {/* Mobile drawer */}
         {mobileOpen && (
           <div style={{ position:'fixed', inset:0, zIndex:2000, display:'flex' }} onClick={() => setMobileOpen(false)}>
-            <div style={{ width:260, background:'var(--navy)', height:'100%', boxShadow:'4px 0 24px rgba(0,0,0,.4)' }} onClick={e => e.stopPropagation()}>
+            <div style={{ width:'min(300px, 82vw)', background:'var(--navy)', height:'100%', boxShadow:'4px 0 24px rgba(0,0,0,.4)' }} onClick={e => e.stopPropagation()}>
               <Sidebar mobile />
             </div>
           </div>
         )}
 
         {/* Content */}
-        <div style={{ flex:1, padding:'32px 28px', overflow:'auto' }}>
+        <div className="admin-content-shell" style={{ flex:1, padding:'32px 28px', overflow:'auto' }}>
           <Outlet />
         </div>
       </div>
 
       <style>{`
-        @media (max-width: 900px) { .desk-sidebar { display: none !important; } .mobile-only { display: flex !important; } .desk-only { display: none !important; } }
+        @media (max-width: 900px) {
+          .desk-sidebar { display: none !important; }
+          .mobile-only { display: flex !important; }
+          .desk-only { display: none !important; }
+          .admin-content-shell { padding: 20px 14px !important; }
+        }
+        @media (max-width: 600px) {
+          .admin-content-shell { padding: 16px 10px !important; }
+        }
         @media (min-width: 901px) { .mobile-only { display: none !important; } }
       `}</style>
     </div>

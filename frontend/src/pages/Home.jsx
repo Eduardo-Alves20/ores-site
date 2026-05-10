@@ -84,6 +84,7 @@ export default function Home() {
   const [donationSlide, setDonationSlide] = useState(0);
   const donationBackgroundUrl = normalizeMediaUrl(settings.donation_background_url);
   const donationQrUrl = normalizeMediaUrl(settings.donation_qr_url);
+  const hasDonationBackground = Boolean(donationBackgroundUrl);
 
   useEffect(() => {
     if (donationSlides.length < 2) return undefined;
@@ -265,11 +266,11 @@ export default function Home() {
               {donationBackgroundUrl && (
                 <>
                   <img src={donationBackgroundUrl} alt="" onError={(e) => { e.currentTarget.style.display = 'none'; }} style={{ position:'absolute', inset:0, width:'100%', height:'100%', objectFit:'cover', opacity:.2 }} />
-                  <div style={{ position:'absolute', inset:0, background:'linear-gradient(90deg,rgba(26,39,68,.92) 0%,rgba(26,39,68,.82) 49%,rgba(249,247,244,.88) 50%,rgba(249,247,244,.94) 100%)' }} />
+                  <div className="donation-overlay" style={{ position:'absolute', inset:0, background:'linear-gradient(90deg,rgba(26,39,68,.92) 0%,rgba(26,39,68,.82) 49%,rgba(249,247,244,.88) 50%,rgba(249,247,244,.94) 100%)' }} />
                 </>
               )}
               <div className="donation-grid" style={{ display:'grid', gridTemplateColumns:'1.05fr .95fr', alignItems:'stretch', position:'relative' }}>
-                <div style={{ padding:'44px 48px', background:donationBackgroundUrl ? 'transparent' : 'var(--navy)', color:'#fff', position:'relative', overflow:'hidden' }}>
+                <div className="donation-copy" style={{ padding:'44px 48px', background:hasDonationBackground ? 'transparent' : 'var(--navy)', color:'#fff', position:'relative', overflow:'hidden' }}>
                   <div style={{ position:'absolute', right:-90, top:-90, width:260, height:260, borderRadius:'50%', border:'1px solid rgba(212,170,114,.16)' }} />
                   <div style={{ position:'absolute', right:40, bottom:-120, width:300, height:300, borderRadius:'50%', border:'1px solid rgba(212,170,114,.1)' }} />
                   <div style={{ position:'relative' }}>
@@ -283,7 +284,7 @@ export default function Home() {
                     {settings.donation_pix_key && <div style={{ marginTop:14, fontSize:12, color:'rgba(255,255,255,.55)', wordBreak:'break-word' }}>Pix: {settings.donation_pix_key}</div>}
                   </div>
                 </div>
-                <div className="donation-media" style={{ padding:'32px', display:'grid', gap:16, alignContent:'space-between', background:donationBackgroundUrl ? 'rgba(249,247,244,.72)' : 'var(--cream)' }}>
+                <div className="donation-media" style={{ padding:'32px', display:'grid', gap:16, alignContent:'space-between', background:hasDonationBackground ? 'rgba(249,247,244,.72)' : 'var(--cream)' }}>
                   {false && donationQrUrl && (
                     <div style={{ background:'#fff', border:'1px solid var(--border)', borderRadius:14, padding:14, boxShadow:'0 10px 30px rgba(0,0,0,.06)' }}>
                       <img src={donationQrUrl} alt="QR Code Pix" onError={(e) => { e.currentTarget.style.display = 'none'; }} style={{ width:'100%', aspectRatio:'1 / 1', objectFit:'contain' }} />
@@ -557,6 +558,15 @@ export default function Home() {
           }
           .donation-grid > div {
             padding: 28px 24px !important;
+          }
+          .donation-overlay {
+            background: linear-gradient(180deg, rgba(26,39,68,.95) 0%, rgba(26,39,68,.86) 58%, rgba(249,247,244,.94) 58%, rgba(249,247,244,.98) 100%) !important;
+          }
+          .donation-copy {
+            min-height: 0 !important;
+          }
+          .donation-media {
+            padding-top: 20px !important;
           }
         }
         @media (max-width: 420px) {
