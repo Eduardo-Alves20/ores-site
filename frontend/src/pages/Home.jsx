@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+﻿import { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { useFetch } from '../hooks/useFetch';
 import Reveal from '../components/Reveal';
@@ -47,11 +47,11 @@ export default function Home() {
   const news = data?.news || [];
   const [currentSlide, setCurrentSlide] = useState(0);
   const fallbackSlide = {
-    eyebrow: settings.hero_eyebrow || 'Bem-vindo à',
-    title: settings.hero_title || 'Uma comunidade unida no Espírito Santo',
-    subtitle: settings.hero_subtitle || 'Venha fazer parte desta família de fé. Missas, grupos, pastorais e muito mais para toda a família.',
+    eyebrow: settings.hero_eyebrow || 'Bem-vindo Ã ',
+    title: settings.hero_title || 'Uma comunidade unida no EspÃ­rito Santo',
+    subtitle: settings.hero_subtitle || 'Venha fazer parte desta famÃ­lia de fÃ©. Missas, grupos, pastorais e muito mais para toda a famÃ­lia.',
     image_url: settings.hero_image_url || '',
-    primary_label: settings.hero_primary_label || 'Conheça a Paróquia',
+    primary_label: settings.hero_primary_label || 'ConheÃ§a a ParÃ³quia',
     primary_url: settings.hero_primary_url || '/conheca',
     secondary_label: settings.hero_secondary_label || 'Fale Conosco',
     secondary_url: settings.hero_secondary_url || '/contato',
@@ -72,7 +72,7 @@ export default function Home() {
 
   const quickLinks = [
     { icon: <Calendar size={22} />, label: menuLabels.menu_public_calendar, to: '/calendario' },
-    { icon: <Clock size={22} />, label: 'Horários de Missa', to: '/conheca' },
+    { icon: <Clock size={22} />, label: 'HorÃ¡rios de Missa', to: '/conheca' },
     { icon: <Users size={22} />, label: menuLabels.menu_public_groups, to: '/grupos' },
     { icon: <Heart size={22} />, label: menuLabels.menu_public_social, to: '/obra-social' },
     { icon: <Radio size={22} />, label: menuLabels.menu_public_radio, to: '/radio' },
@@ -96,12 +96,12 @@ export default function Home() {
 
   const copyPix = async () => {
     if (!settings.donation_pix_key) {
-      notify({ type:'warning', title:'Chave Pix não cadastrada', message:'Cadastre a chave Pix no painel administrativo para habilitar a cópia.' });
+      notify({ type:'warning', title:'Chave Pix nÃ£o cadastrada', message:'Cadastre a chave Pix no painel administrativo para habilitar a cÃ³pia.' });
       return;
     }
     try {
       await navigator.clipboard.writeText(settings.donation_pix_key);
-      notify({ type:'success', title:'Chave Pix copiada', message:'Agora é só colar no aplicativo do banco para fazer a contribuição.' });
+      notify({ type:'success', title:'Chave Pix copiada', message:'Agora Ã© sÃ³ colar no aplicativo do banco para fazer a contribuiÃ§Ã£o.' });
     } catch {
       notify({ type:'info', title:'Chave Pix', message:settings.donation_pix_key });
     }
@@ -136,7 +136,7 @@ export default function Home() {
 
   return (
     <div className="animate-page">
-      {/* ── Hero ── */}
+      {/* â”€â”€ Hero â”€â”€ */}
       <section className="home-hero" style={{ background:'#000',minHeight:'100vh',display:'flex',alignItems:'center',position:'relative',overflow:'hidden' }}>
         {slides.map((slide, i) => slide.image_url && (
           <img
@@ -159,21 +159,21 @@ export default function Home() {
         <div className="home-hero-inner" style={{ maxWidth:1200,margin:'0 auto',padding:'120px 24px 80px',width:'100%',position:'relative',zIndex:1 }}>
           <div style={{ maxWidth:680 }}>
             <div className="animate-fade-up" style={{ fontSize:11,fontWeight:600,letterSpacing:'0.2em',textTransform:'uppercase',color:'var(--gold-light)',marginBottom:22 }}>
-              {hero.eyebrow || 'Bem-vindo à'}
+              {hero.eyebrow || 'Bem-vindo Ã '}
             </div>
             <h1 className="animate-fade-up home-hero-title" style={{ fontFamily:'Playfair Display,serif',fontSize:'clamp(44px,7vw,84px)',fontWeight:700,color:'#fff',lineHeight:1.08,marginBottom:20,animationDelay:'.1s' }}>
-              {hero.title ? hero.title.split('Espírito Santo').map((part, i, arr) =>
-                i < arr.length - 1 ? [part, <em key={i} style={{ color:'var(--gold-light)',fontStyle:'italic' }}>Espírito Santo</em>] : part
-              ) : <><em style={{ color:'var(--gold-light)',fontStyle:'italic' }}>Espírito</em> Santo</>}
+              {hero.title ? hero.title.split('EspÃ­rito Santo').map((part, i, arr) =>
+                i < arr.length - 1 ? [part, <em key={i} style={{ color:'var(--gold-light)',fontStyle:'italic' }}>EspÃ­rito Santo</em>] : part
+              ) : <><em style={{ color:'var(--gold-light)',fontStyle:'italic' }}>EspÃ­rito</em> Santo</>}
             </h1>
             <p className="animate-fade-up" style={{ fontSize:17,color:'rgba(255,255,255,.65)',lineHeight:1.7,fontWeight:300,marginBottom:40,animationDelay:'.2s' }}>
-              {hero.subtitle || 'Venha fazer parte desta família de fé. Missas, grupos, pastorais e muito mais para toda a família.'}
+              {hero.subtitle || 'Venha fazer parte desta famÃ­lia de fÃ©. Missas, grupos, pastorais e muito mais para toda a famÃ­lia.'}
             </p>
             <div className="animate-fade-up home-hero-actions" style={{ display:'flex',gap:16,flexWrap:'wrap',animationDelay:'.3s' }}>
               <Link to={hero.primary_url || '/conheca'} className="btn-gold" style={{ display:'inline-flex',alignItems:'center',gap:6,padding:'13px 28px',borderRadius:100,background:'var(--gold)',color:'#fff',fontWeight:600,fontSize:14,boxShadow:'0 4px 18px rgba(184,148,90,.35)',transition:'transform .2s,box-shadow .2s' }}
                 onMouseEnter={e => { e.currentTarget.style.transform='translateY(-2px)'; e.currentTarget.style.boxShadow='0 8px 26px rgba(184,148,90,.45)'; }}
                 onMouseLeave={e => { e.currentTarget.style.transform=''; e.currentTarget.style.boxShadow='0 4px 18px rgba(184,148,90,.35)'; }}>
-                {hero.primary_label || 'Conheça a Paróquia'}
+                {hero.primary_label || 'ConheÃ§a a ParÃ³quia'}
               </Link>
               <Link to={hero.secondary_url || '/contato'} style={{ display:'inline-flex',alignItems:'center',padding:'13px 28px',borderRadius:100,border:'1.5px solid rgba(255,255,255,.3)',color:'#fff',fontWeight:500,fontSize:14,transition:'background .2s,border-color .2s' }}
                 onMouseEnter={e => { e.currentTarget.style.background='rgba(255,255,255,.08)'; e.currentTarget.style.borderColor='rgba(255,255,255,.5)'; }}
@@ -197,7 +197,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ── Daily message ── */}
+      {/* â”€â”€ Daily message â”€â”€ */}
       {settings.daily_message && (
         <Reveal>
           <div style={{ background:'var(--gold)',padding:'20px 24px',textAlign:'center' }}>
@@ -221,7 +221,7 @@ export default function Home() {
                     {wordDay.title || 'Palavra do Dia'}
                   </h3>
                   <p style={{ fontSize:14, color:'var(--text-soft)', lineHeight:1.7 }}>
-                    {wordDay.subtitle || 'Acesse as leituras completas e a reflexão do dia em um espaço dedicado.'}
+                    {wordDay.subtitle || 'Acesse as leituras completas e a reflexÃ£o do dia em um espaÃ§o dedicado.'}
                   </p>
                 </div>
                 <Link to="/palavra-do-dia" style={{ padding:'11px 18px', borderRadius:10, background:'var(--gold)', color:'#fff', fontSize:13, fontWeight:700, whiteSpace:'nowrap' }}>
@@ -233,13 +233,13 @@ export default function Home() {
         </Reveal>
       )}
 
-      {/* ── Quick links ── */}
+      {/* â”€â”€ Quick links â”€â”€ */}
       <section style={{ padding:'72px 24px' }}>
         <div style={{ maxWidth:1200,margin:'0 auto' }}>
           <Reveal>
             <div style={{ textAlign:'center',marginBottom:48 }}>
-              <div style={{ fontSize:11,fontWeight:700,letterSpacing:'0.15em',textTransform:'uppercase',color:'var(--gold)',marginBottom:12 }}>Acesso Rápido</div>
-              <h2 style={{ fontFamily:'Playfair Display,serif',fontSize:'clamp(26px,4vw,40px)',fontWeight:700,color:'var(--navy)' }}>{settings.home_quick_title || 'O que você está procurando?'}</h2>
+              <div style={{ fontSize:11,fontWeight:700,letterSpacing:'0.15em',textTransform:'uppercase',color:'var(--gold)',marginBottom:12 }}>Acesso RÃ¡pido</div>
+              <h2 style={{ fontFamily:'Playfair Display,serif',fontSize:'clamp(26px,4vw,40px)',fontWeight:700,color:'var(--navy)' }}>{settings.home_quick_title || 'O que vocÃª estÃ¡ procurando?'}</h2>
             </div>
           </Reveal>
           <div className="quick-links-grid" style={{ display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(160px,1fr))',gap:16 }}>
@@ -276,8 +276,8 @@ export default function Home() {
                   <div style={{ position:'relative' }}>
                     <div style={{ width:54, height:54, borderRadius:'50%', background:'var(--gold)', display:'flex', alignItems:'center', justifyContent:'center', marginBottom:20, boxShadow:'0 10px 28px rgba(184,148,90,.35)' }}><Gift size={24} /></div>
                     <div style={{ fontSize:11, fontWeight:800, letterSpacing:'0.16em', textTransform:'uppercase', color:'var(--gold-light)', marginBottom:14 }}>{settings.donation_eyebrow || 'Contribua com a comunidade'}</div>
-                    <h2 style={{ fontFamily:'Playfair Display,serif', fontSize:'clamp(28px,4vw,44px)', lineHeight:1.15, fontWeight:700, marginBottom:18 }}>{settings.donation_title || 'Sua doação ajuda a manter nossas obras vivas'}</h2>
-                    <p style={{ fontSize:15, lineHeight:1.8, color:'rgba(255,255,255,.72)', marginBottom:28 }}>{settings.donation_text || 'Com a sua generosidade, conseguimos cuidar da igreja, apoiar pastorais, realizar ações sociais e acolher melhor cada família que passa por aqui. Qualquer valor faz diferença.'}</p>
+                    <h2 style={{ fontFamily:'Playfair Display,serif', fontSize:'clamp(28px,4vw,44px)', lineHeight:1.15, fontWeight:700, marginBottom:18 }}>{settings.donation_title || 'Sua doaÃ§Ã£o ajuda a manter nossas obras vivas'}</h2>
+                    <p style={{ fontSize:15, lineHeight:1.8, color:'rgba(255,255,255,.72)', marginBottom:28 }}>{settings.donation_text || 'Com a sua generosidade, conseguimos cuidar da igreja, apoiar pastorais, realizar aÃ§Ãµes sociais e acolher melhor cada famÃ­lia que passa por aqui. Qualquer valor faz diferenÃ§a.'}</p>
                     <button onClick={copyPix} style={{ display:'inline-flex', alignItems:'center', gap:8, padding:'13px 24px', borderRadius:999, background:'var(--gold)', color:'#fff', fontWeight:800, fontSize:14, boxShadow:'0 8px 26px rgba(184,148,90,.32)' }}>
                       <Copy size={16} />{settings.donation_button_label || 'Copiar chave Pix'}
                     </button>
@@ -349,12 +349,12 @@ export default function Home() {
                     {donationSlides.length ? donationSlides.map((item, i) => (
                       <div key={i} style={{ display:'grid', gridTemplateColumns:item.url ? '84px 1fr' : '1fr', gap:12, alignItems:'center', background:'#fff', border:'1px solid var(--border)', borderRadius:12, padding:10 }}>
                         {item.url && <img src={item.url} alt="" onError={(e) => { e.currentTarget.style.display = 'none'; }} style={{ width:84, height:64, objectFit:'cover', borderRadius:8 }} />}
-                        <div style={{ fontSize:13, lineHeight:1.55, color:'var(--navy)', fontWeight:600 }}>{item.caption || 'Doação aplicada nas ações da comunidade'}</div>
+                        <div style={{ fontSize:13, lineHeight:1.55, color:'var(--navy)', fontWeight:600 }}>{item.caption || 'DoaÃ§Ã£o aplicada nas aÃ§Ãµes da comunidade'}</div>
                       </div>
                     )) : (
                       <div style={{ background:'#fff', border:'1px solid var(--border)', borderRadius:12, padding:22 }}>
-                        <div style={{ fontFamily:'Playfair Display,serif', fontSize:20, color:'var(--navy)', fontWeight:700, marginBottom:8 }}>Transparência e cuidado</div>
-                        <p style={{ fontSize:13, color:'var(--text-mid)', lineHeight:1.7 }}>Use os cards do painel para mostrar fotos e exemplos de como as contribuições ajudam a comunidade.</p>
+                        <div style={{ fontFamily:'Playfair Display,serif', fontSize:20, color:'var(--navy)', fontWeight:700, marginBottom:8 }}>TransparÃªncia e cuidado</div>
+                        <p style={{ fontSize:13, color:'var(--text-mid)', lineHeight:1.7 }}>Use os cards do painel para mostrar fotos e exemplos de como as contribuiÃ§Ãµes ajudam a comunidade.</p>
                       </div>
                     )}
                   </div>
@@ -371,14 +371,14 @@ export default function Home() {
         </Reveal>
       )}
 
-      {/* ── Main content + sidebar ── */}
+      {/* â”€â”€ Main content + sidebar â”€â”€ */}
       <section style={{ padding:'0 24px 72px' }}>
         <div className="home-main-grid" style={{ maxWidth:1200,margin:'0 auto',display:'grid',gridTemplateColumns:'1fr 340px',gap:32,alignItems:'start' }}>
           {/* Events */}
           <div>
             <Reveal>
               <div style={{ display:'flex',alignItems:'center',gap:16,marginBottom:28 }}>
-                <h2 style={{ fontFamily:'Playfair Display,serif',fontSize:22,fontWeight:700,color:'var(--navy)',whiteSpace:'nowrap' }}>Próximos Eventos</h2>
+                <h2 style={{ fontFamily:'Playfair Display,serif',fontSize:22,fontWeight:700,color:'var(--navy)',whiteSpace:'nowrap' }}>PrÃ³ximos Eventos</h2>
                 <div style={{ flex:1,height:1,background:'var(--border)' }} />
                 <Link to="/calendario" style={{ fontSize:12,color:'var(--text-soft)',fontWeight:500,whiteSpace:'nowrap' }}>Ver todos</Link>
               </div>
@@ -401,7 +401,7 @@ export default function Home() {
                         <span style={{ display:'inline-block',fontSize:10,fontWeight:700,letterSpacing:'0.08em',textTransform:'uppercase',padding:'2px 8px',borderRadius:100,background:'rgba(184,148,90,.1)',color:'var(--gold)',marginBottom:6 }}>{ev.category}</span>
                         <div style={{ fontWeight:700,fontSize:15,color:'var(--navy)',marginBottom:6,lineHeight:1.3 }}>{ev.title}</div>
                         <div className="event-meta" style={{ display:'flex',gap:16,fontSize:12,color:'var(--text-soft)' }}>
-                          {ev.start_time && <span style={{ display:'flex',alignItems:'center',gap:4 }}><Clock size={12} />{ev.start_time.slice(0,5)}h{ev.end_time && `–${ev.end_time.slice(0,5)}h`}</span>}
+                          {ev.start_time && <span style={{ display:'flex',alignItems:'center',gap:4 }}><Clock size={12} />{ev.start_time.slice(0,5)}h{ev.end_time && `â€“${ev.end_time.slice(0,5)}h`}</span>}
                           {ev.location && <span style={{ display:'flex',alignItems:'center',gap:4 }}><MapPin size={12} />{ev.location}</span>}
                         </div>
                       </div>
@@ -410,7 +410,7 @@ export default function Home() {
                 );
               })}
               {events.length === 0 && (
-                <div style={{ textAlign:'center',padding:'40px 0',color:'var(--text-soft)',fontSize:14 }}>Nenhum evento próximo.</div>
+                <div style={{ textAlign:'center',padding:'40px 0',color:'var(--text-soft)',fontSize:14 }}>Nenhum evento prÃ³ximo.</div>
               )}
             </div>
           </div>
@@ -422,7 +422,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ── Stats ── */}
+      {/* â”€â”€ Stats â”€â”€ */}
       <Reveal>
         <section style={{ background:'var(--navy)',padding:'72px 24px' }}>
           <div style={{ maxWidth:1200,margin:'0 auto',display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(200px,1fr))',gap:48,textAlign:'center' }}>
@@ -438,18 +438,18 @@ export default function Home() {
         </section>
       </Reveal>
 
-      {/* ── News ── */}
+      {/* â”€â”€ News â”€â”€ */}
       {news.length > 0 && (
         <section style={{ padding:'72px 24px' }}>
           <div style={{ maxWidth:1200,margin:'0 auto' }}>
             <Reveal>
               <div style={{ display:'flex',alignItems:'center',gap:16,marginBottom:36 }}>
-                <h2 style={{ fontFamily:'Playfair Display,serif',fontSize:28,fontWeight:700,color:'var(--navy)',whiteSpace:'nowrap' }}>Últimas Notícias</h2>
+                <h2 style={{ fontFamily:'Playfair Display,serif',fontSize:28,fontWeight:700,color:'var(--navy)',whiteSpace:'nowrap' }}>Ãšltimas NotÃ­cias</h2>
                 <div style={{ flex:1,height:1,background:'var(--border)' }} />
-                <Link to="/noticias" style={{ fontSize:13,color:'var(--gold)',fontWeight:600 }}>Ver todas →</Link>
+                <Link to="/noticias" style={{ fontSize:13,color:'var(--gold)',fontWeight:600 }}>Ver todas â†’</Link>
               </div>
             </Reveal>
-            <div style={{ display:'grid',gridTemplateColumns:'repeat(auto-fill,minmax(280px,1fr))',gap:24 }}>
+            <div style={{ display:'grid',gridTemplateColumns:'repeat(auto-fill,minmax(220px,1fr))',gap:24 }}>
               {news.map((n, i) => (
                 <Reveal key={n.id} delay={i * 100}>
                   <div style={{ background:'#fff',borderRadius:12,border:'1px solid var(--border)',overflow:'hidden',transition:'transform .2s,box-shadow .2s',boxShadow:'0 1px 4px rgba(0,0,0,.03)' }}
@@ -461,9 +461,9 @@ export default function Home() {
                       <h3 style={{ fontFamily:'Playfair Display,serif',fontSize:17,fontWeight:700,color:'var(--navy)',marginBottom:10,lineHeight:1.35 }}>{n.title}</h3>
                       <p style={{ fontSize:13,color:'var(--text-mid)',lineHeight:1.65,marginBottom:16 }}>{n.summary}</p>
                       {n.external_url ? (
-                        <a href={n.external_url} target="_blank" rel="noreferrer" style={{ fontSize:13,color:'var(--gold)',fontWeight:600 }}>Saiba mais →</a>
+                        <a href={n.external_url} target="_blank" rel="noreferrer" style={{ fontSize:13,color:'var(--gold)',fontWeight:600 }}>Saiba mais â†’</a>
                       ) : (
-                        <Link to={`/noticias/${n.slug}`} style={{ fontSize:13,color:'var(--gold)',fontWeight:600 }}>Ler mais →</Link>
+                        <Link to={`/noticias/${n.slug}`} style={{ fontSize:13,color:'var(--gold)',fontWeight:600 }}>Ler mais â†’</Link>
                       )}
                     </div>
                   </div>
@@ -474,18 +474,18 @@ export default function Home() {
         </section>
       )}
 
-      {/* ── Mission card ── */}
+      {/* â”€â”€ Mission card â”€â”€ */}
       <Reveal>
         <section style={{ padding:'0 24px 96px' }}>
           <div style={{ maxWidth:1200,margin:'0 auto' }}>
             <div className="mission-card" style={{ background:'var(--navy)',borderRadius:20,padding:'56px 64px',display:'grid',gridTemplateColumns:'1fr auto',gap:48,alignItems:'center' }}>
               <div>
-                <div style={{ fontSize:11,fontWeight:600,letterSpacing:'0.2em',textTransform:'uppercase',color:'var(--gold-light)',marginBottom:16 }}>{settings.home_mission_eyebrow || 'Nossa Missão'}</div>
+                <div style={{ fontSize:11,fontWeight:600,letterSpacing:'0.2em',textTransform:'uppercase',color:'var(--gold-light)',marginBottom:16 }}>{settings.home_mission_eyebrow || 'Nossa MissÃ£o'}</div>
                 <h2 style={{ fontFamily:'Playfair Display,serif',fontSize:'clamp(24px,3.5vw,38px)',fontWeight:700,color:'#fff',lineHeight:1.25,marginBottom:20 }}>
                   {settings.home_mission_title || 'Evangelizar, celebrar e servir com amor'}
                 </h2>
                 <p style={{ fontSize:15,color:'rgba(255,255,255,.6)',lineHeight:1.75 }}>
-                  {settings.home_mission_text || 'A Paróquia Espírito Santo é uma comunidade viva que celebra os sacramentos, promove a formação cristã e serve à sociedade com amor fraterno.'}
+                  {settings.home_mission_text || 'A ParÃ³quia EspÃ­rito Santo Ã© uma comunidade viva que celebra os sacramentos, promove a formaÃ§Ã£o cristÃ£ e serve Ã  sociedade com amor fraterno.'}
                 </p>
               </div>
               <div style={{ display:'flex',flexDirection:'column',gap:16,flexShrink:0 }}>
@@ -497,7 +497,7 @@ export default function Home() {
                 <Link to={settings.home_mission_secondary_url || '/voluntario'} style={{ display:'inline-flex',alignItems:'center',justifyContent:'center',padding:'13px 28px',borderRadius:100,border:'1.5px solid rgba(255,255,255,.3)',color:'#fff',fontWeight:500,fontSize:14,transition:'background .2s' }}
                   onMouseEnter={e => e.currentTarget.style.background='rgba(255,255,255,.08)'}
                   onMouseLeave={e => e.currentTarget.style.background=''}>
-                  {settings.home_mission_secondary_label || 'Seja voluntário'}
+                  {settings.home_mission_secondary_label || 'Seja voluntÃ¡rio'}
                 </Link>
               </div>
             </div>
@@ -581,3 +581,4 @@ export default function Home() {
     </div>
   );
 }
+

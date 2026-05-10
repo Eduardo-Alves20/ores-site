@@ -1,4 +1,4 @@
-import { useFetch } from '../hooks/useFetch';
+﻿import { useFetch } from '../hooks/useFetch';
 import { useAudioPlayer } from '../contexts/AudioPlayerContext';
 import PageHeader from '../components/PageHeader';
 import Reveal from '../components/Reveal';
@@ -6,12 +6,15 @@ import { Clock, User, Music, Video, Play } from 'lucide-react';
 
 const TYPE_COLORS = {
   Homilia: { bg: 'var(--navy)', text: '#fff', badge: 'rgba(26,39,68,.12)', badgeText: 'var(--navy)' },
-  Reflexão: { bg: 'var(--gold)', text: '#fff', badge: 'rgba(184,148,90,.15)', badgeText: '#a07830' },
+  Reflexao: { bg: 'var(--gold)', text: '#fff', badge: 'rgba(184,148,90,.15)', badgeText: '#a07830' },
   Podcast:  { bg: '#6366f1', text: '#fff', badge: 'rgba(99,102,241,.12)', badgeText: '#6366f1' },
 };
 
 function HomiliaCard({ h, onPlay }) {
-  const color = TYPE_COLORS[h.type] || TYPE_COLORS.Homilia;
+  const normalizedType = String(h.type || '')
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '');
+  const color = TYPE_COLORS[h.type] || TYPE_COLORS[normalizedType] || TYPE_COLORS.Homilia;
   const hasAudio = !!h.audio_url;
   const hasVideo = !!h.video_url;
 
@@ -93,7 +96,7 @@ function HomiliaCard({ h, onPlay }) {
         </div>
       </div>
 
-      {/* Rodapé com botões */}
+      {/* RodapÃ© com botÃµes */}
       {(hasAudio || hasVideo) && (
         <div style={{
           padding: '14px 22px',
@@ -145,9 +148,9 @@ export default function Homilias() {
   return (
     <div className="animate-page">
       <PageHeader
-        eyebrow="Comunicação"
-        title="Homilias e Reflexões"
-        subtitle="Ouça as homilias e reflexões dos nossos sacerdotes."
+        eyebrow="ComunicaÃ§Ã£o"
+        title="Homilias e ReflexÃµes"
+        subtitle="OuÃ§a as homilias e reflexÃµes dos nossos sacerdotes."
       />
 
       <section style={{ padding: '72px 24px 96px', maxWidth: 1200, margin: '0 auto' }}>
@@ -158,7 +161,7 @@ export default function Homilias() {
         ) : (
           <div style={{
             display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
+            gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))',
             gap: 24,
           }}>
             {(homilies || []).map((h, i) => (
@@ -172,3 +175,4 @@ export default function Homilias() {
     </div>
   );
 }
+

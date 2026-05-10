@@ -1,4 +1,4 @@
-import { useState } from 'react';
+﻿import { useState } from 'react';
 import { useFetch } from '../hooks/useFetch';
 import PageHeader from '../components/PageHeader';
 import Reveal from '../components/Reveal';
@@ -17,7 +17,7 @@ function GroupModal({ group, onClose }) {
             <X size={18} />
           </button>
           <h2 style={{ fontFamily: 'Playfair Display,serif', fontSize: 'clamp(24px,4vw,32px)', color: 'var(--navy)', fontWeight: 700, marginBottom: 6, paddingRight: 42 }}>{group.name}</h2>
-          {(group.day_of_week || group.time_value) && <p style={{ fontSize: 14, color: 'var(--text-mid)' }}>{group.day_of_week} {group.time_value ? `· ${group.time_value}` : ''}</p>}
+          {(group.day_of_week || group.time_value) && <p style={{ fontSize: 14, color: 'var(--text-mid)' }}>{group.day_of_week} {group.time_value ? `Â· ${group.time_value}` : ''}</p>}
         </div>
         <div style={{ padding: 26, overflowY: 'auto' }}>
           {groupImage && <img src={groupImage} alt="" style={{ width: '100%', height: 200, objectFit: 'cover', borderRadius: 12, marginBottom: 18, border: '1px solid var(--border)' }} />}
@@ -46,7 +46,7 @@ export default function Grupos() {
       <PageHeader eyebrow="Comunidade" title="Grupos de Oracao" subtitle="Venha crescer na fe com nossos grupos de oracao e adoracao." />
       <section style={{ padding: '72px 24px', maxWidth: 1200, margin: '0 auto' }}>
         {loading ? <p style={{ textAlign: 'center', color: 'var(--text-soft)' }}>Carregando...</p> : (
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(300px,1fr))', gap: 24 }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(240px,1fr))', gap: 24 }}>
             {(groups || []).map((g, i) => {
               const groupImage = normalizeMediaUrl(g.image_url);
               return (
@@ -58,7 +58,7 @@ export default function Grupos() {
                     <div style={{ padding: '20px' }}>
                       <h3 style={{ fontFamily: 'Playfair Display,serif', fontSize: 18, fontWeight: 700, color: 'var(--navy)', marginBottom: 10 }}>{g.name}</h3>
                       <div style={{ display: 'flex', flexDirection: 'column', gap: 7, fontSize: 12, color: 'var(--text-soft)' }}>
-                        {g.day_of_week && <span style={{ display: 'flex', alignItems: 'center', gap: 6 }}><Clock size={12} style={{ color: 'var(--gold)' }} />{g.day_of_week} {g.time_value ? `· ${g.time_value}` : ''}</span>}
+                        {g.day_of_week && <span style={{ display: 'flex', alignItems: 'center', gap: 6 }}><Clock size={12} style={{ color: 'var(--gold)' }} />{g.day_of_week} {g.time_value ? `Â· ${g.time_value}` : ''}</span>}
                         {g.location && <span style={{ display: 'flex', alignItems: 'center', gap: 6 }}><MapPin size={12} style={{ color: 'var(--gold)' }} />{g.location}</span>}
                         {g.coordinator_phone && <span style={{ display: 'flex', alignItems: 'center', gap: 6 }}><Phone size={12} style={{ color: 'var(--gold)' }} />{g.coordinator_phone}</span>}
                       </div>
@@ -74,4 +74,5 @@ export default function Grupos() {
     </div>
   );
 }
+
 

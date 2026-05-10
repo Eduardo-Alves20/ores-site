@@ -58,7 +58,7 @@ export default function Salas() {
     <div className="animate-page">
       <PageHeader eyebrow="Paróquia" title="Agendamento de Salas" subtitle="Reserve espaços para atividades pastorais e comunitárias." />
       <section style={{ padding:'72px 24px', maxWidth:1200, margin:'0 auto' }}>
-        <div style={{ display:'grid', gridTemplateColumns:'1fr 260px', gap:24, alignItems:'start' }}>
+        <div className="salas-layout" style={{ display:'grid', gridTemplateColumns:'1fr 260px', gap:24, alignItems:'start' }}>
           {/* Calendar */}
           <div style={{ background:'#fff', borderRadius:16, border:'1px solid var(--border)', overflow:'hidden', boxShadow:'0 4px 24px rgba(0,0,0,.06)' }}>
             <div style={{ background:'var(--navy)', padding:'20px 28px', display:'flex', alignItems:'center', justifyContent:'space-between' }}>
@@ -125,7 +125,7 @@ export default function Salas() {
                 </select>
                 <input placeholder="Título do evento" value={form.title} onChange={e => setForm({ ...form, title: e.target.value })} style={{ padding:'10px 12px', borderRadius:8, border:'1px solid var(--border)', fontSize:14 }} />
                 <textarea placeholder="Descrição / observações" value={form.description} onChange={e => setForm({ ...form, description: e.target.value })} rows={2} style={{ padding:'10px 12px', borderRadius:8, border:'1px solid var(--border)', fontSize:14, resize:'vertical' }} />
-                <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:12 }}>
+                <div className="salas-time-grid" style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:12 }}>
                   <div><label style={{ fontSize:11, color:'var(--text-soft)', fontWeight:600 }}>Início</label><input type="time" value={form.start_time} onChange={e => setForm({ ...form, start_time: e.target.value })} style={{ display:'block', width:'100%', padding:'10px 12px', borderRadius:8, border:'1px solid var(--border)', fontSize:14 }} /></div>
                   <div><label style={{ fontSize:11, color:'var(--text-soft)', fontWeight:600 }}>Fim</label><input type="time" value={form.end_time} onChange={e => setForm({ ...form, end_time: e.target.value })} style={{ display:'block', width:'100%', padding:'10px 12px', borderRadius:8, border:'1px solid var(--border)', fontSize:14 }} /></div>
                 </div>
@@ -142,6 +142,18 @@ export default function Salas() {
           </div>
         )}
       </section>
+      <style>{`
+        @media (max-width: 980px) {
+          .salas-layout {
+            grid-template-columns: 1fr !important;
+          }
+        }
+        @media (max-width: 720px) {
+          .salas-time-grid {
+            grid-template-columns: 1fr !important;
+          }
+        }
+      `}</style>
     </div>
   );
 }

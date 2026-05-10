@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+﻿import { useEffect, useMemo, useState } from 'react';
 import { useFetch } from '../hooks/useFetch';
 import PageHeader from '../components/PageHeader';
 import Reveal from '../components/Reveal';
@@ -220,7 +220,7 @@ export default function Pastorais() {
         {loading ? (
           <p style={{ textAlign: 'center', color: 'var(--text-soft)' }}>Carregando...</p>
         ) : (
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(300px,1fr))', gap: 22 }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(240px,1fr))', gap: 22 }}>
             {filtered.map((p, i) => {
               const time = [p.meeting_day, p.meeting_time].filter(Boolean).join(', ');
               const pastoralThumb = normalizeMediaUrl(p.image_url);
@@ -258,7 +258,7 @@ export default function Pastorais() {
                         </p>
                       )}
                       {p.coordinator && <p style={{ fontSize: 12.5, color: 'var(--text-soft)', marginTop: 14 }}>Coord.: {p.coordinator}</p>}
-                      <div style={{ marginTop: 16, fontSize: 12, fontWeight: 700, color: 'var(--gold)' }}>Ver detalhes →</div>
+                      <div style={{ marginTop: 16, fontSize: 12, fontWeight: 700, color: 'var(--gold)' }}>Ver detalhes â†’</div>
                     </div>
                   </button>
                 </Reveal>
@@ -287,3 +287,4 @@ export default function Pastorais() {
     </div>
   );
 }
+

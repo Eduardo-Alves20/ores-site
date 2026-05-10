@@ -26,8 +26,12 @@ body {
 ::selection { background: var(--gold-light); color: var(--navy); }
 a { text-decoration: none; color: inherit; }
 img { display: block; max-width: 100%; }
+svg, video, canvas, iframe { max-width: 100%; }
 button { cursor: pointer; border: none; background: none; font-family: inherit; }
 input, select, textarea { font-family: inherit; }
+input, textarea, select { max-width: 100%; }
+pre, code, p, li, h1, h2, h3, h4, h5, h6, a, span { overflow-wrap: anywhere; }
+table { width: 100%; max-width: 100%; }
 ::-webkit-scrollbar { width: 5px; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }

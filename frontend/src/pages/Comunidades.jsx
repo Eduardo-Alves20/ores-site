@@ -1,4 +1,4 @@
-import { useState } from 'react';
+﻿import { useState } from 'react';
 import { useFetch } from '../hooks/useFetch';
 import PageHeader from '../components/PageHeader';
 import Reveal from '../components/Reveal';
@@ -47,7 +47,7 @@ export default function Comunidades() {
       <PageHeader eyebrow="Comunidade" title="Comunidades (Setores)" subtitle="Nossa paroquia e formada por diversas comunidades espalhadas pelos bairros da cidade." />
       <section style={{ padding: '72px 24px', maxWidth: 1200, margin: '0 auto' }}>
         {loading ? <p style={{ textAlign: 'center', color: 'var(--text-soft)' }}>Carregando...</p> : (
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(280px,1fr))', gap: 20 }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(220px,1fr))', gap: 20 }}>
             {(communities || []).map((c, i) => {
               const communityImage = normalizeMediaUrl(c.image_url);
               return (
@@ -73,4 +73,5 @@ export default function Comunidades() {
     </div>
   );
 }
+
 

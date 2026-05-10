@@ -29,7 +29,7 @@ export default function Conheca() {
         subtitle={s.conheca_subtitle || `Tudo sobre a ${siteName}.`}
       />
       <section style={{ padding: '72px 24px' }}>
-        <div style={{ maxWidth: 1200, margin: '0 auto', display: 'grid', gridTemplateColumns: '1fr 340px', gap: 32, alignItems: 'start' }}>
+        <div className="conheca-layout" style={{ maxWidth: 1200, margin: '0 auto', display: 'grid', gridTemplateColumns: '1fr 340px', gap: 32, alignItems: 'start' }}>
           <div>
             <Reveal>
               <div style={{ background: '#fff', borderRadius: 12, border: '1px solid var(--border)', padding: '32px', marginBottom: 24 }}>
@@ -42,7 +42,7 @@ export default function Conheca() {
                 </p>
               </div>
             </Reveal>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(200px,1fr))', gap: 16 }}>
+            <div className="conheca-cards" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(200px,1fr))', gap: 16 }}>
               {CARDS.map((card, i) => (
                 <Reveal key={card.label} delay={i * 60}>
                   <Link
@@ -66,6 +66,19 @@ export default function Conheca() {
           </div>
         </div>
       </section>
+      <style>{`
+        @media (max-width: 960px) {
+          .conheca-layout {
+            grid-template-columns: 1fr !important;
+            gap: 22px !important;
+          }
+        }
+        @media (max-width: 640px) {
+          .conheca-cards {
+            grid-template-columns: 1fr !important;
+          }
+        }
+      `}</style>
     </div>
   );
 }

@@ -84,7 +84,7 @@ export function NoticiasList() {
       <PageHeader headerKey="news" eyebrow="Comunicacao" title="Noticias" subtitle="Fique por dentro das novidades da paroquia." />
       <section style={{ padding: '72px 24px', maxWidth: 1200, margin: '0 auto' }}>
         {loading ? <p style={{ textAlign: 'center', color: 'var(--text-soft)' }}>Carregando...</p> : (
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(300px,1fr))', gap: 24 }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(240px,1fr))', gap: 24 }}>
             {(news || []).map((item, i) => (
               <Reveal key={item.id} delay={i * 80}>
                 <NewsCard newsItem={item} />
@@ -174,3 +174,4 @@ export function NoticiaDetalhe() {
     </div>
   );
 }
+

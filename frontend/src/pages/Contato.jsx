@@ -47,13 +47,13 @@ export default function Contato() {
     <div className="animate-page">
       <PageHeader eyebrow="Fale Conosco" title="Contato" subtitle="Entre em contato com a Secretaria Paroquial." />
       <section style={{ padding:'72px 24px', maxWidth:1100, margin:'0 auto' }}>
-        <div style={{ display:'grid', gridTemplateColumns:'1fr 360px', gap:32, alignItems:'start' }}>
+        <div className="contato-layout" style={{ display:'grid', gridTemplateColumns:'1fr 360px', gap:32, alignItems:'start' }}>
           {/* Form */}
           <Reveal>
             <div style={{ background:'#fff', borderRadius:12, border:'1px solid var(--border)', padding:'40px' }}>
               <h2 style={{ fontFamily:'Playfair Display,serif', fontSize:22, fontWeight:700, color:'var(--navy)', marginBottom:24 }}>Envie uma mensagem</h2>
               <form onSubmit={submit} style={{ display:'flex', flexDirection:'column', gap:16 }}>
-                <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:16 }}>
+                <div className="contato-form-grid" style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:16 }}>
                   <div>
                     <label style={{ display:'block', fontSize:12, fontWeight:600, color:'var(--text-soft)', marginBottom:6 }}>Nome *</label>
                     <input required value={form.name} onChange={e => setForm({ ...form, name:e.target.value })} style={{ width:'100%', padding:'11px 14px', borderRadius:8, border:'1px solid var(--border)', fontSize:14, outline:'none', transition:'border-color .2s' }} onFocus={e => e.target.style.borderColor='var(--gold)'} onBlur={e => e.target.style.borderColor='var(--border)'} />
@@ -63,7 +63,7 @@ export default function Contato() {
                     <input required type="email" value={form.email} onChange={e => setForm({ ...form, email:e.target.value })} style={{ width:'100%', padding:'11px 14px', borderRadius:8, border:'1px solid var(--border)', fontSize:14, outline:'none', transition:'border-color .2s' }} onFocus={e => e.target.style.borderColor='var(--gold)'} onBlur={e => e.target.style.borderColor='var(--border)'} />
                   </div>
                 </div>
-                <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:16 }}>
+                <div className="contato-form-grid" style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:16 }}>
                   <div>
                     <label style={{ display:'block', fontSize:12, fontWeight:600, color:'var(--text-soft)', marginBottom:6 }}>Telefone</label>
                     <input value={form.phone} onChange={e => setForm({ ...form, phone:e.target.value })} style={{ width:'100%', padding:'11px 14px', borderRadius:8, border:'1px solid var(--border)', fontSize:14, outline:'none', transition:'border-color .2s' }} onFocus={e => e.target.style.borderColor='var(--gold)'} onBlur={e => e.target.style.borderColor='var(--border)'} />
@@ -140,6 +140,19 @@ export default function Contato() {
           </div>
         </div>
       </section>
+      <style>{`
+        @media (max-width: 980px) {
+          .contato-layout {
+            grid-template-columns: 1fr !important;
+            gap: 22px !important;
+          }
+        }
+        @media (max-width: 680px) {
+          .contato-form-grid {
+            grid-template-columns: 1fr !important;
+          }
+        }
+      `}</style>
     </div>
   );
 }
