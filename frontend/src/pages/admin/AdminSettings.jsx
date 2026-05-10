@@ -8,9 +8,11 @@ import { PUBLIC_MENU_ITEMS, ADMIN_MENU_ITEMS, enabledKey } from '../../lib/menuL
 
 function RichTextInput({ value, onChange }) {
   const editorRef = useRef(null);
+  const isEditingRef = useRef(false);
 
   useEffect(() => {
     if (!editorRef.current) return;
+    if (isEditingRef.current) return;
     if (editorRef.current.innerHTML === (value || '')) return;
     editorRef.current.innerHTML = value || '';
   }, [value]);
@@ -44,8 +46,15 @@ function RichTextInput({ value, onChange }) {
         contentEditable
         suppressContentEditableWarning
         onInput={(e) => onChange(e.currentTarget.innerHTML)}
-        onFocus={(e) => { e.currentTarget.style.borderColor = 'var(--gold)'; }}
-        onBlur={(e) => { e.currentTarget.style.borderColor = 'var(--border)'; }}
+        onFocus={(e) => {
+          isEditingRef.current = true;
+          e.currentTarget.style.borderColor = 'var(--gold)';
+        }}
+        onBlur={(e) => {
+          isEditingRef.current = false;
+          onChange(e.currentTarget.innerHTML);
+          e.currentTarget.style.borderColor = 'var(--border)';
+        }}
         style={{
           width:'100%',
           minHeight: 130,
