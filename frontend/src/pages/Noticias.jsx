@@ -100,12 +100,17 @@ export function NoticiasList() {
 export function NoticiaDetalhe() {
   const { slug } = useParams();
   const { data: news, loading } = useFetch(`/news/${slug}`);
+  const { data: newsList } = useFetch('/news');
 
   if (loading) return <div style={{ paddingTop: 100, textAlign: 'center', color: 'var(--text-soft)' }}>Carregando...</div>;
   if (!news) return <div style={{ paddingTop: 100, textAlign: 'center' }}><p>Noticia nao encontrada.</p><Link to="/noticias" style={{ color: 'var(--gold)', fontWeight: 600 }}>{'<-'} Voltar</Link></div>;
 
   const detailImageUrl = normalizeMediaUrl(news.image_url);
   const detailTitle = news.title || 'Noticia';
+  const list = Array.isArray(newsList) ? newsList : [];
+  const currentIndex = list.findIndex((item) => item.slug === slug);
+  const prevNews = currentIndex > 0 ? list[currentIndex - 1] : null;
+  const nextNews = currentIndex >= 0 && currentIndex < list.length - 1 ? list[currentIndex + 1] : null;
 
   return (
     <div className="animate-page">
@@ -113,6 +118,33 @@ export function NoticiaDetalhe() {
       <section style={{ padding: '72px 24px', maxWidth: 800, margin: '0 auto' }}>
         <Reveal>
           <div style={{ background: '#fff', borderRadius: 12, border: '1px solid var(--border)', padding: '40px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12, marginBottom: 20 }}>
+              <div style={{ flex: 1 }}>
+                <h1 style={{ fontFamily: 'Playfair Display,serif', fontSize: 'clamp(26px,4vw,38px)', color: 'var(--navy)', lineHeight: 1.2, fontWeight: 700 }}>
+                  {detailTitle}
+                </h1>
+              </div>
+              <div style={{ display: 'flex', gap: 8, flexShrink: 0 }}>
+                {prevNews ? (
+                  <Link to={`/noticias/${prevNews.slug}`} style={{ padding: '8px 12px', borderRadius: 8, border: '1px solid var(--border)', color: 'var(--navy)', fontSize: 13, fontWeight: 700, background: '#fff' }}>
+                    {'<-'} Anterior
+                  </Link>
+                ) : (
+                  <span style={{ padding: '8px 12px', borderRadius: 8, border: '1px solid var(--border)', color: 'var(--text-soft)', fontSize: 13, fontWeight: 700, background: '#faf8f4' }}>
+                    {'<-'} Anterior
+                  </span>
+                )}
+                {nextNews ? (
+                  <Link to={`/noticias/${nextNews.slug}`} style={{ padding: '8px 12px', borderRadius: 8, border: '1px solid var(--border)', color: '#fff', fontSize: 13, fontWeight: 700, background: 'var(--gold)' }}>
+                    Proxima {'->'}
+                  </Link>
+                ) : (
+                  <span style={{ padding: '8px 12px', borderRadius: 8, border: '1px solid var(--border)', color: 'var(--text-soft)', fontSize: 13, fontWeight: 700, background: '#faf8f4' }}>
+                    Proxima {'->'}
+                  </span>
+                )}
+              </div>
+            </div>
             {detailImageUrl && (
               <div style={{ marginBottom: 20, borderRadius: 12, overflow: 'hidden', border: '1px solid var(--border)' }}>
                 <img
