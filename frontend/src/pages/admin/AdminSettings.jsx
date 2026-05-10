@@ -297,6 +297,27 @@ const sections = [
   },
 ];
 
+function SettingsField({ field, form, setValue, MenuManagerComponent }) {
+  const [key, label, type] = field;
+  if (type === 'menu_manager') return <MenuManagerComponent />;
+  if (type === 'image') return <MediaField label={label} value={form[key] || ''} onChange={(v) => setValue(key, v)} />;
+  const common = {
+    value: form[key] || '',
+    onChange: (e) => setValue(key, e.target.value),
+    style: { width:'100%', padding:'10px 14px', borderRadius:8, border:'1px solid var(--border)', fontSize:14, outline:'none' },
+    onFocus: (e) => { e.target.style.borderColor = 'var(--gold)'; },
+    onBlur: (e) => { e.target.style.borderColor = 'var(--border)'; },
+  };
+  return (
+    <div style={{ marginBottom:18 }}>
+      <label style={{ display:'block', fontSize:12, fontWeight:700, color:'var(--text-soft)', marginBottom:6, textTransform:'uppercase', letterSpacing:'0.04em' }}>{label}</label>
+      {type === 'textarea'
+        ? <RichTextInput value={form[key] || ''} onChange={(v) => setValue(key, v)} />
+        : <input type={type || 'text'} {...common} />}
+    </div>
+  );
+}
+
 export default function AdminSettings() {
   const { data, refetch } = useFetch('/admin/settings');
   const { notify, confirm } = useAppAlert();
@@ -421,27 +442,6 @@ export default function AdminSettings() {
     );
   };
 
-  const Input = ({ field }) => {
-    const [key, label, type] = field;
-    if (type === 'menu_manager') return <MenuManager />;
-    if (type === 'image') return <MediaField label={label} value={form[key] || ''} onChange={v => set(key, v)} />;
-    const common = {
-      value: form[key] || '',
-      onChange: e => set(key, e.target.value),
-      style: { width:'100%', padding:'10px 14px', borderRadius:8, border:'1px solid var(--border)', fontSize:14, outline:'none' },
-      onFocus: e => e.target.style.borderColor = 'var(--gold)',
-      onBlur: e => e.target.style.borderColor = 'var(--border)',
-    };
-    return (
-      <div style={{ marginBottom:18 }}>
-        <label style={{ display:'block', fontSize:12, fontWeight:700, color:'var(--text-soft)', marginBottom:6, textTransform:'uppercase', letterSpacing:'0.04em' }}>{label}</label>
-        {type === 'textarea'
-          ? <RichTextInput value={form[key] || ''} onChange={(v) => set(key, v)} />
-          : <input type={type || 'text'} {...common} />}
-      </div>
-    );
-  };
-
   const section = sections.find(s => s.title === active) || sections[0];
 
   return (
@@ -478,7 +478,7 @@ export default function AdminSettings() {
           <div style={{ display:'grid', gridTemplateColumns:'repeat(2,minmax(0,1fr))', gap:'0 18px' }}>
             {section.fields.map(field => (
               <div key={field[0]} style={{ gridColumn:field[2] === 'textarea' || field[2] === 'image' || field[2] === 'menu_manager' ? '1 / -1' : 'auto' }}>
-                <Input field={field} />
+                <SettingsField field={field} form={form} setValue={set} MenuManagerComponent={MenuManager} />
               </div>
             ))}
           </div>
