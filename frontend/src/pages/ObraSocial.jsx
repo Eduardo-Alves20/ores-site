@@ -11,25 +11,25 @@ export default function ObraSocial() {
   const courses = data?.courses || [];
   return (
     <div className="animate-page">
-      <PageHeader headerKey="obra_social" eyebrow={s.obra_social_eyebrow || 'Obra Social'} title={s.obra_social_title || 'Obra Social Notre Dame de FÃ¡tima'} subtitle={s.obra_social_subtitle || 'Servindo a comunidade com amor e solidariedade hÃ¡ dÃ©cadas.'} />
+      <PageHeader headerKey="obra_social" eyebrow={s.obra_social_eyebrow || 'Obra Social'} title={s.obra_social_title || 'Obra Social Notre Dame de Fátima'} subtitle={s.obra_social_subtitle || 'Servindo a comunidade com amor e solidariedade há décadas.'} />
       <section style={{ padding:'72px 24px', maxWidth:1200, margin:'0 auto' }}>
         <Reveal>
           <div style={{ background:'var(--navy)', borderRadius:16, padding:'40px 48px', marginBottom:56, display:'grid', gridTemplateColumns:'1fr auto', gap:32, alignItems:'center' }}>
             <div>
-              <h2 style={{ fontFamily:'Playfair Display,serif', fontSize:28, color:'#fff', fontWeight:700, marginBottom:12 }}>{s.obra_social_mission_title || 'Nossa MissÃ£o Social'}</h2>
-              <p style={{ fontSize:15, color:'rgba(255,255,255,.7)', lineHeight:1.75 }}>{s.obra_social_mission_text || 'A Obra Social Nossa Senhora de FÃ¡tima Ã© o braÃ§o assistencial da ParÃ³quia EspÃ­rito Santo, oferecendo serviÃ§os gratuitos e cursos profissionalizantes para famÃ­lias em situaÃ§Ã£o de vulnerabilidade.'}</p>
+              <h2 style={{ fontFamily:'Playfair Display,serif', fontSize:28, color:'#fff', fontWeight:700, marginBottom:12 }}>{s.obra_social_mission_title || 'Nossa Missão Social'}</h2>
+              <p style={{ fontSize:15, color:'rgba(255,255,255,.7)', lineHeight:1.75 }}>{s.obra_social_mission_text || 'A Obra Social Nossa Senhora de Fátima é o braço assistencial da Paróquia Espírito Santo, oferecendo serviços gratuitos e cursos profissionalizantes para famílias em situação de vulnerabilidade.'}</p>
             </div>
             <Link to={s.obra_social_cta_url || '/voluntario'} style={{ padding:'13px 28px', borderRadius:100, background:'var(--gold)', color:'#fff', fontWeight:600, fontSize:14, whiteSpace:'nowrap', flexShrink:0, transition:'transform .2s' }}
               onMouseEnter={e => e.currentTarget.style.transform='translateY(-2px)'}
               onMouseLeave={e => e.currentTarget.style.transform=''}>
-              {s.obra_social_cta_label || 'Seja VoluntÃ¡rio'}
+              {s.obra_social_cta_label || 'Seja Voluntário'}
             </Link>
           </div>
         </Reveal>
 
         {/* Services */}
         <Reveal>
-          <h2 style={{ fontFamily:'Playfair Display,serif', fontSize:24, fontWeight:700, color:'var(--navy)', marginBottom:24 }}>ServiÃ§os Oferecidos</h2>
+          <h2 style={{ fontFamily:'Playfair Display,serif', fontSize:24, fontWeight:700, color:'var(--navy)', marginBottom:24 }}>Serviços Oferecidos</h2>
         </Reveal>
         <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fill,minmax(220px,1fr))', gap:20, marginBottom:56 }}>
           {services.map((s, i) => (
@@ -59,8 +59,8 @@ export default function ObraSocial() {
                 </div>
                 <p style={{ fontSize:13, color:'var(--text-mid)', lineHeight:1.65, marginBottom:12 }}>{c.description}</p>
                 <div style={{ fontSize:12, color:'var(--text-soft)', display:'flex', flexDirection:'column', gap:4 }}>
-                  {c.duration && <span>â± {c.duration}</span>}
-                  {c.schedule && <span>ðŸ“… {c.schedule}</span>}
+                  {c.duration && <span>Duração: {c.duration}</span>}
+                  {c.schedule && <span>Horário: {c.schedule}</span>}
                 </div>
               </div>
             </Reveal>

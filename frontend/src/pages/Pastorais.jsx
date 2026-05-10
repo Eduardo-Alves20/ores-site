@@ -258,7 +258,7 @@ export default function Pastorais() {
                         </p>
                       )}
                       {p.coordinator && <p style={{ fontSize: 12.5, color: 'var(--text-soft)', marginTop: 14 }}>Coord.: {p.coordinator}</p>}
-                      <div style={{ marginTop: 16, fontSize: 12, fontWeight: 700, color: 'var(--gold)' }}>Ver detalhes â†’</div>
+                      <div style={{ marginTop: 16, fontSize: 12, fontWeight: 700, color: 'var(--gold)' }}>Ver detalhes →</div>
                     </div>
                   </button>
                 </Reveal>

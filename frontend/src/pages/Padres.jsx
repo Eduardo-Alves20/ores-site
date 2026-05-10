@@ -74,7 +74,7 @@ function PriestModal({ priest, masses, onClose }) {
                 ))}
               </div>
             ) : (
-              <p style={{ fontSize:14, color:'var(--text-soft)' }}>Nenhum horÃ¡rio cadastrado.</p>
+              <p style={{ fontSize:14, color:'var(--text-soft)' }}>Nenhum horário cadastrado.</p>
             )}
           </div>
         </div>
@@ -90,7 +90,7 @@ export default function Padres() {
 
   return (
     <div className="animate-page">
-      <PageHeader eyebrow="ParÃ³quia" title="Padres e DiÃ¡conos" subtitle="ConheÃ§a os sacerdotes e diÃ¡conos que servem a nossa comunidade." />
+      <PageHeader eyebrow="Paróquia" title="Padres e Diáconos" subtitle="Conheça os sacerdotes e diáconos que servem a nossa comunidade." />
       <section style={{ padding:'72px 24px', maxWidth:1200, margin:'0 auto' }}>
         {loading ? <p style={{ textAlign:'center', color:'var(--text-soft)' }}>Carregando...</p> : (
           <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fill,minmax(240px,1fr))', gap:24 }}>
@@ -119,7 +119,7 @@ export default function Padres() {
                           </div>
                         </div>
                       )}
-                      <div style={{ marginTop:16, fontSize:12, fontWeight:800, color:'var(--gold)' }}>Ver detalhes â†’</div>
+                      <div style={{ marginTop:16, fontSize:12, fontWeight:800, color:'var(--gold)' }}>Ver detalhes →</div>
                     </div>
                   </button>
                 </Reveal>

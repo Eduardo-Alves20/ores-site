@@ -1,4 +1,4 @@
-﻿import { useFetch } from '../hooks/useFetch';
+import { useFetch } from '../hooks/useFetch';
 import { useAudioPlayer } from '../contexts/AudioPlayerContext';
 import PageHeader from '../components/PageHeader';
 import Reveal from '../components/Reveal';
@@ -96,7 +96,7 @@ function HomiliaCard({ h, onPlay }) {
         </div>
       </div>
 
-      {/* RodapÃ© com botÃµes */}
+      {/* Rodapé com botões */}
       {(hasAudio || hasVideo) && (
         <div style={{
           padding: '14px 22px',
@@ -148,9 +148,9 @@ export default function Homilias() {
   return (
     <div className="animate-page">
       <PageHeader
-        eyebrow="ComunicaÃ§Ã£o"
-        title="Homilias e ReflexÃµes"
-        subtitle="OuÃ§a as homilias e reflexÃµes dos nossos sacerdotes."
+        eyebrow="Comunicação"
+        title="Homilias e Reflexões"
+        subtitle="Ouça as homilias e reflexões dos nossos sacerdotes."
       />
 
       <section style={{ padding: '72px 24px 96px', maxWidth: 1200, margin: '0 auto' }}>

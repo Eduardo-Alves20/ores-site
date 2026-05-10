@@ -1,4 +1,4 @@
-﻿import { useFetch } from '../hooks/useFetch';
+import { useFetch } from '../hooks/useFetch';
 import PageHeader from '../components/PageHeader';
 import Reveal from '../components/Reveal';
 
@@ -6,7 +6,7 @@ export default function Instalacoes() {
   const { data: facilities, loading } = useFetch('/facilities');
   return (
     <div className="animate-page">
-      <PageHeader eyebrow="ParÃ³quia" title="InstalaÃ§Ãµes" subtitle="ConheÃ§a os espaÃ§os da ParÃ³quia EspÃ­rito Santo disponÃ­veis para a comunidade." />
+      <PageHeader eyebrow="Paróquia" title="Instalações" subtitle="Conheça os espaços da Paróquia Espírito Santo disponíveis para a comunidade." />
       <section style={{ padding:'72px 24px', maxWidth:1200, margin:'0 auto' }}>
         {loading ? <p style={{ textAlign:'center', color:'var(--text-soft)' }}>Carregando...</p> : (
           <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fill,minmax(220px,1fr))', gap:24 }}>
