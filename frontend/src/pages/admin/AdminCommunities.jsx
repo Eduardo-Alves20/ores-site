@@ -8,6 +8,11 @@ export default function AdminCommunities() {
       searchField="name"
       columns={[
         { key: 'name', label: 'Nome', primary: true },
+        {
+          key: 'image_url',
+          label: 'Foto',
+          render: (v) => (v ? <img src={v} alt="" style={{ width: 46, height: 46, objectFit: 'cover', borderRadius: 8, border: '1px solid var(--border)' }} /> : '—'),
+        },
         { key: 'neighborhood', label: 'Bairro' },
         { key: 'coordinator_name', label: 'Coordenador' },
         { key: 'coordinator_phone', label: 'Telefone' },
@@ -26,4 +31,3 @@ export default function AdminCommunities() {
     />
   );
 }
-

@@ -8,6 +8,11 @@ export default function AdminGroups() {
       searchField="name"
       columns={[
         { key: 'name', label: 'Nome', primary: true },
+        {
+          key: 'image_url',
+          label: 'Foto',
+          render: (v) => (v ? <img src={v} alt="" style={{ width: 46, height: 46, objectFit: 'cover', borderRadius: 8, border: '1px solid var(--border)' }} /> : '—'),
+        },
         { key: 'day_of_week', label: 'Dia' },
         { key: 'time_value', label: 'Horario' },
         { key: 'location', label: 'Local' },
@@ -28,4 +33,3 @@ export default function AdminGroups() {
     />
   );
 }
-
