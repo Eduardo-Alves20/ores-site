@@ -34,12 +34,16 @@ export default function Conheca() {
             <Reveal>
               <div style={{ background: '#fff', borderRadius: 12, border: '1px solid var(--border)', padding: '32px', marginBottom: 24 }}>
                 <h2 style={{ fontFamily: 'Playfair Display,serif', fontSize: 24, fontWeight: 700, color: 'var(--navy)', marginBottom: 16 }}>{s.conheca_history_title || 'Nossa Historia'}</h2>
-                <p style={{ fontSize: 15, color: 'var(--text-mid)', lineHeight: 1.75, marginBottom: 16 }}>
-                  {s.conheca_history_text_1 || `A ${siteName} serve a comunidade com fe, caridade e evangelizacao.`}
-                </p>
-                <p style={{ fontSize: 15, color: 'var(--text-mid)', lineHeight: 1.75 }}>
-                  {s.conheca_history_text_2 || 'Nossa missao e evangelizar, celebrar os sacramentos e promover o desenvolvimento integral da pessoa humana.'}
-                </p>
+                <div
+                  className="conheca-history-content"
+                  style={{ fontSize: 15, color: 'var(--text-mid)', lineHeight: 1.75, marginBottom: 16 }}
+                  dangerouslySetInnerHTML={{ __html: s.conheca_history_text_1 || `A ${siteName} serve a comunidade com fe, caridade e evangelizacao.` }}
+                />
+                <div
+                  className="conheca-history-content"
+                  style={{ fontSize: 15, color: 'var(--text-mid)', lineHeight: 1.75 }}
+                  dangerouslySetInnerHTML={{ __html: s.conheca_history_text_2 || 'Nossa missao e evangelizar, celebrar os sacramentos e promover o desenvolvimento integral da pessoa humana.' }}
+                />
               </div>
             </Reveal>
             <div className="conheca-cards" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(200px,1fr))', gap: 16 }}>
@@ -67,6 +71,32 @@ export default function Conheca() {
         </div>
       </section>
       <style>{`
+        .conheca-history-content p {
+          margin: 0 0 12px 0;
+        }
+        .conheca-history-content h1,
+        .conheca-history-content h2,
+        .conheca-history-content h3,
+        .conheca-history-content h4 {
+          margin: 10px 0 8px;
+          color: var(--navy);
+          line-height: 1.35;
+          font-family: 'Playfair Display, serif';
+        }
+        .conheca-history-content ul,
+        .conheca-history-content ol {
+          margin: 0 0 12px 20px;
+        }
+        .conheca-history-content li {
+          margin-bottom: 6px;
+        }
+        .conheca-history-content blockquote {
+          margin: 10px 0;
+          padding: 10px 14px;
+          border-left: 3px solid var(--gold);
+          background: var(--cream);
+          border-radius: 8px;
+        }
         @media (max-width: 960px) {
           .conheca-layout {
             grid-template-columns: 1fr !important;
