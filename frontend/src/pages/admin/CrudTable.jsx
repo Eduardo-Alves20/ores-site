@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Pencil, Trash2, Plus, X, Check, Search } from 'lucide-react';
 import api from '../../lib/api';
 import { useFetch } from '../../hooks/useFetch';
@@ -20,6 +20,17 @@ function Modal({ title, children, onClose }) {
 }
 
 function RichTextField({ value, onChange }) {
+  const editorRef = useRef(null);
+  const isEditingRef = useRef(false);
+
+  useEffect(() => {
+    if (!editorRef.current) return;
+    if (isEditingRef.current) return;
+    const next = value || '';
+    if (editorRef.current.innerHTML === next) return;
+    editorRef.current.innerHTML = next;
+  }, [value]);
+
   const style = {
     width: '100%',
     minHeight: 170,
@@ -35,6 +46,7 @@ function RichTextField({ value, onChange }) {
 
   const apply = (command, arg) => {
     document.execCommand(command, false, arg);
+    if (editorRef.current) onChange(editorRef.current.innerHTML);
   };
 
   const toolbarBtn = {
@@ -58,13 +70,20 @@ function RichTextField({ value, onChange }) {
         <button type="button" onClick={() => apply('insertParagraph')} style={toolbarBtn}>Quebra</button>
       </div>
       <div
+        ref={editorRef}
         contentEditable
         suppressContentEditableWarning
         style={style}
         onInput={(e) => onChange(e.currentTarget.innerHTML)}
-        onFocus={(e) => { e.currentTarget.style.borderColor = 'var(--gold)'; }}
-        onBlur={(e) => { e.currentTarget.style.borderColor = 'var(--border)'; }}
-        dangerouslySetInnerHTML={{ __html: value || '' }}
+        onFocus={(e) => {
+          isEditingRef.current = true;
+          e.currentTarget.style.borderColor = 'var(--gold)';
+        }}
+        onBlur={(e) => {
+          isEditingRef.current = false;
+          onChange(e.currentTarget.innerHTML);
+          e.currentTarget.style.borderColor = 'var(--border)';
+        }}
       />
     </div>
   );
