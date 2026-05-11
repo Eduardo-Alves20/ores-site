@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link, useLocation, useNavigate, Outlet } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth.jsx';
 import { useFetch } from '../../hooks/useFetch';
@@ -10,7 +10,7 @@ import {
   Settings, LogOut, Menu, X, Shield, ChevronRight, Handshake, Images
 } from 'lucide-react';
 
-function buildMenu(labels) {
+function buildMenu(labels, unreadMessages = 0) {
   const raw = [
     labels.menu_admin_dashboard_enabled && { label: labels.menu_admin_dashboard, to:'/admin/dashboard', icon:<LayoutDashboard size={18}/> },
     labels.menu_admin_settings_enabled && { label: labels.menu_admin_settings, to:'/admin/settings', icon:<Settings size={18}/> },
@@ -32,7 +32,7 @@ function buildMenu(labels) {
     labels.menu_admin_services_enabled && { label: labels.menu_admin_services, to:'/admin/services', icon:<Handshake size={18}/> },
     labels.menu_admin_courses_enabled && { label: labels.menu_admin_courses, to:'/admin/courses', icon:<GraduationCap size={18}/> },
     labels.menu_admin_divider_system_enabled && { divider: true, label: labels.menu_admin_divider_system },
-    labels.menu_admin_messages_enabled && { label: labels.menu_admin_messages, to:'/admin/messages', icon:<MessageSquare size={18}/> },
+    labels.menu_admin_messages_enabled && { label: labels.menu_admin_messages, to:'/admin/messages', icon:<MessageSquare size={18}/>, badge: unreadMessages },
     labels.menu_admin_users_enabled && { label: labels.menu_admin_users, to:'/admin/users', icon:<Shield size={18}/> },
     labels.menu_admin_audit_enabled && { label: labels.menu_admin_audit, to:'/admin/audit', icon:<Shield size={18}/> },
   ].filter(Boolean);
@@ -48,13 +48,21 @@ function buildMenu(labels) {
 export default function AdminLayout() {
   const { user, logout } = useAuth();
   const { data: siteInfo } = useFetch('/site-info');
+  const { data: dashboard, refetch: refetchDashboard } = useFetch('/admin/dashboard');
   const siteName = getSiteName(siteInfo || {});
   const menuLabels = getAdminMenuLabels(siteInfo || {});
-  const MENU = buildMenu(menuLabels);
+  const unreadMessages = Number(dashboard?.stats?.unreadMessages || 0);
+  const MENU = buildMenu(menuLabels, unreadMessages);
   const location = useLocation();
   const navigate = useNavigate();
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [mobileOpen, setMobileOpen] = useState(false);
+
+  useEffect(() => {
+    const updateDashboard = () => refetchDashboard();
+    window.addEventListener('admin-messages-updated', updateDashboard);
+    return () => window.removeEventListener('admin-messages-updated', updateDashboard);
+  }, [refetchDashboard]);
 
   const handleLogout = async () => {
     await logout();
@@ -88,7 +96,12 @@ export default function AdminLayout() {
               onMouseEnter={e => { if (!active) { e.currentTarget.style.background='rgba(255,255,255,.04)'; e.currentTarget.style.color='rgba(255,255,255,.9)'; } }}
               onMouseLeave={e => { if (!active) { e.currentTarget.style.background='transparent'; e.currentTarget.style.color='rgba(255,255,255,.6)'; } }}>
               <span style={{ flexShrink:0 }}>{item.icon}</span>
-              {(sidebarOpen||mobile) && item.label}
+              {(sidebarOpen||mobile) && <span style={{ flex:1 }}>{item.label}</span>}
+              {item.badge > 0 && (
+                <span style={{ minWidth:18, height:18, padding:'0 6px', borderRadius:999, background:'#ef4444', color:'#fff', fontSize:10, fontWeight:800, display:'inline-flex', alignItems:'center', justifyContent:'center', marginLeft:(sidebarOpen||mobile)?'auto':0 }}>
+                  {item.badge > 99 ? '99+' : item.badge}
+                </span>
+              )}
             </Link>
           );
         })}

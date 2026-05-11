@@ -13,9 +13,12 @@ export default function AdminMessages() {
   const { notify, confirm } = useAppAlert();
   const [selected, setSelected] = useState(null);
 
+  const isVolunteerMessage = (message) => String(message?.subject || '').toLowerCase().includes('volunt');
+
   const markRead = async (id) => {
     await api.put(`/admin/messages/${id}/read`);
     refetch();
+    window.dispatchEvent(new Event('admin-messages-updated'));
   };
 
   const del = async (id) => {
@@ -26,6 +29,7 @@ export default function AdminMessages() {
       setSelected(null);
       notify({ type:'success', title:'Mensagem excluída', message:'A mensagem foi removida.' });
       refetch();
+      window.dispatchEvent(new Event('admin-messages-updated'));
     } catch {
       notify({ type:'error', title:'Erro ao excluir', message:'Não consegui excluir a mensagem agora.' });
     }
@@ -33,7 +37,7 @@ export default function AdminMessages() {
 
   return (
     <div>
-      <h1 style={{ fontFamily:'Playfair Display,serif', fontSize:26, fontWeight:700, color:'var(--navy)', marginBottom:24 }}>Mensagens de Contato</h1>
+      <h1 style={{ fontFamily:'Playfair Display,serif', fontSize:26, fontWeight:700, color:'var(--navy)', marginBottom:24 }}>Mensagens de Contato e Voluntariado</h1>
       <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:24 }}>
         <div style={{ background:'#fff', borderRadius:12, border:'1px solid var(--border)', overflow:'hidden' }}>
           {loading ? <div style={{ padding:40, textAlign:'center', color:'var(--text-soft)' }}>Carregando...</div> : (
@@ -45,7 +49,7 @@ export default function AdminMessages() {
                     <span style={{ fontWeight:600, fontSize:13, color:'var(--navy)' }}>{m.name}</span>
                     {!m.read_at && <span style={{ fontSize:9, background:'#ef4444', color:'#fff', padding:'2px 6px', borderRadius:100, fontWeight:700 }}>NOVO</span>}
                   </div>
-                  <div style={{ fontSize:12, color:'var(--text-soft)', marginBottom:2 }}>{m.subject || '(Sem assunto)'}</div>
+                  <div style={{ fontSize:12, color:isVolunteerMessage(m)?'var(--gold)':'var(--text-soft)', fontWeight:isVolunteerMessage(m)?700:400, marginBottom:2 }}>{m.subject || '(Sem assunto)'}</div>
                   <div style={{ fontSize:11, color:'var(--text-soft)' }}>{m.email} · {formatDate(m.created_at)}</div>
                 </button>
               ))
@@ -62,6 +66,7 @@ export default function AdminMessages() {
               <button onClick={() => del(selected.id)} style={{ color:'#ef4444', padding:'4px 8px', borderRadius:6 }}><Trash2 size={16}/></button>
             </div>
             {selected.subject && <div style={{ fontSize:13, fontWeight:600, color:'var(--navy)', marginBottom:12 }}>Assunto: {selected.subject}</div>}
+            {isVolunteerMessage(selected) && <div style={{ display:'inline-flex', alignItems:'center', marginBottom:12, padding:'4px 10px', borderRadius:999, background:'rgba(184,148,90,.12)', color:'var(--gold)', fontSize:11, fontWeight:800, textTransform:'uppercase', letterSpacing:'0.06em' }}>Voluntariado</div>}
             <div style={{ fontSize:14, color:'var(--text-mid)', lineHeight:1.7, background:'var(--cream)', borderRadius:8, padding:16 }}>{selected.message}</div>
             <div style={{ fontSize:11, color:'var(--text-soft)', marginTop:12 }}>Recebido em {formatDateTime(selected.created_at)}</div>
           </div>
