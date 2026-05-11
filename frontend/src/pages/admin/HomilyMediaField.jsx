@@ -15,7 +15,7 @@ function SingleMediaInput({ label, icon: Icon, accept, mediaType, value, onChang
       const fd = new FormData();
       fd.append('file', file);
       // Não definir Content-Type manualmente — o browser adiciona o boundary automaticamente
-      const res = await api.post('/admin/homilies/media', fd);
+      const res = await api.post('/admin/homilies/media', fd, { timeout: 0 });
       onChange(res.data.url);
     } catch (err) {
       const msg = err.response?.data?.error || err.message || 'Erro no upload.';

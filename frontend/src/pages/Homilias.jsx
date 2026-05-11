@@ -1,8 +1,10 @@
+import { useEffect, useState } from 'react';
 import { useFetch } from '../hooks/useFetch';
 import { useAudioPlayer } from '../contexts/AudioPlayerContext';
 import PageHeader from '../components/PageHeader';
 import Reveal from '../components/Reveal';
-import { Clock, User, Music, Video, Play } from 'lucide-react';
+import { Clock, User, Music, Video, Play, X } from 'lucide-react';
+import { normalizeMediaUrl } from '../lib/media';
 
 const TYPE_COLORS = {
   Homilia: { bg: 'var(--navy)', text: '#fff', badge: 'rgba(26,39,68,.12)', badgeText: 'var(--navy)' },
@@ -10,13 +12,47 @@ const TYPE_COLORS = {
   Podcast:  { bg: '#6366f1', text: '#fff', badge: 'rgba(99,102,241,.12)', badgeText: '#6366f1' },
 };
 
-function HomiliaCard({ h, onPlay }) {
+function VideoModal({ videoUrl, title, onClose }) {
+  useEffect(() => {
+    const onKeyDown = (event) => {
+      if (event.key === 'Escape') onClose();
+    };
+    window.addEventListener('keydown', onKeyDown);
+    return () => window.removeEventListener('keydown', onKeyDown);
+  }, [onClose]);
+
+  if (!videoUrl) return null;
+
+  return (
+    <div
+      onClick={onClose}
+      style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,.72)', zIndex: 5000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 24 }}
+    >
+      <div
+        onClick={(e) => e.stopPropagation()}
+        style={{ width: 'min(940px, 100%)', background: '#0b1220', borderRadius: 14, overflow: 'hidden', boxShadow: '0 30px 80px rgba(0,0,0,.45)' }}
+      >
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px 14px', borderBottom: '1px solid rgba(255,255,255,.12)', color: '#fff' }}>
+          <p style={{ fontSize: 13, fontWeight: 700, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{title || 'Video'}</p>
+          <button type="button" onClick={onClose} style={{ width: 32, height: 32, borderRadius: 8, background: 'rgba(255,255,255,.12)', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <X size={16} />
+          </button>
+        </div>
+        <video src={videoUrl} controls autoPlay style={{ width: '100%', display: 'block', maxHeight: '76vh', background: '#000' }} />
+      </div>
+    </div>
+  );
+}
+
+function HomiliaCard({ h, onPlay, onWatchVideo }) {
   const normalizedType = String(h.type || '')
     .normalize('NFD')
     .replace(/[\u0300-\u036f]/g, '');
   const color = TYPE_COLORS[h.type] || TYPE_COLORS[normalizedType] || TYPE_COLORS.Homilia;
-  const hasAudio = !!h.audio_url;
-  const hasVideo = !!h.video_url;
+  const audioUrl = normalizeMediaUrl(h.audio_url);
+  const videoUrl = normalizeMediaUrl(h.video_url);
+  const hasAudio = !!audioUrl;
+  const hasVideo = !!videoUrl;
 
   return (
     <div
@@ -105,7 +141,7 @@ function HomiliaCard({ h, onPlay }) {
         }}>
           {hasAudio && (
             <button
-              onClick={() => onPlay({ title: h.title, priest: h.priest_name, audioUrl: h.audio_url })}
+              onClick={() => onPlay({ title: h.title, priest: h.priest_name, audioUrl })}
               style={{
                 flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center',
                 gap: 7, padding: '9px 14px', borderRadius: 100,
@@ -120,8 +156,9 @@ function HomiliaCard({ h, onPlay }) {
             </button>
           )}
           {hasVideo && (
-            <a
-              href={h.video_url} target="_blank" rel="noopener noreferrer"
+            <button
+              type="button"
+              onClick={() => onWatchVideo({ title: h.title, videoUrl })}
               style={{
                 flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center',
                 gap: 7, padding: '9px 14px', borderRadius: 100,
@@ -133,7 +170,7 @@ function HomiliaCard({ h, onPlay }) {
               onMouseLeave={e => e.currentTarget.style.filter = ''}
             >
               <Video size={14} /> Assistir
-            </a>
+            </button>
           )}
         </div>
       )}
@@ -144,6 +181,7 @@ function HomiliaCard({ h, onPlay }) {
 export default function Homilias() {
   const { data: homilies, loading } = useFetch('/homilies');
   const { play } = useAudioPlayer();
+  const [videoModal, setVideoModal] = useState(null);
 
   return (
     <div className="animate-page">
@@ -166,12 +204,19 @@ export default function Homilias() {
           }}>
             {(homilies || []).map((h, i) => (
               <Reveal key={h.id} delay={i * 60}>
-                <HomiliaCard h={h} onPlay={play} />
+                <HomiliaCard h={h} onPlay={play} onWatchVideo={setVideoModal} />
               </Reveal>
             ))}
           </div>
         )}
       </section>
+      {videoModal?.videoUrl && (
+        <VideoModal
+          title={videoModal.title}
+          videoUrl={videoModal.videoUrl}
+          onClose={() => setVideoModal(null)}
+        />
+      )}
     </div>
   );
 }

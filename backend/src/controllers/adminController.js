@@ -6,10 +6,14 @@ import multer from 'multer';
 import path from 'path';
 import fs from 'fs';
 import { randomUUID } from 'crypto';
+import { execFile } from 'child_process';
+import { promisify } from 'util';
 import { refreshWordOfDayCache } from '../services/wordOfDayService.js';
 import { uploadsDir } from '../utils/uploads.js';
 
 fs.mkdirSync(uploadsDir, { recursive: true });
+const execFileAsync = promisify(execFile);
+const MAX_HOMILY_MEDIA_DURATION_SECONDS = 10 * 60 * 60;
 
 const upload = multer({
   storage: multer.diskStorage({
@@ -43,6 +47,28 @@ const uploadAudioVideo = multer({
     cb(null, true);
   },
 }).single('file');
+
+function removeUploadedFile(filePath) {
+  try {
+    fs.unlinkSync(filePath);
+  } catch {
+    // Ignore cleanup errors.
+  }
+}
+
+async function getMediaDurationSeconds(filePath) {
+  const { stdout } = await execFileAsync('ffprobe', [
+    '-v', 'error',
+    '-show_entries', 'format=duration',
+    '-of', 'default=noprint_wrappers=1:nokey=1',
+    filePath,
+  ]);
+  const durationSeconds = Number(String(stdout || '').trim());
+  if (!Number.isFinite(durationSeconds) || durationSeconds <= 0) {
+    throw new Error('Duracao de midia invalida.');
+  }
+  return durationSeconds;
+}
 
 const SETTINGS_KEYS = [
   'site_name', 'site_tagline', 'site_logo_url', 'site_address', 'site_email', 'site_whatsapp',
@@ -246,11 +272,22 @@ export async function uploadMedia(req, res) {
 export async function uploadHomilyMedia(req, res) {
   uploadAudioVideo(req, res, async (err) => {
     if (err) return res.status(400).json({ error: err.message || 'Erro no upload.' });
-    if (!req.file) return res.status(400).json({ error: 'Arquivo obrigatório.' });
+    if (!req.file) return res.status(400).json({ error: 'Arquivo obrigatorio.' });
     const url = `/uploads/${req.file.filename}`;
     const mediaType = req.file.mimetype.startsWith('audio/') ? 'audio' : 'video';
+    let durationSeconds = null;
+    try {
+      durationSeconds = await getMediaDurationSeconds(req.file.path);
+    } catch {
+      removeUploadedFile(req.file.path);
+      return res.status(422).json({ error: 'Nao foi possivel validar a duracao da midia. Envie outro arquivo.' });
+    }
+    if (durationSeconds > MAX_HOMILY_MEDIA_DURATION_SECONDS) {
+      removeUploadedFile(req.file.path);
+      return res.status(422).json({ error: 'A midia excede o limite de 10 horas.' });
+    }
     await auditLog(req.adminUser.id, 'UPLOAD_HOMILY_MEDIA', 'uploads', null, null, { url, name: req.file.originalname, mediaType }, req.ip);
-    return res.status(201).json({ url, mediaType });
+    return res.status(201).json({ url, mediaType, duration_seconds: Math.round(durationSeconds) });
   });
 }
 
@@ -725,3 +762,4 @@ export async function getAuditLog(req, res) {
     return res.status(500).json({ error: 'Erro interno.' });
   }
 }
+
