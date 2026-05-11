@@ -42,7 +42,12 @@ export default function AdminHomilies() {
   const set = (k, v) => setForm(f => ({ ...f, [k]: v }));
 
   const openCreate = () => { setForm(EMPTY); setError(''); setModal('create'); };
-  const openEdit = (row) => { setForm({ ...EMPTY, ...row, active: String(row.active ?? '1') }); setError(''); setModal('edit'); };
+  const openEdit = (row) => {
+    const publishedAt = row?.published_at ? String(row.published_at).slice(0, 10) : '';
+    setForm({ ...EMPTY, ...row, published_at: publishedAt, active: String(row.active ?? '1') });
+    setError('');
+    setModal('edit');
+  };
 
   const save = async () => {
     setSaving(true); setError('');

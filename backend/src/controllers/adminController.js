@@ -56,18 +56,48 @@ function removeUploadedFile(filePath) {
   }
 }
 
-async function getMediaDurationSeconds(filePath) {
-  const { stdout } = await execFileAsync('ffprobe', [
-    '-v', 'error',
-    '-show_entries', 'format=duration',
-    '-of', 'default=noprint_wrappers=1:nokey=1',
-    filePath,
-  ]);
-  const durationSeconds = Number(String(stdout || '').trim());
-  if (!Number.isFinite(durationSeconds) || durationSeconds <= 0) {
-    throw new Error('Duracao de midia invalida.');
+function parseDurationFromProbeJson(raw) {
+  try {
+    const parsed = JSON.parse(String(raw || '{}'));
+    const durations = [];
+    const formatDuration = Number(parsed?.format?.duration);
+    if (Number.isFinite(formatDuration) && formatDuration > 0) durations.push(formatDuration);
+    if (Array.isArray(parsed?.streams)) {
+      for (const stream of parsed.streams) {
+        const streamDuration = Number(stream?.duration);
+        if (Number.isFinite(streamDuration) && streamDuration > 0) durations.push(streamDuration);
+      }
+    }
+    if (!durations.length) return null;
+    return Math.max(...durations);
+  } catch {
+    return null;
   }
-  return durationSeconds;
+}
+
+async function getMediaDurationSeconds(filePath) {
+  try {
+    const { stdout } = await execFileAsync('ffprobe', [
+      '-v', 'error',
+      '-show_entries', 'format=duration:stream=duration',
+      '-of', 'json',
+      filePath,
+    ]);
+    const durationSeconds = parseDurationFromProbeJson(stdout);
+    if (!Number.isFinite(durationSeconds) || durationSeconds <= 0) {
+      const err = new Error('Duracao de midia invalida.');
+      err.code = 'INVALID_MEDIA_DURATION';
+      throw err;
+    }
+    return durationSeconds;
+  } catch (err) {
+    if (err?.code === 'ENOENT') {
+      const notAvailable = new Error('ffprobe nao disponivel.');
+      notAvailable.code = 'FFPROBE_NOT_AVAILABLE';
+      throw notAvailable;
+    }
+    throw err;
+  }
 }
 
 const SETTINGS_KEYS = [
@@ -279,8 +309,13 @@ export async function uploadHomilyMedia(req, res) {
     try {
       durationSeconds = await getMediaDurationSeconds(req.file.path);
     } catch {
-      removeUploadedFile(req.file.path);
-      return res.status(422).json({ error: 'Nao foi possivel validar a duracao da midia. Envie outro arquivo.' });
+      const fallbackDuration = Number(req.body?.duration_seconds);
+      if (Number.isFinite(fallbackDuration) && fallbackDuration > 0) {
+        durationSeconds = fallbackDuration;
+      } else {
+        removeUploadedFile(req.file.path);
+        return res.status(422).json({ error: 'Nao foi possivel validar a duracao da midia. Envie outro arquivo.' });
+      }
     }
     if (durationSeconds > MAX_HOMILY_MEDIA_DURATION_SECONDS) {
       removeUploadedFile(req.file.path);

@@ -2,6 +2,37 @@ import { useRef, useState } from 'react';
 import { Music, Video, X, Upload, Link } from 'lucide-react';
 import api from '../../lib/api';
 
+const MAX_MEDIA_DURATION_SECONDS = 10 * 60 * 60;
+
+function getFileDurationSeconds(file, mediaType) {
+  return new Promise((resolve, reject) => {
+    const objectUrl = URL.createObjectURL(file);
+    const element = document.createElement(mediaType === 'video' ? 'video' : 'audio');
+
+    const cleanup = () => {
+      URL.revokeObjectURL(objectUrl);
+      element.removeAttribute('src');
+      element.load();
+    };
+
+    element.preload = 'metadata';
+    element.onloadedmetadata = () => {
+      const duration = Number(element.duration);
+      cleanup();
+      if (!Number.isFinite(duration) || duration <= 0) {
+        reject(new Error('Duracao invalida.'));
+        return;
+      }
+      resolve(duration);
+    };
+    element.onerror = () => {
+      cleanup();
+      reject(new Error('Nao foi possivel ler a duracao.'));
+    };
+    element.src = objectUrl;
+  });
+}
+
 function SingleMediaInput({ label, icon: Icon, accept, mediaType, value, onChange }) {
   const inputRef = useRef(null);
   const [uploading, setUploading] = useState(false);
@@ -12,9 +43,15 @@ function SingleMediaInput({ label, icon: Icon, accept, mediaType, value, onChang
     setUploading(true);
     setError('');
     try {
+      const durationSeconds = await getFileDurationSeconds(file, mediaType);
+      if (durationSeconds > MAX_MEDIA_DURATION_SECONDS) {
+        setError('A midia excede o limite de 10 horas.');
+        return;
+      }
+
       const fd = new FormData();
       fd.append('file', file);
-      // Não definir Content-Type manualmente — o browser adiciona o boundary automaticamente
+      fd.append('duration_seconds', String(Math.round(durationSeconds)));
       const res = await api.post('/admin/homilies/media', fd, { timeout: 0 });
       onChange(res.data.url);
     } catch (err) {
@@ -56,7 +93,7 @@ function SingleMediaInput({ label, icon: Icon, accept, mediaType, value, onChang
       ) : (
         <div>
           <label style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '9px 14px', borderRadius: 8, background: uploading ? '#ccc' : 'var(--navy)', color: '#fff', fontSize: 13, fontWeight: 600, cursor: uploading ? 'not-allowed' : 'pointer' }}>
-            <Upload size={15} />{uploading ? 'Enviando...' : `Selecionar ${mediaType === 'audio' ? 'áudio' : 'vídeo'}`}
+            <Upload size={15} />{uploading ? 'Enviando...' : `Selecionar ${mediaType === 'audio' ? 'audio' : 'video'}`}
             <input ref={inputRef} type="file" accept={accept} disabled={uploading}
               onChange={e => e.target.files?.[0] && upload(e.target.files[0])} style={{ display: 'none' }} />
           </label>
@@ -79,7 +116,7 @@ function SingleMediaInput({ label, icon: Icon, accept, mediaType, value, onChang
       {value && mediaType === 'video' && (
         <a href={value} target="_blank" rel="noopener noreferrer"
           style={{ display: 'inline-flex', alignItems: 'center', gap: 6, marginTop: 8, fontSize: 12, color: 'var(--gold)', fontWeight: 600 }}>
-          <Video size={13} /> Ver vídeo
+          <Video size={13} /> Ver video
         </a>
       )}
     </div>
@@ -89,13 +126,13 @@ function SingleMediaInput({ label, icon: Icon, accept, mediaType, value, onChang
 export default function HomilyMediaField({ audioUrl, videoUrl, onAudioChange, onVideoChange }) {
   return (
     <div style={{ background: 'var(--cream)', borderRadius: 10, padding: '16px 14px', marginBottom: 14 }}>
-      <p style={{ fontSize: 11, fontWeight: 700, color: 'var(--text-soft)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 14 }}>Mídia</p>
+      <p style={{ fontSize: 11, fontWeight: 700, color: 'var(--text-soft)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 14 }}>Midia</p>
       <SingleMediaInput
-        label="Áudio" icon={Music} accept="audio/*" mediaType="audio"
+        label="Audio" icon={Music} accept="audio/*" mediaType="audio"
         value={audioUrl} onChange={onAudioChange}
       />
       <SingleMediaInput
-        label="Vídeo" icon={Video} accept="video/*" mediaType="video"
+        label="Video" icon={Video} accept="video/*" mediaType="video"
         value={videoUrl} onChange={onVideoChange}
       />
     </div>
