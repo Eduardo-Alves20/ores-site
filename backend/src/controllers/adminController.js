@@ -122,6 +122,10 @@ const SETTINGS_KEYS = [
   'conheca_history_text_1', 'conheca_history_text_2',
   'voluntario_eyebrow', 'voluntario_title', 'voluntario_subtitle', 'voluntario_cta_title',
   'voluntario_cta_text', 'voluntario_cta_label', 'voluntario_cta_url',
+  'voluntario_area_1_icon', 'voluntario_area_1_title', 'voluntario_area_1_desc',
+  'voluntario_area_2_icon', 'voluntario_area_2_title', 'voluntario_area_2_desc',
+  'voluntario_area_3_icon', 'voluntario_area_3_title', 'voluntario_area_3_desc',
+  'voluntario_area_4_icon', 'voluntario_area_4_title', 'voluntario_area_4_desc',
   'obra_social_eyebrow', 'obra_social_title', 'obra_social_subtitle', 'obra_social_mission_title',
   'obra_social_mission_text', 'obra_social_cta_label', 'obra_social_cta_url',
   'conheca_image_url', 'voluntario_image_url', 'obra_social_image_url',
@@ -268,6 +272,10 @@ export async function updateSettings(req, res) {
       'obra_social_mission_text',
       'voluntario_subtitle',
       'voluntario_cta_text',
+      'voluntario_area_1_desc',
+      'voluntario_area_2_desc',
+      'voluntario_area_3_desc',
+      'voluntario_area_4_desc',
       'contact_subtitle',
     ]);
 
@@ -535,6 +543,38 @@ export async function updateGroup(req, res) {
 
 export async function deleteGroup(req, res) {
   return deleteRecord(req, res, 'prayer_groups', parseInt(req.params.id));
+}
+
+export async function listGroupSlides(req, res) {
+  return res.json(await list('prayer_group_slides', 'display_order, id'));
+}
+
+export async function createGroupSlide(req, res) {
+  try {
+    const { title, subtitle, image_url, display_order, active } = req.body;
+    const [result] = await pool.execute(
+      `INSERT INTO prayer_group_slides (title, subtitle, image_url, display_order, active) VALUES (?, ?, ?, ?, ?)`,
+      [
+        sanitizeText(title),
+        sanitizeText(subtitle),
+        sanitizeText(image_url),
+        display_order || 0,
+        active === undefined ? 1 : Number(active) ? 1 : 0,
+      ]
+    );
+    await auditLog(req.adminUser.id, 'CREATE_GROUP_SLIDE', 'prayer_group_slides', result.insertId, null, req.body, req.ip);
+    return res.status(201).json({ id: result.insertId });
+  } catch (err) {
+    return res.status(500).json({ error: 'Erro interno.' });
+  }
+}
+
+export async function updateGroupSlide(req, res) {
+  return updateRecord(req, res, 'prayer_group_slides', ['title', 'subtitle', 'image_url', 'display_order', 'active'], parseInt(req.params.id));
+}
+
+export async function deleteGroupSlide(req, res) {
+  return deleteRecord(req, res, 'prayer_group_slides', parseInt(req.params.id));
 }
 
 // ── Pastorals ────────────────────────────────────────────────────────────────

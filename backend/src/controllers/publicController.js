@@ -181,6 +181,20 @@ export async function getPrayerGroups(req, res) {
   }
 }
 
+export async function getPrayerGroupSlides(req, res) {
+  try {
+    const slides = await query(
+      `SELECT id, title, subtitle, image_url, display_order
+       FROM prayer_group_slides
+       WHERE active = 1
+       ORDER BY display_order, id`
+    );
+    return res.json(slides);
+  } catch (err) {
+    return res.status(500).json({ error: 'Erro interno.' });
+  }
+}
+
 // ── Pastorals ────────────────────────────────────────────────────────────────
 export async function getPastorals(req, res) {
   try {

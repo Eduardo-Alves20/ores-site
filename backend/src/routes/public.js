@@ -16,6 +16,7 @@ router.get('/priests', pub.getPriests);
 router.get('/news', pub.getNews);
 router.get('/news/:slug', pub.getNewsItem);
 router.get('/prayer-groups', pub.getPrayerGroups);
+router.get('/prayer-group-slides', pub.getPrayerGroupSlides);
 router.get('/pastorals', pub.getPastorals);
 router.get('/pastoral-slides', pub.getPastoralSlides);
 router.get('/communities', pub.getCommunities);

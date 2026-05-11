@@ -88,6 +88,10 @@ router.get('/groups', adm.listGroups);
 router.post('/groups', adm.createGroup);
 router.put('/groups/:id', adm.updateGroup);
 router.delete('/groups/:id', adm.deleteGroup);
+router.get('/group-slides', adm.listGroupSlides);
+router.post('/group-slides', adm.createGroupSlide);
+router.put('/group-slides/:id', adm.updateGroupSlide);
+router.delete('/group-slides/:id', adm.deleteGroupSlide);
 
 // ── Pastorals ────────────────────────────────────────────────────────────────
 router.get('/pastorals', adm.listPastorals);

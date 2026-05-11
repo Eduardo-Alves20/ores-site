@@ -160,6 +160,19 @@ const migrations = [
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
   ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci`,
 
+  // Prayer group gallery slides
+  `CREATE TABLE IF NOT EXISTS prayer_group_slides (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    title VARCHAR(200),
+    subtitle VARCHAR(300),
+    image_url VARCHAR(500) NOT NULL,
+    display_order INT DEFAULT 0,
+    active TINYINT(1) DEFAULT 1,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    INDEX idx_active_order (active, display_order)
+  ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci`,
+
   // Pastorals & movements
   `CREATE TABLE IF NOT EXISTS pastorals (
     id INT AUTO_INCREMENT PRIMARY KEY,

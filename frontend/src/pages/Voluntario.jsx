@@ -7,17 +7,38 @@ import { useFetch } from '../hooks/useFetch';
 import { useAppAlert } from '../components/AppAlert';
 import api from '../lib/api';
 
-const areas = [
-  { icon:<Heart size={28}/>, title:'Pastoral da Saúde', desc:'Visitas a hospitais e doentes em casa, oferecendo conforto espiritual e material.' },
-  { icon:<Users size={28}/>, title:'Pastoral Social', desc:'Ações de solidariedade, distribuição de alimentos e apoio às famílias carentes.' },
-  { icon:<BookOpen size={28}/>, title:'Catequese', desc:'Formação de crianças e jovens nos sacramentos da iniciação cristã.' },
-  { icon:<Handshake size={28}/>, title:'Obra Social', desc:'Apoio na farmácia comunitária, cursos, bazar e atendimento social.' },
+const AREA_DEFAULTS = [
+  { icon: 'heart', title: 'Pastoral da Saude', desc: 'Visitas a hospitais e doentes em casa, oferecendo conforto espiritual e material.' },
+  { icon: 'users', title: 'Pastoral Social', desc: 'Acoes de solidariedade, distribuicao de alimentos e apoio as familias carentes.' },
+  { icon: 'book', title: 'Catequese', desc: 'Formacao de criancas e jovens nos sacramentos da iniciacao crista.' },
+  { icon: 'handshake', title: 'Obra Social', desc: 'Apoio na farmacia comunitaria, cursos, bazar e atendimento social.' },
 ];
+
+const AREA_ICONS = {
+  heart: Heart,
+  users: Users,
+  book: BookOpen,
+  handshake: Handshake,
+};
+
+function buildVolunteerAreas(settings) {
+  return AREA_DEFAULTS.map((fallback, index) => {
+    const number = index + 1;
+    const iconKey = String(settings[`voluntario_area_${number}_icon`] || fallback.icon).trim().toLowerCase();
+    const Icon = AREA_ICONS[iconKey] || AREA_ICONS[fallback.icon] || Heart;
+    return {
+      icon: <Icon size={28} />,
+      title: settings[`voluntario_area_${number}_title`] || fallback.title,
+      desc: settings[`voluntario_area_${number}_desc`] || fallback.desc,
+    };
+  });
+}
 
 export default function Voluntario() {
   const { data: siteInfo } = useFetch('/site-info');
   const { notify } = useAppAlert();
   const s = siteInfo || {};
+  const areas = buildVolunteerAreas(s);
   const [form, setForm] = useState({ name: '', email: '', phone: '', area: '', message: '' });
   const [status, setStatus] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -69,7 +90,7 @@ export default function Voluntario() {
                 onMouseLeave={e => { e.currentTarget.style.transform=''; e.currentTarget.style.boxShadow=''; }}>
                 <div style={{ width:60, height:60, borderRadius:'50%', background:'rgba(184,148,90,.1)', display:'flex', alignItems:'center', justifyContent:'center', margin:'0 auto 16px', color:'var(--gold)' }}>{a.icon}</div>
                 <h3 style={{ fontFamily:'Playfair Display,serif', fontSize:17, fontWeight:700, color:'var(--navy)', marginBottom:10 }}>{a.title}</h3>
-                <p style={{ fontSize:13, color:'var(--text-mid)', lineHeight:1.65 }}>{a.desc}</p>
+                <RichTextContent html={a.desc} style={{ fontSize:13, color:'var(--text-mid)', lineHeight:1.65 }} />
               </div>
             </Reveal>
           ))}

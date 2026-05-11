@@ -1,9 +1,9 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useFetch } from '../hooks/useFetch';
 import PageHeader from '../components/PageHeader';
 import Reveal from '../components/Reveal';
 import RichTextContent from '../components/RichTextContent';
-import { Phone, Clock, MapPin, X } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Phone, Clock, MapPin, X } from 'lucide-react';
 import { normalizeMediaUrl } from '../lib/media';
 
 function GroupModal({ group, onClose }) {
@@ -33,8 +33,86 @@ function GroupModal({ group, onClose }) {
   );
 }
 
+function GroupCarousel({ slides }) {
+  const [index, setIndex] = useState(0);
+  const total = slides.length;
+
+  useEffect(() => {
+    if (total <= 1) return undefined;
+    const timer = setInterval(() => {
+      setIndex((prev) => (prev + 1) % total);
+    }, 4200);
+    return () => clearInterval(timer);
+  }, [total]);
+
+  useEffect(() => {
+    if (index > total - 1) setIndex(0);
+  }, [index, total]);
+
+  if (!total) return null;
+
+  const current = slides[index];
+  const currentImage = normalizeMediaUrl(current.image_url);
+
+  return (
+    <Reveal>
+      <div style={{ marginTop: 36 }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14, gap: 16 }}>
+          <h3 style={{ fontFamily: 'Playfair Display,serif', fontSize: 'clamp(24px,3vw,32px)', color: 'var(--navy)', fontWeight: 700 }}>
+            Galeria dos Grupos de Oracao
+          </h3>
+          {total > 1 && (
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+              <button type="button" onClick={() => setIndex((prev) => (prev - 1 + total) % total)} style={{ width: 34, height: 34, borderRadius: 999, border: '1px solid var(--border)', background: '#fff', color: 'var(--navy)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <ChevronLeft size={16} />
+              </button>
+              <button type="button" onClick={() => setIndex((prev) => (prev + 1) % total)} style={{ width: 34, height: 34, borderRadius: 999, border: '1px solid var(--border)', background: '#fff', color: 'var(--navy)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <ChevronRight size={16} />
+              </button>
+            </div>
+          )}
+        </div>
+
+        <div style={{ borderRadius: 16, overflow: 'hidden', border: '1px solid var(--border)', background: '#0f1d3f', position: 'relative' }}>
+          {currentImage ? (
+            <img className="group-fit-media group-carousel-media" src={currentImage} alt={current.title || 'Slide do grupo de oracao'} onError={(e) => { e.currentTarget.style.display = 'none'; }} style={{ width: '100%', height: 'clamp(260px,38vw,420px)', objectFit: 'cover', display: 'block' }} />
+          ) : (
+            <div style={{ width: '100%', height: 'clamp(260px,38vw,420px)', background: 'linear-gradient(135deg,var(--navy),var(--navy-light))' }} />
+          )}
+          <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(180deg, rgba(10,20,42,.14) 0%, rgba(10,20,42,.72) 100%)' }} />
+          <div style={{ position: 'absolute', left: 20, right: 20, bottom: 20 }}>
+            {current.title && <h4 style={{ fontFamily: 'Playfair Display,serif', fontSize: 'clamp(22px,3vw,34px)', color: '#fff', marginBottom: 6 }}>{current.title}</h4>}
+            {current.subtitle && <p style={{ color: 'rgba(255,255,255,.86)', fontSize: 14, maxWidth: 680 }}>{current.subtitle}</p>}
+          </div>
+        </div>
+
+        {total > 1 && (
+          <div style={{ display: 'flex', justifyContent: 'center', gap: 8, marginTop: 12, flexWrap: 'wrap' }}>
+            {slides.map((slide, dotIndex) => (
+              <button
+                key={slide.id}
+                type="button"
+                onClick={() => setIndex(dotIndex)}
+                style={{
+                  width: dotIndex === index ? 26 : 9,
+                  height: 9,
+                  borderRadius: 99,
+                  border: 'none',
+                  background: dotIndex === index ? 'var(--gold)' : 'rgba(26,39,68,.24)',
+                  transition: 'all .2s',
+                }}
+              />
+            ))}
+          </div>
+        )}
+      </div>
+    </Reveal>
+  );
+}
+
 export default function Grupos() {
   const { data: groups, loading } = useFetch('/prayer-groups');
+  const { data: slides } = useFetch('/prayer-group-slides');
   const [selected, setSelected] = useState(null);
 
   return (
@@ -65,8 +143,20 @@ export default function Grupos() {
             })}
           </div>
         )}
+        <GroupCarousel slides={slides || []} />
       </section>
       <GroupModal group={selected} onClose={() => setSelected(null)} />
+      <style>{`
+        @media (min-width: 901px) {
+          .group-fit-media {
+            object-fit: contain !important;
+            background: #f2eee7 !important;
+          }
+          .group-carousel-media {
+            background: #0f1d3f !important;
+          }
+        }
+      `}</style>
     </div>
   );
 }
