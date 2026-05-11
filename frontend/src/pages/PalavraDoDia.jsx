@@ -1,5 +1,6 @@
 import PageHeader from '../components/PageHeader';
 import Reveal from '../components/Reveal';
+import RichTextContent from '../components/RichTextContent';
 import { useFetch } from '../hooks/useFetch';
 
 export default function PalavraDoDia() {
@@ -27,7 +28,7 @@ export default function PalavraDoDia() {
                 </h2>
                 {data?.subtitle && <p style={{ fontSize: 14, color: 'var(--text-soft)', lineHeight: 1.75, marginBottom: 18 }}>{data.subtitle}</p>}
                 {data?.content_html ? (
-                  <div className="word-day-content" style={{ fontSize: 15, color: 'var(--text-mid)', lineHeight: 1.8 }} dangerouslySetInnerHTML={{ __html: data.content_html }} />
+                  <RichTextContent html={data.content_html} style={{ fontSize: 15, color: 'var(--text-mid)', lineHeight: 1.8 }} />
                 ) : (
                   <p style={{ fontSize: 14, color: 'var(--text-soft)' }}>Conteudo indisponivel no momento.</p>
                 )}
@@ -43,63 +44,6 @@ export default function PalavraDoDia() {
                 )}
               </div>
             </div>
-            <style>{`
-              .word-day-content h2,
-              .word-day-content h3,
-              .word-day-content h4 {
-                font-family: 'Playfair Display,serif';
-                color: var(--navy);
-                font-weight: 700;
-                line-height: 1.3;
-                margin-top: 22px;
-                margin-bottom: 10px;
-              }
-              .word-day-content h2 { font-size: 26px; }
-              .word-day-content h3 { font-size: 22px; }
-              .word-day-content h4 { font-size: 19px; }
-              .word-day-content p {
-                margin-top: 0;
-                margin-bottom: 14px;
-              }
-              .word-day-content p:last-child {
-                margin-bottom: 0;
-              }
-              .word-day-content ul,
-              .word-day-content ol {
-                margin: 10px 0 16px 20px;
-                padding: 0;
-              }
-              .word-day-content li {
-                margin-bottom: 6px;
-              }
-              .word-day-content blockquote {
-                margin: 16px 0;
-                padding: 12px 14px;
-                border-left: 3px solid var(--gold);
-                background: var(--cream);
-                border-radius: 8px;
-              }
-              .word-day-content a {
-                color: var(--gold);
-                font-weight: 600;
-                text-decoration: underline;
-                text-underline-offset: 2px;
-              }
-              .word-day-content br + br {
-                display: block;
-                margin-top: 6px;
-                content: '';
-              }
-              @media (max-width: 700px) {
-                .word-day-content {
-                  font-size: 14px !important;
-                  line-height: 1.75 !important;
-                }
-                .word-day-content h2 { font-size: 22px; }
-                .word-day-content h3 { font-size: 19px; }
-                .word-day-content h4 { font-size: 17px; }
-              }
-            `}</style>
           </Reveal>
         )}
       </section>

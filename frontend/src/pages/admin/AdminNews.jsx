@@ -17,7 +17,7 @@ export default function AdminNews() {
         { key: 'slug', label: 'Slug (URL)', required: true },
         { key: 'category', label: 'Categoria' },
         { key: 'summary', label: 'Resumo', textarea: true },
-        { key: 'content', label: 'Conteudo', textarea: true },
+        { key: 'content', label: 'Conteudo', richText: true },
         { key: 'image_url', label: 'Imagem da noticia', upload: true },
         { key: 'external_url', label: 'Link externo (opcional)' },
         { key: 'published', label: 'Publicado', options: [{ value: '1', label: 'Sim' }, { value: '0', label: 'Nao' }] },

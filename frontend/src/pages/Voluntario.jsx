@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import PageHeader from '../components/PageHeader';
 import Reveal from '../components/Reveal';
+import RichTextContent from '../components/RichTextContent';
 import { Heart, Users, BookOpen, Handshake } from 'lucide-react';
 import { useFetch } from '../hooks/useFetch';
 
@@ -34,7 +35,12 @@ export default function Voluntario() {
         <Reveal>
           <div style={{ background:'var(--navy)', borderRadius:16, padding:'48px', textAlign:'center' }}>
             <h2 style={{ fontFamily:'Playfair Display,serif', fontSize:28, color:'#fff', fontWeight:700, marginBottom:16 }}>{s.voluntario_cta_title || 'Pronto para servir?'}</h2>
-            <p style={{ fontSize:15, color:'rgba(255,255,255,.65)', lineHeight:1.75, maxWidth:560, margin:'0 auto 32px' }}>{s.voluntario_cta_text || 'Entre em contato com a secretaria paroquial ou nos envie uma mensagem. Teremos prazer em apresentar as oportunidades de voluntariado.'}</p>
+            <RichTextContent
+              html={s.voluntario_cta_text}
+              fallback="Entre em contato com a secretaria paroquial ou nos envie uma mensagem. Teremos prazer em apresentar as oportunidades de voluntariado."
+              dark
+              style={{ fontSize:15, color:'rgba(255,255,255,.65)', lineHeight:1.75, maxWidth:560, margin:'0 auto 32px' }}
+            />
             <Link to={s.voluntario_cta_url || '/contato'} style={{ display:'inline-flex', alignItems:'center', gap:6, padding:'14px 32px', borderRadius:100, background:'var(--gold)', color:'#fff', fontWeight:600, fontSize:15, boxShadow:'0 4px 18px rgba(184,148,90,.35)', transition:'transform .2s' }}
               onMouseEnter={e => e.currentTarget.style.transform='translateY(-2px)'}
               onMouseLeave={e => e.currentTarget.style.transform=''}>

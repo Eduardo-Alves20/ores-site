@@ -4,6 +4,7 @@ import { useFetch } from '../hooks/useFetch';
 import Reveal from '../components/Reveal';
 import MassScheduleSidebar from '../components/MassScheduleSidebar';
 import EventsSidebar from '../components/EventsSidebar';
+import RichTextContent from '../components/RichTextContent';
 import { Calendar, Users, Radio, Heart, BookOpen, Clock, MapPin, Copy, Gift, ChevronLeft, ChevronRight } from 'lucide-react';
 import { parseDateOnly } from '../lib/date';
 import { useAppAlert } from '../components/AppAlert';
@@ -166,9 +167,13 @@ export default function Home() {
                 i < arr.length - 1 ? [part, <em key={i} style={{ color:'var(--gold-light)',fontStyle:'italic' }}>Espírito Santo</em>] : part
               ) : <><em style={{ color:'var(--gold-light)',fontStyle:'italic' }}>Espírito</em> Santo</>}
             </h1>
-            <p className="animate-fade-up" style={{ fontSize:17,color:'rgba(255,255,255,.65)',lineHeight:1.7,fontWeight:300,marginBottom:40,animationDelay:'.2s' }}>
-              {hero.subtitle || 'Venha fazer parte desta família de fé. Missas, grupos, pastorais e muito mais para toda a família.'}
-            </p>
+            <RichTextContent
+              className="animate-fade-up"
+              html={hero.subtitle}
+              fallback="Venha fazer parte desta família de fé. Missas, grupos, pastorais e muito mais para toda a família."
+              dark
+              style={{ fontSize:17,color:'rgba(255,255,255,.65)',lineHeight:1.7,fontWeight:300,marginBottom:40,animationDelay:'.2s' }}
+            />
             <div className="animate-fade-up home-hero-actions" style={{ display:'flex',gap:16,flexWrap:'wrap',animationDelay:'.3s' }}>
               <Link to={hero.primary_url || '/conheca'} className="btn-gold" style={{ display:'inline-flex',alignItems:'center',gap:6,padding:'13px 28px',borderRadius:100,background:'var(--gold)',color:'#fff',fontWeight:600,fontSize:14,boxShadow:'0 4px 18px rgba(184,148,90,.35)',transition:'transform .2s,box-shadow .2s' }}
                 onMouseEnter={e => { e.currentTarget.style.transform='translateY(-2px)'; e.currentTarget.style.boxShadow='0 8px 26px rgba(184,148,90,.45)'; }}
@@ -201,9 +206,11 @@ export default function Home() {
       {settings.daily_message && (
         <Reveal>
           <div style={{ background:'var(--gold)',padding:'20px 24px',textAlign:'center' }}>
-            <p style={{ maxWidth:900,margin:'0 auto',fontFamily:'Playfair Display,serif',fontStyle:'italic',fontSize:'clamp(14px,2vw,18px)',color:'#fff',lineHeight:1.6 }}>
-              "{settings.daily_message}"
-            </p>
+            <RichTextContent
+              html={settings.daily_message}
+              dark
+              style={{ maxWidth:900,margin:'0 auto',fontFamily:'Playfair Display,serif',fontStyle:'italic',fontSize:'clamp(14px,2vw,18px)',color:'#fff',lineHeight:1.6 }}
+            />
           </div>
         </Reveal>
       )}
@@ -277,7 +284,12 @@ export default function Home() {
                     <div style={{ width:54, height:54, borderRadius:'50%', background:'var(--gold)', display:'flex', alignItems:'center', justifyContent:'center', marginBottom:20, boxShadow:'0 10px 28px rgba(184,148,90,.35)' }}><Gift size={24} /></div>
                     <div style={{ fontSize:11, fontWeight:800, letterSpacing:'0.16em', textTransform:'uppercase', color:'var(--gold-light)', marginBottom:14 }}>{settings.donation_eyebrow || 'Contribua com a comunidade'}</div>
                     <h2 style={{ fontFamily:'Playfair Display,serif', fontSize:'clamp(28px,4vw,44px)', lineHeight:1.15, fontWeight:700, marginBottom:18 }}>{settings.donation_title || 'Sua doação ajuda a manter nossas obras vivas'}</h2>
-                    <p style={{ fontSize:15, lineHeight:1.8, color:'rgba(255,255,255,.72)', marginBottom:28 }}>{settings.donation_text || 'Com a sua generosidade, conseguimos cuidar da igreja, apoiar pastorais, realizar ações sociais e acolher melhor cada família que passa por aqui. Qualquer valor faz diferença.'}</p>
+                    <RichTextContent
+                      html={settings.donation_text}
+                      fallback="Com a sua generosidade, conseguimos cuidar da igreja, apoiar pastorais, realizar ações sociais e acolher melhor cada família que passa por aqui. Qualquer valor faz diferença."
+                      dark
+                      style={{ fontSize:15, lineHeight:1.8, color:'rgba(255,255,255,.72)', marginBottom:28 }}
+                    />
                     <button onClick={copyPix} style={{ display:'inline-flex', alignItems:'center', gap:8, padding:'13px 24px', borderRadius:999, background:'var(--gold)', color:'#fff', fontWeight:800, fontSize:14, boxShadow:'0 8px 26px rgba(184,148,90,.32)' }}>
                       <Copy size={16} />{settings.donation_button_label || 'Copiar chave Pix'}
                     </button>
@@ -484,9 +496,12 @@ export default function Home() {
                 <h2 style={{ fontFamily:'Playfair Display,serif',fontSize:'clamp(24px,3.5vw,38px)',fontWeight:700,color:'#fff',lineHeight:1.25,marginBottom:20 }}>
                   {settings.home_mission_title || 'Evangelizar, celebrar e servir com amor'}
                 </h2>
-                <p style={{ fontSize:15,color:'rgba(255,255,255,.6)',lineHeight:1.75 }}>
-                  {settings.home_mission_text || 'A Paróquia Espírito Santo é uma comunidade viva que celebra os sacramentos, promove a formação cristã e serve à sociedade com amor fraterno.'}
-                </p>
+                <RichTextContent
+                  html={settings.home_mission_text}
+                  fallback="A Paróquia Espírito Santo é uma comunidade viva que celebra os sacramentos, promove a formação cristã e serve à sociedade com amor fraterno."
+                  dark
+                  style={{ fontSize:15,color:'rgba(255,255,255,.6)',lineHeight:1.75 }}
+                />
               </div>
               <div style={{ display:'flex',flexDirection:'column',gap:16,flexShrink:0 }}>
                 <Link to={settings.home_mission_primary_url || '/conheca'} style={{ display:'inline-flex',alignItems:'center',gap:6,padding:'13px 28px',borderRadius:100,background:'var(--gold)',color:'#fff',fontWeight:600,fontSize:14,boxShadow:'0 4px 18px rgba(184,148,90,.35)',transition:'transform .2s' }}

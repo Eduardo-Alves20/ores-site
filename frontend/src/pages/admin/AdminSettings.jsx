@@ -5,72 +5,7 @@ import { Save } from 'lucide-react';
 import MediaField from './MediaField';
 import { useAppAlert } from '../../components/AppAlert';
 import { PUBLIC_MENU_ITEMS, ADMIN_MENU_ITEMS, enabledKey } from '../../lib/menuLabels';
-
-function RichTextInput({ value, onChange }) {
-  const editorRef = useRef(null);
-  const isEditingRef = useRef(false);
-
-  useEffect(() => {
-    if (!editorRef.current) return;
-    if (isEditingRef.current) return;
-    if (editorRef.current.innerHTML === (value || '')) return;
-    editorRef.current.innerHTML = value || '';
-  }, [value]);
-
-  const apply = (command, arg) => {
-    document.execCommand(command, false, arg);
-    if (editorRef.current) onChange(editorRef.current.innerHTML);
-  };
-
-  const btn = {
-    padding: '6px 10px',
-    borderRadius: 8,
-    border: '1px solid var(--border)',
-    background: '#fff',
-    fontSize: 12,
-    color: 'var(--text-mid)',
-    fontWeight: 700,
-  };
-
-  return (
-    <div>
-      <div style={{ display: 'flex', gap: 8, marginBottom: 8, flexWrap: 'wrap' }}>
-        <button type="button" onClick={() => apply('bold')} style={btn}>Negrito</button>
-        <button type="button" onClick={() => apply('italic')} style={btn}>Italico</button>
-        <button type="button" onClick={() => apply('insertUnorderedList')} style={btn}>Lista</button>
-        <button type="button" onClick={() => apply('insertOrderedList')} style={btn}>Numerada</button>
-        <button type="button" onClick={() => apply('insertParagraph')} style={btn}>Paragrafo</button>
-      </div>
-      <div
-        ref={editorRef}
-        contentEditable
-        suppressContentEditableWarning
-        onInput={(e) => onChange(e.currentTarget.innerHTML)}
-        onFocus={(e) => {
-          isEditingRef.current = true;
-          e.currentTarget.style.borderColor = 'var(--gold)';
-        }}
-        onBlur={(e) => {
-          isEditingRef.current = false;
-          onChange(e.currentTarget.innerHTML);
-          e.currentTarget.style.borderColor = 'var(--border)';
-        }}
-        style={{
-          width:'100%',
-          minHeight: 130,
-          padding:'10px 14px',
-          borderRadius:8,
-          border:'1px solid var(--border)',
-          fontSize:14,
-          outline:'none',
-          lineHeight: 1.65,
-          color: 'var(--text-mid)',
-          background: '#fff',
-        }}
-      />
-    </div>
-  );
-}
+import RichTextEditor from '../../components/RichTextEditor';
 
 const sections = [
   {
@@ -321,7 +256,7 @@ function SettingsField({ field, form, setValue, MenuManagerComponent }) {
     <div style={{ marginBottom:18 }}>
       <label style={{ display:'block', fontSize:12, fontWeight:700, color:'var(--text-soft)', marginBottom:6, textTransform:'uppercase', letterSpacing:'0.04em' }}>{label}</label>
       {type === 'textarea'
-        ? <RichTextInput value={form[key] || ''} onChange={(v) => setValue(key, v)} />
+        ? <RichTextEditor value={form[key] || ''} onChange={(v) => setValue(key, v)} minHeight={130} style={{ padding:'10px 14px', lineHeight:1.65 }} />
         : <input type={type || 'text'} {...common} />}
     </div>
   );

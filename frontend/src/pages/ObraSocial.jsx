@@ -1,6 +1,7 @@
 ﻿import { useFetch } from '../hooks/useFetch';
 import PageHeader from '../components/PageHeader';
 import Reveal from '../components/Reveal';
+import RichTextContent from '../components/RichTextContent';
 import { Link } from 'react-router-dom';
 
 export default function ObraSocial() {
@@ -17,7 +18,12 @@ export default function ObraSocial() {
           <div style={{ background:'var(--navy)', borderRadius:16, padding:'40px 48px', marginBottom:56, display:'grid', gridTemplateColumns:'1fr auto', gap:32, alignItems:'center' }}>
             <div>
               <h2 style={{ fontFamily:'Playfair Display,serif', fontSize:28, color:'#fff', fontWeight:700, marginBottom:12 }}>{s.obra_social_mission_title || 'Nossa Missão Social'}</h2>
-              <p style={{ fontSize:15, color:'rgba(255,255,255,.7)', lineHeight:1.75 }}>{s.obra_social_mission_text || 'A Obra Social Nossa Senhora de Fátima é o braço assistencial da Paróquia Espírito Santo, oferecendo serviços gratuitos e cursos profissionalizantes para famílias em situação de vulnerabilidade.'}</p>
+              <RichTextContent
+                html={s.obra_social_mission_text}
+                fallback="A Obra Social Nossa Senhora de Fátima é o braço assistencial da Paróquia Espírito Santo, oferecendo serviços gratuitos e cursos profissionalizantes para famílias em situação de vulnerabilidade."
+                dark
+                style={{ fontSize:15, color:'rgba(255,255,255,.7)', lineHeight:1.75 }}
+              />
             </div>
             <Link to={s.obra_social_cta_url || '/voluntario'} style={{ padding:'13px 28px', borderRadius:100, background:'var(--gold)', color:'#fff', fontWeight:600, fontSize:14, whiteSpace:'nowrap', flexShrink:0, transition:'transform .2s' }}
               onMouseEnter={e => e.currentTarget.style.transform='translateY(-2px)'}

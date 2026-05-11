@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useFetch } from '../hooks/useFetch';
 import PageHeader from '../components/PageHeader';
 import Reveal from '../components/Reveal';
+import RichTextContent from '../components/RichTextContent';
 import { Phone, Clock, MapPin, X } from 'lucide-react';
 import { normalizeMediaUrl } from '../lib/media';
 
@@ -21,18 +22,13 @@ function GroupModal({ group, onClose }) {
         </div>
         <div style={{ padding: 26, overflowY: 'auto' }}>
           {groupImage && <img src={groupImage} alt="" style={{ width: '100%', height: 200, objectFit: 'cover', borderRadius: 12, marginBottom: 18, border: '1px solid var(--border)' }} />}
-          {group.description && <div className="group-description" style={{ fontSize: 14, color: 'var(--text-mid)', lineHeight: 1.75, marginBottom: 18 }} dangerouslySetInnerHTML={{ __html: group.description }} />}
+          {group.description && <RichTextContent html={group.description} style={{ fontSize: 14, color: 'var(--text-mid)', lineHeight: 1.75, marginBottom: 18 }} />}
           <div style={{ display: 'grid', gap: 10 }}>
             {group.location && <p style={{ display: 'flex', alignItems: 'center', gap: 7, fontSize: 13, color: 'var(--text-mid)' }}><MapPin size={14} style={{ color: 'var(--gold)' }} />{group.location}</p>}
             {group.coordinator_phone && <p style={{ display: 'flex', alignItems: 'center', gap: 7, fontSize: 13, color: 'var(--text-mid)' }}><Phone size={14} style={{ color: 'var(--gold)' }} />{group.coordinator_phone}</p>}
           </div>
         </div>
       </div>
-      <style>{`
-        .group-description p { margin: 0 0 12px 0; }
-        .group-description ul, .group-description ol { margin: 0 0 12px 20px; }
-        .group-description li { margin-bottom: 6px; }
-      `}</style>
     </div>
   );
 }

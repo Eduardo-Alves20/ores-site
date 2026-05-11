@@ -2,6 +2,7 @@
 import { useFetch } from '../hooks/useFetch';
 import PageHeader from '../components/PageHeader';
 import Reveal from '../components/Reveal';
+import RichTextContent from '../components/RichTextContent';
 import { Phone, MapPin, X } from 'lucide-react';
 import { normalizeMediaUrl } from '../lib/media';
 
@@ -21,7 +22,7 @@ function CommunityModal({ community, onClose }) {
         </div>
         <div style={{ padding: 26, overflowY: 'auto' }}>
           {communityImage && <img src={communityImage} alt="" style={{ width: '100%', height: 200, objectFit: 'cover', borderRadius: 12, marginBottom: 18, border: '1px solid var(--border)' }} />}
-          {community.description && <div className="community-description" style={{ fontSize: 14, color: 'var(--text-mid)', lineHeight: 1.75, marginBottom: 18 }} dangerouslySetInnerHTML={{ __html: community.description }} />}
+          {community.description && <RichTextContent html={community.description} style={{ fontSize: 14, color: 'var(--text-mid)', lineHeight: 1.75, marginBottom: 18 }} />}
           <div style={{ display: 'grid', gap: 10 }}>
             {community.neighborhood && <p style={{ display: 'flex', alignItems: 'center', gap: 7, fontSize: 13, color: 'var(--text-mid)' }}><MapPin size={14} style={{ color: 'var(--gold)' }} />{community.neighborhood}</p>}
             {community.coordinator_name && <p style={{ fontSize: 13, color: 'var(--text-mid)' }}>Coord.: {community.coordinator_name}</p>}
@@ -29,11 +30,6 @@ function CommunityModal({ community, onClose }) {
           </div>
         </div>
       </div>
-      <style>{`
-        .community-description p { margin: 0 0 12px 0; }
-        .community-description ul, .community-description ol { margin: 0 0 12px 20px; }
-        .community-description li { margin-bottom: 6px; }
-      `}</style>
     </div>
   );
 }

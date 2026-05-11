@@ -1,9 +1,10 @@
-import { useEffect, useRef, useState } from 'react';
+import { useState } from 'react';
 import { Pencil, Trash2, Plus, X, Check, Search } from 'lucide-react';
 import api from '../../lib/api';
 import { useFetch } from '../../hooks/useFetch';
 import MediaField from './MediaField';
 import { useAppAlert } from '../../components/AppAlert';
+import RichTextEditor from '../../components/RichTextEditor';
 
 function Modal({ title, children, onClose }) {
   return (
@@ -15,76 +16,6 @@ function Modal({ title, children, onClose }) {
         </div>
         <div style={{ padding:'24px' }}>{children}</div>
       </div>
-    </div>
-  );
-}
-
-function RichTextField({ value, onChange }) {
-  const editorRef = useRef(null);
-  const isEditingRef = useRef(false);
-
-  useEffect(() => {
-    if (!editorRef.current) return;
-    if (isEditingRef.current) return;
-    const next = value || '';
-    if (editorRef.current.innerHTML === next) return;
-    editorRef.current.innerHTML = next;
-  }, [value]);
-
-  const style = {
-    width: '100%',
-    minHeight: 170,
-    padding: '10px 12px',
-    borderRadius: 8,
-    border: '1px solid var(--border)',
-    fontSize: 14,
-    outline: 'none',
-    fontFamily: 'Plus Jakarta Sans,sans-serif',
-    lineHeight: 1.7,
-    color: 'var(--text-mid)',
-  };
-
-  const apply = (command, arg) => {
-    document.execCommand(command, false, arg);
-    if (editorRef.current) onChange(editorRef.current.innerHTML);
-  };
-
-  const toolbarBtn = {
-    padding: '6px 10px',
-    borderRadius: 8,
-    border: '1px solid var(--border)',
-    background: '#fff',
-    fontSize: 12,
-    color: 'var(--text-mid)',
-    fontWeight: 700,
-  };
-
-  return (
-    <div>
-      <div style={{ display: 'flex', gap: 8, marginBottom: 8, flexWrap: 'wrap' }}>
-        <button type="button" onClick={() => apply('bold')} style={toolbarBtn}>Negrito</button>
-        <button type="button" onClick={() => apply('italic')} style={toolbarBtn}>Italico</button>
-        <button type="button" onClick={() => apply('insertUnorderedList')} style={toolbarBtn}>Lista</button>
-        <button type="button" onClick={() => apply('insertOrderedList')} style={toolbarBtn}>Numerada</button>
-        <button type="button" onClick={() => apply('formatBlock', 'p')} style={toolbarBtn}>Paragrafo</button>
-        <button type="button" onClick={() => apply('insertParagraph')} style={toolbarBtn}>Quebra</button>
-      </div>
-      <div
-        ref={editorRef}
-        contentEditable
-        suppressContentEditableWarning
-        style={style}
-        onInput={(e) => onChange(e.currentTarget.innerHTML)}
-        onFocus={(e) => {
-          isEditingRef.current = true;
-          e.currentTarget.style.borderColor = 'var(--gold)';
-        }}
-        onBlur={(e) => {
-          isEditingRef.current = false;
-          onChange(e.currentTarget.innerHTML);
-          e.currentTarget.style.borderColor = 'var(--border)';
-        }}
-      />
     </div>
   );
 }
@@ -103,7 +34,7 @@ function Field({ label, type='text', value, onChange, options, required, textare
           {options.map(o => <option key={o.value||o} value={o.value||o}>{o.label||o}</option>)}
         </select>
       ) : richText ? (
-        <RichTextField value={value} onChange={onChange} />
+        <RichTextEditor value={value || ''} onChange={onChange} minHeight={170} />
       ) : textarea ? (
         <textarea rows={3} value={value||''} onChange={e=>onChange(e.target.value)} style={{ ...style, resize:'vertical' }} {...events} />
       ) : (

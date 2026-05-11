@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useFetch } from '../hooks/useFetch';
 import { normalizeMediaUrl } from '../lib/media';
+import RichTextContent from './RichTextContent';
 
 const HEADER_KEYS = {
   'Conheca a Paroquia': 'conheca',
@@ -65,7 +66,13 @@ export default function PageHeader({ eyebrow, title, subtitle, headerKey, childr
       <div style={{ maxWidth: 1200, margin: '0 auto', position: 'relative', textAlign: 'center' }}>
         {e && <div style={{ fontSize: 11, fontWeight: 600, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--gold-light)', marginBottom: 16 }}>{e}</div>}
         <h1 style={{ fontFamily: 'Playfair Display,serif', fontSize: 'clamp(30px,5vw,52px)', fontWeight: 700, color: '#fff', textShadow: '0 2px 12px rgba(0,0,0,.38)', marginBottom: s ? 16 : 0 }}>{t}</h1>
-        {s && <p style={{ fontSize: 16, color: 'rgba(255,255,255,.85)', textShadow: '0 1px 8px rgba(0,0,0,.34)', lineHeight: 1.7, maxWidth: 600, margin: '0 auto' }}>{s}</p>}
+        {s && (
+          <RichTextContent
+            html={s}
+            dark
+            style={{ fontSize: 16, color: 'rgba(255,255,255,.85)', textShadow: '0 1px 8px rgba(0,0,0,.34)', lineHeight: 1.7, maxWidth: 600, margin: '0 auto' }}
+          />
+        )}
         {children}
       </div>
       <style>{`

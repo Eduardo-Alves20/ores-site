@@ -2,6 +2,7 @@
 import { useParams, Link } from 'react-router-dom';
 import PageHeader from '../components/PageHeader';
 import Reveal from '../components/Reveal';
+import RichTextContent from '../components/RichTextContent';
 import { normalizeMediaUrl } from '../lib/media';
 
 function formatDate(value) {
@@ -156,7 +157,7 @@ export function NoticiaDetalhe() {
               </div>
             )}
             {news.content
-              ? <div style={{ fontSize: 15, lineHeight: 1.8, color: 'var(--text-mid)' }} dangerouslySetInnerHTML={{ __html: news.content }} />
+              ? <RichTextContent html={news.content} style={{ fontSize: 15, lineHeight: 1.8, color: 'var(--text-mid)' }} />
               : <p style={{ fontSize: 15, lineHeight: 1.8, color: 'var(--text-mid)' }}>{news.summary}</p>}
             {news.external_url && (
               <div style={{ marginTop: 20 }}>

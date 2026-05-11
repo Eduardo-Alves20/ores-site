@@ -2,6 +2,7 @@
 import { useFetch } from '../hooks/useFetch';
 import PageHeader from '../components/PageHeader';
 import Reveal from '../components/Reveal';
+import RichTextContent from '../components/RichTextContent';
 import { ChevronLeft, ChevronRight, Clock, MapPin, Search, X } from 'lucide-react';
 import { normalizeMediaUrl } from '../lib/media';
 
@@ -60,11 +61,7 @@ function PastoralModal({ pastoral, onClose }) {
           </div>
 
           {pastoral.description && (
-            <div
-              className="pastoral-description"
-              style={{ fontSize: 14, color: 'var(--text-mid)', lineHeight: 1.75, marginBottom: 18 }}
-              dangerouslySetInnerHTML={{ __html: pastoral.description }}
-            />
+            <RichTextContent html={pastoral.description} style={{ fontSize: 14, color: 'var(--text-mid)', lineHeight: 1.75, marginBottom: 18 }} />
           )}
 
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 12 }}>
@@ -92,12 +89,6 @@ function PastoralModal({ pastoral, onClose }) {
         </div>
       </div>
       <style>{`
-        .pastoral-description p { margin: 0 0 12px 0; }
-        .pastoral-description ul,
-        .pastoral-description ol { margin: 0 0 12px 20px; }
-        .pastoral-description li { margin-bottom: 6px; }
-        .pastoral-description strong { color: var(--navy); }
-
         @media (max-width: 700px) {
           .pastoral-modal { max-height: calc(100dvh - 28px) !important; }
           .pastoral-modal [style*="grid-template-columns: 1fr 1fr"] { grid-template-columns: 1fr !important; }
