@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import api from '../../lib/api';
 import { useFetch } from '../../hooks/useFetch';
-import { Save } from 'lucide-react';
+import { ChevronDown, ChevronUp, Pencil, Save, Trash2 } from 'lucide-react';
 import MediaField from './MediaField';
 import { useAppAlert } from '../../components/AppAlert';
 import { PUBLIC_MENU_ITEMS, ADMIN_MENU_ITEMS, enabledKey } from '../../lib/menuLabels';
@@ -60,22 +60,7 @@ const sections = [
   {
     title: 'Home - Faixa de numeros',
     fields: [
-      ['home_stat_1_value', 'Indicador 1: valor'],
-      ['home_stat_1_suffix', 'Indicador 1: sufixo (ex: +)'],
-      ['home_stat_1_label', 'Indicador 1: legenda'],
-      ['home_stat_1_no_count', 'Indicador 1: sem animacao?', 'boolean01'],
-      ['home_stat_2_value', 'Indicador 2: valor'],
-      ['home_stat_2_suffix', 'Indicador 2: sufixo'],
-      ['home_stat_2_label', 'Indicador 2: legenda'],
-      ['home_stat_2_no_count', 'Indicador 2: sem animacao?', 'boolean01'],
-      ['home_stat_3_value', 'Indicador 3: valor'],
-      ['home_stat_3_suffix', 'Indicador 3: sufixo'],
-      ['home_stat_3_label', 'Indicador 3: legenda'],
-      ['home_stat_3_no_count', 'Indicador 3: sem animacao?', 'boolean01'],
-      ['home_stat_4_value', 'Indicador 4: valor'],
-      ['home_stat_4_suffix', 'Indicador 4: sufixo'],
-      ['home_stat_4_label', 'Indicador 4: legenda'],
-      ['home_stat_4_no_count', 'Indicador 4: sem animacao?', 'boolean01'],
+      ['home_stats_manager', 'Gerenciador da faixa de numeros', 'home_stats_manager'],
     ],
   },
   {
@@ -258,9 +243,10 @@ const sections = [
   },
 ];
 
-function SettingsField({ field, form, setValue, MenuManagerComponent }) {
+function SettingsField({ field, form, setValue, MenuManagerComponent, HomeStatsManagerComponent }) {
   const [key, label, type] = field;
   if (type === 'menu_manager') return <MenuManagerComponent />;
+  if (type === 'home_stats_manager') return <HomeStatsManagerComponent />;
   if (type === 'image') return <MediaField label={label} value={form[key] || ''} onChange={(v) => setValue(key, v)} />;
   if (type === 'boolean01') {
     return (
@@ -305,11 +291,39 @@ export default function AdminSettings() {
   const [loading, setLoading] = useState(false);
   const [editingMenuItem, setEditingMenuItem] = useState(null);
   const [editingMenuLabel, setEditingMenuLabel] = useState('');
+  const [openStat, setOpenStat] = useState(1);
+  const [editingStat, setEditingStat] = useState(null);
+  const [editingStatDraft, setEditingStatDraft] = useState({ value: '', suffix: '', label: '', noCount: '0' });
   const hydratedRef = useRef(false);
+
+  const statDefaults = {
+    1: { value: '35', suffix: '+', label: 'Grupos e Pastorais', noCount: '0' },
+    2: { value: '11', suffix: '', label: 'Comunidades', noCount: '0' },
+    3: { value: '5', suffix: '', label: 'Missas por semana', noCount: '0' },
+    4: { value: '1992', suffix: '', label: 'Ano de fundacao', noCount: '1' },
+  };
 
   useEffect(() => {
     if (!data || hydratedRef.current) return;
-    setForm(data);
+    setForm({
+      ...data,
+      home_stat_1_value: data.home_stat_1_value ?? statDefaults[1].value,
+      home_stat_1_suffix: data.home_stat_1_suffix ?? statDefaults[1].suffix,
+      home_stat_1_label: data.home_stat_1_label ?? statDefaults[1].label,
+      home_stat_1_no_count: data.home_stat_1_no_count ?? statDefaults[1].noCount,
+      home_stat_2_value: data.home_stat_2_value ?? statDefaults[2].value,
+      home_stat_2_suffix: data.home_stat_2_suffix ?? statDefaults[2].suffix,
+      home_stat_2_label: data.home_stat_2_label ?? statDefaults[2].label,
+      home_stat_2_no_count: data.home_stat_2_no_count ?? statDefaults[2].noCount,
+      home_stat_3_value: data.home_stat_3_value ?? statDefaults[3].value,
+      home_stat_3_suffix: data.home_stat_3_suffix ?? statDefaults[3].suffix,
+      home_stat_3_label: data.home_stat_3_label ?? statDefaults[3].label,
+      home_stat_3_no_count: data.home_stat_3_no_count ?? statDefaults[3].noCount,
+      home_stat_4_value: data.home_stat_4_value ?? statDefaults[4].value,
+      home_stat_4_suffix: data.home_stat_4_suffix ?? statDefaults[4].suffix,
+      home_stat_4_label: data.home_stat_4_label ?? statDefaults[4].label,
+      home_stat_4_no_count: data.home_stat_4_no_count ?? statDefaults[4].noCount,
+    });
     hydratedRef.current = true;
   }, [data]);
 
@@ -361,6 +375,41 @@ export default function AdminSettings() {
     const ok = await confirm({ title:'Excluir item do menu?', message:`"${form[item.key] || item.defaultLabel}" sera ocultado do menu.`, confirmText:'Excluir' });
     if (!ok) return;
     set(enabledKey(item.key), '0');
+  };
+
+  const openStatEditor = (index) => {
+    setEditingStat(index);
+    setEditingStatDraft({
+      value: form[`home_stat_${index}_value`] ?? statDefaults[index].value,
+      suffix: form[`home_stat_${index}_suffix`] ?? statDefaults[index].suffix,
+      label: form[`home_stat_${index}_label`] ?? statDefaults[index].label,
+      noCount: (form[`home_stat_${index}_no_count`] ?? statDefaults[index].noCount) === '1' ? '1' : '0',
+    });
+  };
+
+  const saveStatEditor = () => {
+    if (!editingStat) return;
+    const index = editingStat;
+    set(`home_stat_${index}_value`, editingStatDraft.value);
+    set(`home_stat_${index}_suffix`, editingStatDraft.suffix);
+    set(`home_stat_${index}_label`, editingStatDraft.label);
+    set(`home_stat_${index}_no_count`, editingStatDraft.noCount);
+    setEditingStat(null);
+  };
+
+  const clearStat = async (index) => {
+    const ok = await confirm({
+      title:'Excluir indicador?',
+      message:`O indicador ${index} sera resetado para o valor atual padrao do site.`,
+      confirmText:'Excluir',
+    });
+    if (!ok) return;
+
+    set(`home_stat_${index}_value`, statDefaults[index].value);
+    set(`home_stat_${index}_suffix`, statDefaults[index].suffix);
+    set(`home_stat_${index}_label`, statDefaults[index].label);
+    set(`home_stat_${index}_no_count`, statDefaults[index].noCount);
+    notify({ type:'success', title:'Indicador resetado', message:`Indicador ${index} voltou ao padrao.` });
   };
 
   const MenuManager = () => {
@@ -420,6 +469,82 @@ export default function AdminSettings() {
     );
   };
 
+  const HomeStatsManager = () => {
+    const stats = [1, 2, 3, 4].map((index) => ({
+      index,
+      value: form[`home_stat_${index}_value`] ?? statDefaults[index].value,
+      suffix: form[`home_stat_${index}_suffix`] ?? statDefaults[index].suffix,
+      label: form[`home_stat_${index}_label`] ?? statDefaults[index].label,
+      noCount: (form[`home_stat_${index}_no_count`] ?? statDefaults[index].noCount) === '1',
+    }));
+
+    return (
+      <div style={{ border: '1px solid var(--border)', borderRadius: 12, overflow: 'hidden' }}>
+        <div style={{ padding: '12px 14px', background: 'var(--cream)', borderBottom: '1px solid var(--border)', fontSize: 12, fontWeight: 700, color: 'var(--navy)', textTransform: 'uppercase', letterSpacing: '0.06em' }}>
+          Indicadores da Home
+        </div>
+        {stats.map((item, idx) => (
+          <div key={item.index} style={{ borderBottom: idx === stats.length - 1 ? 'none' : '1px solid var(--cream-dark)' }}>
+            <button
+              type="button"
+              onClick={() => setOpenStat(openStat === item.index ? 0 : item.index)}
+              style={{ width: '100%', padding: '11px 14px', display: 'grid', gridTemplateColumns: '1fr auto', alignItems: 'center', gap: 12, textAlign: 'left', background: '#fff' }}
+            >
+              <div>
+                <div style={{ fontSize: 13.5, fontWeight: 600, color: 'var(--navy)' }}>
+                  Indicador {item.index}
+                </div>
+                <div style={{ fontSize: 11.5, color: 'var(--text-soft)' }}>
+                  {item.value}{item.suffix} - {item.label}
+                </div>
+              </div>
+              <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+                <button
+                  type="button"
+                  onClick={(e) => { e.stopPropagation(); openStatEditor(item.index); }}
+                  style={{ padding: '7px 12px', borderRadius: 8, border: '1px solid var(--border)', fontSize: 12.5, fontWeight: 600, color: 'var(--navy)', background: '#fff', display: 'inline-flex', alignItems: 'center', gap: 6 }}
+                >
+                  <Pencil size={13} /> Editar
+                </button>
+                <button
+                  type="button"
+                  onClick={(e) => { e.stopPropagation(); void clearStat(item.index); }}
+                  style={{ padding: '7px 12px', borderRadius: 8, border: '1px solid #fecaca', fontSize: 12.5, fontWeight: 700, color: '#b91c1c', background: '#fff5f5', display: 'inline-flex', alignItems: 'center', gap: 6 }}
+                >
+                  <Trash2 size={13} /> Excluir
+                </button>
+                {openStat === item.index ? <ChevronUp size={16} color="var(--text-soft)" /> : <ChevronDown size={16} color="var(--text-soft)" />}
+              </div>
+            </button>
+
+            {openStat === item.index && (
+              <div style={{ padding: '0 14px 14px', background: '#fff' }}>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2,minmax(0,1fr))', gap: 12 }}>
+                  <div>
+                    <label style={{ display: 'block', fontSize: 12, fontWeight: 700, color: 'var(--text-soft)', marginBottom: 6, textTransform: 'uppercase' }}>Valor</label>
+                    <input readOnly value={item.value} style={{ width: '100%', padding: '10px 12px', borderRadius: 8, border: '1px solid var(--border)', background: '#fafafa' }} />
+                  </div>
+                  <div>
+                    <label style={{ display: 'block', fontSize: 12, fontWeight: 700, color: 'var(--text-soft)', marginBottom: 6, textTransform: 'uppercase' }}>Sufixo</label>
+                    <input readOnly value={item.suffix} style={{ width: '100%', padding: '10px 12px', borderRadius: 8, border: '1px solid var(--border)', background: '#fafafa' }} />
+                  </div>
+                  <div>
+                    <label style={{ display: 'block', fontSize: 12, fontWeight: 700, color: 'var(--text-soft)', marginBottom: 6, textTransform: 'uppercase' }}>Legenda</label>
+                    <input readOnly value={item.label} style={{ width: '100%', padding: '10px 12px', borderRadius: 8, border: '1px solid var(--border)', background: '#fafafa' }} />
+                  </div>
+                  <div>
+                    <label style={{ display: 'block', fontSize: 12, fontWeight: 700, color: 'var(--text-soft)', marginBottom: 6, textTransform: 'uppercase' }}>Animacao</label>
+                    <input readOnly value={item.noCount ? 'Sem animacao' : 'Com animacao'} style={{ width: '100%', padding: '10px 12px', borderRadius: 8, border: '1px solid var(--border)', background: '#fafafa' }} />
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+        ))}
+      </div>
+    );
+  };
+
   const section = sections.find(s => s.title === active) || sections[0];
 
   return (
@@ -455,13 +580,56 @@ export default function AdminSettings() {
           <h2 style={{ fontFamily:'Playfair Display,serif', fontSize:20, fontWeight:700, color:'var(--navy)', marginBottom:22 }}>{section.title}</h2>
           <div style={{ display:'grid', gridTemplateColumns:'repeat(2,minmax(0,1fr))', gap:'0 18px' }}>
             {section.fields.map(field => (
-              <div key={field[0]} style={{ gridColumn:field[2] === 'textarea' || field[2] === 'image' || field[2] === 'menu_manager' ? '1 / -1' : 'auto' }}>
-                <SettingsField field={field} form={form} setValue={set} MenuManagerComponent={MenuManager} />
+              <div key={field[0]} style={{ gridColumn:field[2] === 'textarea' || field[2] === 'image' || field[2] === 'menu_manager' || field[2] === 'home_stats_manager' ? '1 / -1' : 'auto' }}>
+                <SettingsField field={field} form={form} setValue={set} MenuManagerComponent={MenuManager} HomeStatsManagerComponent={HomeStatsManager} />
               </div>
             ))}
           </div>
         </div>
       </div>
+
+      {editingStat && (
+        <div
+          style={{ position:'fixed', inset:0, background:'rgba(0,0,0,.45)', zIndex:3000, display:'flex', alignItems:'center', justifyContent:'center', padding:24 }}
+          onClick={() => setEditingStat(null)}
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            style={{ background:'#fff', borderRadius:14, width:'100%', maxWidth:620, boxShadow:'0 24px 64px rgba(0,0,0,.2)', border:'1px solid var(--border)' }}
+          >
+            <div style={{ padding:'18px 22px', borderBottom:'1px solid var(--border)' }}>
+              <h3 style={{ fontFamily:'Playfair Display,serif', fontSize:20, fontWeight:700, color:'var(--navy)' }}>Editar Indicador {editingStat}</h3>
+            </div>
+            <div style={{ padding:'22px', display:'grid', gap:12 }}>
+              <div style={{ display:'grid', gridTemplateColumns:'repeat(2,minmax(0,1fr))', gap:12 }}>
+                <div>
+                  <label style={{ display:'block', fontSize:12, fontWeight:700, color:'var(--text-soft)', marginBottom:6, textTransform:'uppercase', letterSpacing:'0.04em' }}>Valor</label>
+                  <input value={editingStatDraft.value} onChange={(e) => setEditingStatDraft((d) => ({ ...d, value: e.target.value }))} style={{ width:'100%', padding:'10px 14px', borderRadius:8, border:'1px solid var(--border)', fontSize:14, outline:'none' }} />
+                </div>
+                <div>
+                  <label style={{ display:'block', fontSize:12, fontWeight:700, color:'var(--text-soft)', marginBottom:6, textTransform:'uppercase', letterSpacing:'0.04em' }}>Sufixo</label>
+                  <input value={editingStatDraft.suffix} onChange={(e) => setEditingStatDraft((d) => ({ ...d, suffix: e.target.value }))} style={{ width:'100%', padding:'10px 14px', borderRadius:8, border:'1px solid var(--border)', fontSize:14, outline:'none' }} />
+                </div>
+              </div>
+              <div>
+                <label style={{ display:'block', fontSize:12, fontWeight:700, color:'var(--text-soft)', marginBottom:6, textTransform:'uppercase', letterSpacing:'0.04em' }}>Legenda</label>
+                <input value={editingStatDraft.label} onChange={(e) => setEditingStatDraft((d) => ({ ...d, label: e.target.value }))} style={{ width:'100%', padding:'10px 14px', borderRadius:8, border:'1px solid var(--border)', fontSize:14, outline:'none' }} />
+              </div>
+              <div>
+                <label style={{ display:'block', fontSize:12, fontWeight:700, color:'var(--text-soft)', marginBottom:6, textTransform:'uppercase', letterSpacing:'0.04em' }}>Sem animacao?</label>
+                <select value={editingStatDraft.noCount} onChange={(e) => setEditingStatDraft((d) => ({ ...d, noCount: e.target.value }))} style={{ width:'100%', padding:'10px 14px', borderRadius:8, border:'1px solid var(--border)', fontSize:14, outline:'none' }}>
+                  <option value="0">Nao (com animacao)</option>
+                  <option value="1">Sim (sem animacao)</option>
+                </select>
+              </div>
+              <div style={{ display:'flex', justifyContent:'flex-end', gap:10, marginTop:6 }}>
+                <button onClick={() => setEditingStat(null)} type="button" style={{ padding:'9px 20px', borderRadius:8, border:'1px solid var(--border)', fontSize:13, color:'var(--text-mid)' }}>Cancelar</button>
+                <button onClick={saveStatEditor} type="button" style={{ padding:'9px 20px', borderRadius:8, background:'var(--gold)', color:'#fff', fontWeight:600, fontSize:13 }}>Salvar</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {editingMenuItem && (
         <div
