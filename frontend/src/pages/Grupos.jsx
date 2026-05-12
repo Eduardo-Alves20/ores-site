@@ -21,7 +21,7 @@ function GroupModal({ group, onClose }) {
           {(group.day_of_week || group.time_value) && <p style={{ fontSize: 14, color: 'var(--text-mid)' }}>{group.day_of_week} {group.time_value ? `· ${group.time_value}` : ''}</p>}
         </div>
         <div style={{ padding: 26, overflowY: 'auto' }}>
-          {groupImage && <img src={groupImage} alt="" style={{ width: '100%', height: 200, objectFit: 'cover', borderRadius: 12, marginBottom: 18, border: '1px solid var(--border)' }} />}
+          {groupImage && <img className="uploaded-media-fit" src={groupImage} alt="" style={{ width: '100%', height: 200, objectFit: 'cover', borderRadius: 12, marginBottom: 18, border: '1px solid var(--border)' }} />}
           {group.description && <RichTextContent html={group.description} style={{ fontSize: 14, color: 'var(--text-mid)', lineHeight: 1.75, marginBottom: 18 }} />}
           <div style={{ display: 'grid', gap: 10 }}>
             {group.location && <p style={{ display: 'flex', alignItems: 'center', gap: 7, fontSize: 13, color: 'var(--text-mid)' }}><MapPin size={14} style={{ color: 'var(--gold)' }} />{group.location}</p>}
@@ -75,7 +75,7 @@ function GroupCarousel({ slides }) {
 
         <div style={{ borderRadius: 16, overflow: 'hidden', border: '1px solid var(--border)', background: '#0f1d3f', position: 'relative' }}>
           {currentImage ? (
-            <img className="group-fit-media group-carousel-media" src={currentImage} alt={current.title || 'Slide do grupo de oracao'} onError={(e) => { e.currentTarget.style.display = 'none'; }} style={{ width: '100%', height: 'clamp(260px,38vw,420px)', objectFit: 'cover', display: 'block' }} />
+            <img className="uploaded-media-fit group-fit-media group-carousel-media" src={currentImage} alt={current.title || 'Slide do grupo de oracao'} onError={(e) => { e.currentTarget.style.display = 'none'; }} style={{ width: '100%', height: 'clamp(260px,38vw,420px)', objectFit: 'cover', display: 'block' }} />
           ) : (
             <div style={{ width: '100%', height: 'clamp(260px,38vw,420px)', background: 'linear-gradient(135deg,var(--navy),var(--navy-light))' }} />
           )}
@@ -128,7 +128,7 @@ export default function Grupos() {
                   <button type="button" onClick={() => setSelected(g)} style={{ display: 'block', width: '100%', textAlign: 'left', background: '#fff', borderRadius: 12, border: '1px solid var(--border)', overflow: 'hidden', boxShadow: '0 1px 4px rgba(0,0,0,.03)', transition: 'transform .2s,box-shadow .2s' }}
                     onMouseEnter={(e) => { e.currentTarget.style.transform = 'translateY(-3px)'; e.currentTarget.style.boxShadow = '0 8px 28px rgba(0,0,0,.07)'; }}
                     onMouseLeave={(e) => { e.currentTarget.style.transform = ''; e.currentTarget.style.boxShadow = '0 1px 4px rgba(0,0,0,.03)'; }}>
-                    {groupImage && <img src={groupImage} alt="" style={{ width: '100%', height: 152, objectFit: 'cover', display: 'block' }} />}
+                    {groupImage && <img className="uploaded-media-fit" src={groupImage} alt="" style={{ width: '100%', height: 152, objectFit: 'cover', display: 'block' }} />}
                     <div style={{ padding: '20px' }}>
                       <h3 style={{ fontFamily: 'Playfair Display,serif', fontSize: 18, fontWeight: 700, color: 'var(--navy)', marginBottom: 10 }}>{g.name}</h3>
                       <div style={{ display: 'flex', flexDirection: 'column', gap: 7, fontSize: 12, color: 'var(--text-soft)' }}>

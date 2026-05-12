@@ -30,6 +30,7 @@ function NewsCard({ newsItem }) {
       {imageUrl && (
         <div style={{ height: 190, background: '#e9e5dd' }}>
           <img
+            className="uploaded-media-fit"
             src={imageUrl}
             alt={title}
             onError={(e) => { e.currentTarget.style.display = 'none'; }}
@@ -149,6 +150,7 @@ export function NoticiaDetalhe() {
             {detailImageUrl && (
               <div className="news-detail-image" style={{ marginBottom: 20, borderRadius: 12, overflow: 'hidden', border: '1px solid var(--border)' }}>
                 <img
+                  className="uploaded-media-fit"
                   src={detailImageUrl}
                   alt={detailTitle}
                   onError={(e) => { e.currentTarget.style.display = 'none'; }}

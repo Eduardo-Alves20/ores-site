@@ -21,7 +21,7 @@ function CommunityModal({ community, onClose }) {
           {community.neighborhood && <p style={{ fontSize: 14, color: 'var(--text-mid)' }}>{community.neighborhood}</p>}
         </div>
         <div style={{ padding: 26, overflowY: 'auto' }}>
-          {communityImage && <img src={communityImage} alt="" style={{ width: '100%', height: 200, objectFit: 'cover', borderRadius: 12, marginBottom: 18, border: '1px solid var(--border)' }} />}
+          {communityImage && <img className="uploaded-media-fit" src={communityImage} alt="" style={{ width: '100%', height: 200, objectFit: 'cover', borderRadius: 12, marginBottom: 18, border: '1px solid var(--border)' }} />}
           {community.description && <RichTextContent html={community.description} style={{ fontSize: 14, color: 'var(--text-mid)', lineHeight: 1.75, marginBottom: 18 }} />}
           <div style={{ display: 'grid', gap: 10 }}>
             {community.neighborhood && <p style={{ display: 'flex', alignItems: 'center', gap: 7, fontSize: 13, color: 'var(--text-mid)' }}><MapPin size={14} style={{ color: 'var(--gold)' }} />{community.neighborhood}</p>}
@@ -51,7 +51,7 @@ export default function Comunidades() {
                   <button type="button" onClick={() => setSelected(c)} style={{ display: 'block', width: '100%', textAlign: 'left', background: '#fff', borderRadius: 12, border: '1px solid var(--border)', overflow: 'hidden', transition: 'transform .2s,box-shadow .2s' }}
                     onMouseEnter={(e) => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 6px 20px rgba(0,0,0,.07)'; }}
                     onMouseLeave={(e) => { e.currentTarget.style.transform = ''; e.currentTarget.style.boxShadow = ''; }}>
-                    {communityImage && <img src={communityImage} alt="" style={{ width: '100%', height: 152, objectFit: 'cover', display: 'block' }} />}
+                    {communityImage && <img className="uploaded-media-fit" src={communityImage} alt="" style={{ width: '100%', height: 152, objectFit: 'cover', display: 'block' }} />}
                     <div style={{ padding: '22px 24px' }}>
                       <h3 style={{ fontFamily: 'Playfair Display,serif', fontSize: 16, fontWeight: 700, color: 'var(--navy)', marginBottom: 10 }}>{c.name}</h3>
                       {c.neighborhood && <p style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 13, color: 'var(--text-soft)', marginBottom: 8 }}><MapPin size={12} style={{ color: 'var(--gold)' }} />{c.neighborhood}</p>}

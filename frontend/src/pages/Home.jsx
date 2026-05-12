@@ -326,6 +326,7 @@ export default function Home() {
                       <div style={{ position:'relative', borderRadius:12, overflow:'hidden', border:'1px solid var(--border)', background:'#f3f1ec', aspectRatio:'16 / 9' }}>
                         {donationSlides.map((item, i) => (
                           <img
+                            className="uploaded-media-fit"
                             key={`${item.url}-${i}`}
                             src={item.url}
                             alt={item.caption || 'Foto da doacao'}
@@ -360,7 +361,7 @@ export default function Home() {
                   <div style={{ display:'none' }}>
                     {donationSlides.length ? donationSlides.map((item, i) => (
                       <div key={i} style={{ display:'grid', gridTemplateColumns:item.url ? '84px 1fr' : '1fr', gap:12, alignItems:'center', background:'#fff', border:'1px solid var(--border)', borderRadius:12, padding:10 }}>
-                        {item.url && <img src={item.url} alt="" onError={(e) => { e.currentTarget.style.display = 'none'; }} style={{ width:84, height:64, objectFit:'cover', borderRadius:8 }} />}
+                        {item.url && <img className="uploaded-media-fit" src={item.url} alt="" onError={(e) => { e.currentTarget.style.display = 'none'; }} style={{ width:84, height:64, objectFit:'cover', borderRadius:8 }} />}
                         <div style={{ fontSize:13, lineHeight:1.55, color:'var(--navy)', fontWeight:600 }}>{item.caption || 'Doação aplicada nas ações da comunidade'}</div>
                       </div>
                     )) : (

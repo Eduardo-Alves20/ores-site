@@ -56,7 +56,7 @@ function PastoralModal({ pastoral, onClose }) {
             {hasMap ? (
               <iframe title={`Mapa ${pastoral.name}`} src={pastoral.map_url} style={{ width: '100%', height: 180, border: 0, display: 'block' }} loading="lazy" />
             ) : pastoralImage ? (
-              <img className="pastoral-fit-media" src={pastoralImage} alt="" onError={(e) => { e.currentTarget.style.display = 'none'; }} style={{ width: '100%', height: 180, objectFit: 'cover', display: 'block' }} />
+              <img className="uploaded-media-fit pastoral-fit-media" src={pastoralImage} alt="" onError={(e) => { e.currentTarget.style.display = 'none'; }} style={{ width: '100%', height: 180, objectFit: 'cover', display: 'block' }} />
             ) : mediaFallback(pastoral.name)}
           </div>
 
@@ -140,7 +140,7 @@ function PastoralCarousel({ slides }) {
 
         <div style={{ borderRadius: 16, overflow: 'hidden', border: '1px solid var(--border)', background: '#0f1d3f', position: 'relative' }}>
           {currentImage ? (
-            <img className="pastoral-fit-media pastoral-carousel-media" src={currentImage} alt={current.title || 'Slide da pastoral'} onError={(e) => { e.currentTarget.style.display = 'none'; }} style={{ width: '100%', height: 'clamp(260px,38vw,420px)', objectFit: 'cover', display: 'block' }} />
+            <img className="uploaded-media-fit pastoral-fit-media pastoral-carousel-media" src={currentImage} alt={current.title || 'Slide da pastoral'} onError={(e) => { e.currentTarget.style.display = 'none'; }} style={{ width: '100%', height: 'clamp(260px,38vw,420px)', objectFit: 'cover', display: 'block' }} />
           ) : (
             <div style={{ width: '100%', height: 'clamp(260px,38vw,420px)', background: 'linear-gradient(135deg,var(--navy),var(--navy-light))' }} />
           )}
@@ -230,7 +230,7 @@ export default function Pastorais() {
                       e.currentTarget.style.boxShadow = '0 4px 14px rgba(0,0,0,.04)';
                     }}
                   >
-                    {pastoralThumb ? <img className="pastoral-fit-media pastoral-card-media" src={pastoralThumb} alt="" onError={(e) => { e.currentTarget.style.display = 'none'; }} style={{ width: '100%', height: 132, objectFit: 'cover', display: 'block' }} /> : mediaFallback(p.name)}
+                    {pastoralThumb ? <img className="uploaded-media-fit pastoral-fit-media pastoral-card-media" src={pastoralThumb} alt="" onError={(e) => { e.currentTarget.style.display = 'none'; }} style={{ width: '100%', height: 132, objectFit: 'cover', display: 'block' }} /> : mediaFallback(p.name)}
                     <div style={{ padding: '20px' }}>
                       <div style={{ display: 'flex', justifyContent: 'space-between', gap: 12, alignItems: 'flex-start', marginBottom: 10 }}>
                         <h3 style={{ fontFamily: 'Playfair Display,serif', fontSize: 19, fontWeight: 700, color: 'var(--navy)', lineHeight: 1.25 }}>{p.name}</h3>

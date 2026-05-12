@@ -103,7 +103,7 @@ export default function MediaField({ label, value, onChange }) {
       <label style={{ display:'block', fontSize:12, fontWeight:700, color:'var(--text-soft)', marginBottom:8, textTransform:'uppercase', letterSpacing:'0.04em' }}>{label}</label>
       {value && (
         <div style={{ marginBottom:10, border:'1px solid var(--border)', borderRadius:8, overflow:'hidden', background:'var(--cream)' }}>
-          <img src={value} alt="" style={{ width:'100%', height:150, objectFit:'cover' }} />
+          <img className="uploaded-media-fit" src={value} alt="" style={{ width:'100%', height:150, objectFit:'cover' }} />
         </div>
       )}
       <div style={{ display:'flex', gap:8, alignItems:'center' }}>
