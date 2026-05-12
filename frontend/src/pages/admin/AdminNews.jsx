@@ -14,7 +14,7 @@ export default function AdminNews() {
       ]}
       fields={[
         { key: 'title', label: 'Titulo', required: true },
-        { key: 'slug', label: 'Slug (URL)', required: true },
+        { key: 'slug', label: 'Slug (URL - opcional)' },
         { key: 'category', label: 'Categoria' },
         { key: 'summary', label: 'Resumo', textarea: true },
         { key: 'content', label: 'Conteudo', richText: true },

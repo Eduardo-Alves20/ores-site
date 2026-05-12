@@ -62,7 +62,7 @@ router.delete('/events/:id', adm.deleteEvent);
 router.get('/news', adm.listNews);
 router.post('/news', [
   body('title').trim().isLength({ min: 3 }),
-  body('slug').trim().isSlug().withMessage('Slug inválido (use apenas letras, números e hífens).'),
+  body('slug').optional({ values: 'falsy' }).trim().isLength({ max: 300 }),
   validateRequest,
 ], adm.createNews);
 router.put('/news/:id', adm.updateNews);

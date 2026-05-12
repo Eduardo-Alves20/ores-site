@@ -210,6 +210,33 @@ async function deleteRecord(req, res, table, recordId) {
   return res.json({ message: 'Excluído com sucesso.' });
 }
 
+function slugify(value) {
+  const slug = String(value || '')
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '')
+    .slice(0, 280);
+
+  return slug || 'noticia';
+}
+
+async function uniqueNewsSlug(baseSlug, ignoreId = null) {
+  let suffix = 2;
+  const cleanBase = slugify(baseSlug);
+  let candidate = cleanBase;
+
+  while (true) {
+    const params = ignoreId ? [candidate, ignoreId] : [candidate];
+    const where = ignoreId ? 'slug = ? AND id <> ?' : 'slug = ?';
+    const existing = await queryOne(`SELECT id FROM news WHERE ${where}`, params);
+    if (!existing) return candidate;
+
+    const suffixText = `-${suffix++}`;
+    candidate = `${cleanBase.slice(0, 300 - suffixText.length)}${suffixText}`;
+  }
+}
 // ── Dashboard stats ──────────────────────────────────────────────────────────
 export async function getDashboardStats(req, res) {
   try {
@@ -419,11 +446,12 @@ export async function listNews(req, res) {
 export async function createNews(req, res) {
   try {
     const { title, slug, category, summary, content, image_url, external_url } = req.body;
+    const newsSlug = await uniqueNewsSlug(slug || title);
     const [result] = await pool.execute(
       `INSERT INTO news (title, slug, category, summary, content, image_url, external_url) VALUES (?, ?, ?, ?, ?, ?, ?)`,
       [
         sanitizeText(title),
-        sanitizeText(slug),
+        newsSlug,
         sanitizeText(category),
         sanitizeText(summary),
         sanitizeRichText(content),
@@ -440,12 +468,18 @@ export async function createNews(req, res) {
 }
 
 export async function updateNews(req, res) {
+  const recordId = parseInt(req.params.id);
+  if (req.body.slug !== undefined) {
+    const old = await queryOne(`SELECT title FROM news WHERE id = ?`, [recordId]);
+    req.body.slug = await uniqueNewsSlug(req.body.slug || req.body.title || old?.title, recordId);
+  }
+
   return updateRecord(
     req,
     res,
     'news',
     ['title', 'slug', 'category', 'summary', 'content', 'image_url', 'external_url', 'published'],
-    parseInt(req.params.id),
+    recordId,
     { richTextFields: ['content'] }
   );
 }
