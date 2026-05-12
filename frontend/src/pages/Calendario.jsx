@@ -37,6 +37,27 @@ export default function Calendario() {
   });
 
   const eventsOnDay = (day) => eventsInMonth.filter((ev) => parseDateOnly(ev.event_date)?.getDate() === day);
+  const eventsByDay = eventsInMonth.reduce((acc, ev) => {
+    const day = parseDateOnly(ev.event_date)?.getDate();
+    if (!day) return acc;
+    return { ...acc, [day]: [...(acc[day] || []), ev] };
+  }, {});
+  const eventDays = Object.keys(eventsByDay).map(Number).sort((a, b) => a - b);
+
+  const focusDay = (day) => {
+    const target = document.getElementById(`calendar-events-day-${day}`);
+    if (!target) return;
+
+    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    target.classList.add('calendar-day-group-highlight');
+    window.setTimeout(() => target.classList.remove('calendar-day-group-highlight'), 1400);
+  };
+
+  const handleDayKeyDown = (event, day) => {
+    if (event.key !== 'Enter' && event.key !== ' ') return;
+    event.preventDefault();
+    focusDay(day);
+  };
 
   const prev = () => {
     if (month === 0) {
@@ -77,8 +98,18 @@ export default function Calendario() {
             {cells.map((day, idx) => {
               const isToday = day && new Date().getDate() === day && new Date().getMonth() === month && new Date().getFullYear() === year;
               const dayEvs = day ? eventsOnDay(day) : [];
+              const hasEvents = dayEvs.length > 0;
               return (
-                <div className="calendar-cell" key={idx} style={{ minHeight: 90, padding: 8, borderRight: idx % 7 < 6 ? '1px solid var(--cream-dark)' : 'none', borderBottom: '1px solid var(--cream-dark)', background: day ? '#fff' : 'var(--cream)', overflow: 'hidden' }}>
+                <div
+                  className={`calendar-cell${hasEvents ? ' calendar-cell-clickable' : ''}`}
+                  key={idx}
+                  role={hasEvents ? 'button' : undefined}
+                  tabIndex={hasEvents ? 0 : undefined}
+                  onClick={hasEvents ? () => focusDay(day) : undefined}
+                  onKeyDown={hasEvents ? (event) => handleDayKeyDown(event, day) : undefined}
+                  aria-label={hasEvents ? `Ver eventos do dia ${day}` : undefined}
+                  style={{ minHeight: 90, padding: 8, borderRight: idx % 7 < 6 ? '1px solid var(--cream-dark)' : 'none', borderBottom: '1px solid var(--cream-dark)', background: day ? '#fff' : 'var(--cream)', overflow: 'hidden', cursor: hasEvents ? 'pointer' : 'default' }}
+                >
                   {day && (
                     <>
                       <div className="calendar-day-number" style={{ width: 26, height: 26, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 13, fontWeight: 600, marginBottom: 4, background: isToday ? 'var(--gold)' : 'transparent', color: isToday ? '#fff' : 'var(--text-mid)' }}>{day}</div>
@@ -106,23 +137,37 @@ export default function Calendario() {
         {eventsInMonth.length > 0 && (
           <div style={{ marginTop: 40 }}>
             <h3 style={{ fontFamily: 'Playfair Display,serif', fontSize: 22, fontWeight: 700, color: 'var(--navy)', marginBottom: 20 }}>Eventos de {MONTHS[month]}</h3>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-              {eventsInMonth.map((ev, i) => {
-                const color = CAT_COLORS[ev.category] || 'var(--navy)';
-                return (
-                  <div className="calendar-event-card" key={i} style={{ background: '#fff', borderRadius: 10, border: '1px solid var(--border)', padding: '16px 20px', display: 'flex', gap: 16, alignItems: 'center' }}>
-                    <div style={{ width: 6, borderRadius: 3, alignSelf: 'stretch', background: color, flexShrink: 0 }} />
-                    <div className="calendar-event-info" style={{ flex: 1 }}>
-                      <div style={{ fontWeight: 600, color: 'var(--navy)', marginBottom: 4 }}>{ev.title}</div>
-                      <div className="calendar-event-meta" style={{ display: 'flex', gap: 16, fontSize: 12, color: 'var(--text-soft)' }}>
-                        <span style={{ display: 'flex', alignItems: 'center', gap: 4 }}><Clock size={12} />{formatEventDate(ev.event_date)} {ev.start_time?.slice(0, 5)}h{ev.end_time && `-${ev.end_time.slice(0, 5)}h`}</span>
-                        {ev.location && <span style={{ display: 'flex', alignItems: 'center', gap: 4 }}><MapPin size={12} />{ev.location}</span>}
-                      </div>
-                    </div>
-                    {ev.category && <span className="calendar-event-category" style={{ fontSize: 10, fontWeight: 700, letterSpacing: '0.06em', textTransform: 'uppercase', padding: '3px 8px', borderRadius: 100, background: `${color}22`, color }}>{ev.category}</span>}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+              {eventDays.map((day) => (
+                <div
+                  id={`calendar-events-day-${day}`}
+                  className="calendar-day-group"
+                  key={day}
+                  style={{ scrollMarginTop: 96, borderRadius: 12, transition: 'background .25s, box-shadow .25s' }}
+                >
+                  <h4 style={{ fontFamily: 'Playfair Display,serif', fontSize: 18, fontWeight: 700, color: 'var(--navy)', marginBottom: 10 }}>
+                    Dia {String(day).padStart(2, '0')}
+                  </h4>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+                    {eventsByDay[day].map((ev, i) => {
+                      const color = CAT_COLORS[ev.category] || 'var(--navy)';
+                      return (
+                        <div className="calendar-event-card" key={`${day}-${i}`} style={{ background: '#fff', borderRadius: 10, border: '1px solid var(--border)', padding: '16px 20px', display: 'flex', gap: 16, alignItems: 'center' }}>
+                          <div style={{ width: 6, borderRadius: 3, alignSelf: 'stretch', background: color, flexShrink: 0 }} />
+                          <div className="calendar-event-info" style={{ flex: 1 }}>
+                            <div style={{ fontWeight: 600, color: 'var(--navy)', marginBottom: 4 }}>{ev.title}</div>
+                            <div className="calendar-event-meta" style={{ display: 'flex', gap: 16, fontSize: 12, color: 'var(--text-soft)' }}>
+                              <span style={{ display: 'flex', alignItems: 'center', gap: 4 }}><Clock size={12} />{formatEventDate(ev.event_date)} {ev.start_time?.slice(0, 5)}h{ev.end_time && `-${ev.end_time.slice(0, 5)}h`}</span>
+                              {ev.location && <span style={{ display: 'flex', alignItems: 'center', gap: 4 }}><MapPin size={12} />{ev.location}</span>}
+                            </div>
+                          </div>
+                          {ev.category && <span className="calendar-event-category" style={{ fontSize: 10, fontWeight: 700, letterSpacing: '0.06em', textTransform: 'uppercase', padding: '3px 8px', borderRadius: 100, background: `${color}22`, color }}>{ev.category}</span>}
+                        </div>
+                      );
+                    })}
                   </div>
-                );
-              })}
+                </div>
+              ))}
             </div>
           </div>
         )}
@@ -130,6 +175,21 @@ export default function Calendario() {
       <style>{`
         .calendar-event-dots {
           display: none;
+        }
+        .calendar-cell-clickable {
+          transition: background .18s, box-shadow .18s;
+        }
+        .calendar-cell-clickable:hover {
+          background: #fbf8f1 !important;
+          box-shadow: inset 0 0 0 1px rgba(184,148,90,.35);
+        }
+        .calendar-cell-clickable:focus-visible {
+          outline: 2px solid var(--gold);
+          outline-offset: -2px;
+        }
+        .calendar-day-group-highlight {
+          background: rgba(184,148,90,.08);
+          box-shadow: 0 0 0 12px rgba(184,148,90,.08);
         }
         @media (max-width: 700px) {
           .calendar-section {
