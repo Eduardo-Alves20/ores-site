@@ -55,22 +55,27 @@ const sections = [
       ['home_mission_primary_url', 'Missao: link principal'],
       ['home_mission_secondary_label', 'Missao: botao secundario'],
       ['home_mission_secondary_url', 'Missao: link secundario'],
-      ['home_stat_1_value', 'Faixa de numeros: valor 1'],
-      ['home_stat_1_suffix', 'Faixa de numeros: sufixo 1 (ex: +)'],
-      ['home_stat_1_label', 'Faixa de numeros: legenda 1'],
-      ['home_stat_1_no_count', 'Faixa de numeros: sem animacao 1? (1 sim, 0 nao)'],
-      ['home_stat_2_value', 'Faixa de numeros: valor 2'],
-      ['home_stat_2_suffix', 'Faixa de numeros: sufixo 2'],
-      ['home_stat_2_label', 'Faixa de numeros: legenda 2'],
-      ['home_stat_2_no_count', 'Faixa de numeros: sem animacao 2? (1 sim, 0 nao)'],
-      ['home_stat_3_value', 'Faixa de numeros: valor 3'],
-      ['home_stat_3_suffix', 'Faixa de numeros: sufixo 3'],
-      ['home_stat_3_label', 'Faixa de numeros: legenda 3'],
-      ['home_stat_3_no_count', 'Faixa de numeros: sem animacao 3? (1 sim, 0 nao)'],
-      ['home_stat_4_value', 'Faixa de numeros: valor 4'],
-      ['home_stat_4_suffix', 'Faixa de numeros: sufixo 4'],
-      ['home_stat_4_label', 'Faixa de numeros: legenda 4'],
-      ['home_stat_4_no_count', 'Faixa de numeros: sem animacao 4? (1 sim, 0 nao)'],
+    ],
+  },
+  {
+    title: 'Home - Faixa de numeros',
+    fields: [
+      ['home_stat_1_value', 'Indicador 1: valor'],
+      ['home_stat_1_suffix', 'Indicador 1: sufixo (ex: +)'],
+      ['home_stat_1_label', 'Indicador 1: legenda'],
+      ['home_stat_1_no_count', 'Indicador 1: sem animacao?', 'boolean01'],
+      ['home_stat_2_value', 'Indicador 2: valor'],
+      ['home_stat_2_suffix', 'Indicador 2: sufixo'],
+      ['home_stat_2_label', 'Indicador 2: legenda'],
+      ['home_stat_2_no_count', 'Indicador 2: sem animacao?', 'boolean01'],
+      ['home_stat_3_value', 'Indicador 3: valor'],
+      ['home_stat_3_suffix', 'Indicador 3: sufixo'],
+      ['home_stat_3_label', 'Indicador 3: legenda'],
+      ['home_stat_3_no_count', 'Indicador 3: sem animacao?', 'boolean01'],
+      ['home_stat_4_value', 'Indicador 4: valor'],
+      ['home_stat_4_suffix', 'Indicador 4: sufixo'],
+      ['home_stat_4_label', 'Indicador 4: legenda'],
+      ['home_stat_4_no_count', 'Indicador 4: sem animacao?', 'boolean01'],
     ],
   },
   {
@@ -257,6 +262,23 @@ function SettingsField({ field, form, setValue, MenuManagerComponent }) {
   const [key, label, type] = field;
   if (type === 'menu_manager') return <MenuManagerComponent />;
   if (type === 'image') return <MediaField label={label} value={form[key] || ''} onChange={(v) => setValue(key, v)} />;
+  if (type === 'boolean01') {
+    return (
+      <div style={{ marginBottom:18 }}>
+        <label style={{ display:'block', fontSize:12, fontWeight:700, color:'var(--text-soft)', marginBottom:6, textTransform:'uppercase', letterSpacing:'0.04em' }}>{label}</label>
+        <select
+          value={(form[key] ?? '0') === '1' ? '1' : '0'}
+          onChange={(e) => setValue(key, e.target.value)}
+          style={{ width:'100%', padding:'10px 14px', borderRadius:8, border:'1px solid var(--border)', fontSize:14, outline:'none' }}
+          onFocus={(e) => { e.target.style.borderColor = 'var(--gold)'; }}
+          onBlur={(e) => { e.target.style.borderColor = 'var(--border)'; }}
+        >
+          <option value="0">Nao (com animacao)</option>
+          <option value="1">Sim (sem animacao)</option>
+        </select>
+      </div>
+    );
+  }
   const common = {
     value: form[key] || '',
     onChange: (e) => setValue(key, e.target.value),
