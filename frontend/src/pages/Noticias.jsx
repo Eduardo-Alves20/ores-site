@@ -116,16 +116,16 @@ export function NoticiaDetalhe() {
   return (
     <div className="animate-page">
       <PageHeader eyebrow={news.category} title={detailTitle} subtitle={formatDate(news.published_at)} />
-      <section style={{ padding: '72px 24px', maxWidth: 800, margin: '0 auto' }}>
+      <section className="news-detail-section" style={{ padding: '72px 24px', maxWidth: 800, margin: '0 auto' }}>
         <Reveal>
-          <div style={{ background: '#fff', borderRadius: 12, border: '1px solid var(--border)', padding: '40px' }}>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12, marginBottom: 20 }}>
-              <div style={{ flex: 1 }}>
-                <h1 style={{ fontFamily: 'Playfair Display,serif', fontSize: 'clamp(26px,4vw,38px)', color: 'var(--navy)', lineHeight: 1.2, fontWeight: 700 }}>
+          <div className="news-detail-card" style={{ background: '#fff', borderRadius: 12, border: '1px solid var(--border)', padding: '40px' }}>
+            <div className="news-detail-top" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12, marginBottom: 20 }}>
+              <div className="news-detail-title" style={{ flex: 1, minWidth: 0 }}>
+                <h1 className="news-detail-heading" style={{ fontFamily: 'Playfair Display,serif', fontSize: 'clamp(26px,4vw,38px)', color: 'var(--navy)', lineHeight: 1.2, fontWeight: 700 }}>
                   {detailTitle}
                 </h1>
               </div>
-              <div style={{ display: 'flex', gap: 8, flexShrink: 0 }}>
+              <div className="news-detail-actions" style={{ display: 'flex', gap: 8, flexShrink: 0 }}>
                 {prevNews ? (
                   <Link to={`/noticias/${prevNews.slug}`} style={{ padding: '8px 12px', borderRadius: 8, border: '1px solid var(--border)', color: 'var(--navy)', fontSize: 13, fontWeight: 700, background: '#fff' }}>
                     {'<-'} Anterior
@@ -147,7 +147,7 @@ export function NoticiaDetalhe() {
               </div>
             </div>
             {detailImageUrl && (
-              <div style={{ marginBottom: 20, borderRadius: 12, overflow: 'hidden', border: '1px solid var(--border)' }}>
+              <div className="news-detail-image" style={{ marginBottom: 20, borderRadius: 12, overflow: 'hidden', border: '1px solid var(--border)' }}>
                 <img
                   src={detailImageUrl}
                   alt={detailTitle}
@@ -172,6 +172,44 @@ export function NoticiaDetalhe() {
           </div>
         </Reveal>
       </section>
+      <style>{`
+        @media (max-width: 700px) {
+          .news-detail-section {
+            padding: 32px 18px 48px !important;
+            max-width: 100% !important;
+          }
+          .news-detail-card {
+            padding: 22px !important;
+          }
+          .news-detail-top {
+            display: block !important;
+          }
+          .news-detail-title {
+            width: 100% !important;
+          }
+          .news-detail-heading {
+            font-size: 27px !important;
+            line-height: 1.16 !important;
+            overflow-wrap: anywhere;
+          }
+          .news-detail-actions {
+            width: 100% !important;
+            margin-top: 16px !important;
+            flex-wrap: wrap !important;
+            justify-content: flex-start !important;
+          }
+          .news-detail-actions a,
+          .news-detail-actions span {
+            flex: 1 1 120px;
+            text-align: center;
+          }
+          .news-detail-image img {
+            max-height: none !important;
+            object-fit: contain !important;
+            background: #f2eee7;
+          }
+        }
+      `}</style>
     </div>
   );
 }
