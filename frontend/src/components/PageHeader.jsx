@@ -53,7 +53,14 @@ export default function PageHeader({ eyebrow, title, subtitle, headerKey, childr
             src={image}
             alt=""
             onError={() => setImageFailed(true)}
-            style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', opacity: 1 }}
+            aria-hidden="true"
+            style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', filter: 'blur(16px)', transform: 'scale(1.08)', opacity: 0.55 }}
+          />
+          <img
+            src={image}
+            alt=""
+            onError={() => setImageFailed(true)}
+            style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'contain', objectPosition: 'center center', opacity: 1 }}
           />
           <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(180deg,rgba(0,0,0,.05),rgba(0,0,0,.12))' }} />
         </>

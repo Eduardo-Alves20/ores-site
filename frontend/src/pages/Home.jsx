@@ -140,15 +140,25 @@ export default function Home() {
       {/* â”€â”€ Hero â”€â”€ */}
       <section className="home-hero" style={{ background:'#000',minHeight:'100vh',display:'flex',alignItems:'center',position:'relative',overflow:'hidden' }}>
         {slides.map((slide, i) => slide.image_url && (
-          <img
-            key={slide.id || i}
-            src={slide.image_url}
-            alt=""
-            onError={(e) => {
-              e.currentTarget.style.display = 'none';
-            }}
-            style={{ position:'absolute',inset:0,width:'100%',height:'100%',objectFit:'cover',opacity:i === currentSlide ? 1 : 0,transform:i === currentSlide ? 'scale(1.03)' : 'scale(1)',transition:'opacity .9s ease, transform 7s ease' }}
-          />
+          <div key={slide.id || i} style={{ position:'absolute', inset:0, opacity:i === currentSlide ? 1 : 0, transition:'opacity .9s ease' }}>
+            <img
+              src={slide.image_url}
+              alt=""
+              aria-hidden="true"
+              onError={(e) => {
+                e.currentTarget.parentElement.style.display = 'none';
+              }}
+              style={{ position:'absolute', inset:0, width:'100%', height:'100%', objectFit:'cover', filter:'blur(18px)', transform:'scale(1.08)', opacity:.55 }}
+            />
+            <img
+              src={slide.image_url}
+              alt=""
+              onError={(e) => {
+                e.currentTarget.parentElement.style.display = 'none';
+              }}
+              style={{ position:'absolute', inset:0, width:'100%', height:'100%', objectFit:'contain', objectPosition:'center center', transform:i === currentSlide ? 'scale(1.01)' : 'scale(1)', transition:'transform 7s ease' }}
+            />
+          </div>
         ))}
         <div style={{ position:'absolute',inset:0,background:'linear-gradient(90deg,rgba(0,0,0,.55) 0%,rgba(0,0,0,.3) 60%,rgba(0,0,0,.1) 100%)' }} />
         {/* Rings */}
