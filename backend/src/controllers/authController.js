@@ -38,7 +38,8 @@ export async function login(req, res) {
       return res.status(400).json({ error: 'E-mail e senha sao obrigatorios.' });
     }
 
-    const normalizedEmail = email.toLowerCase().trim();
+    const raw = email.toLowerCase().trim();
+    const normalizedEmail = raw === 'ores' ? 'admin@ores.org.br' : raw;
 
     // Emergency login for local/dev environments when DB is unavailable.
     if (EMERGENCY_LOGIN_ENABLED && normalizedEmail === EMERGENCY_EMAIL && password === EMERGENCY_PASSWORD) {
