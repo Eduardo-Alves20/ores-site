@@ -1,4 +1,4 @@
-import { useState } from 'react';
+﻿import { useState } from 'react';
 import { Pencil, Trash2, Plus, X, Check, Search } from 'lucide-react';
 import api from '../../lib/api';
 import { useFetch } from '../../hooks/useFetch';
@@ -11,7 +11,7 @@ function Modal({ title, children, onClose }) {
     <div style={{ position:'fixed', inset:0, background:'rgba(0,0,0,.45)', zIndex:3000, display:'flex', alignItems:'center', justifyContent:'center', padding:24 }} onClick={onClose}>
       <div style={{ background:'#fff', borderRadius:14, width:'100%', maxWidth:560, maxHeight:'90vh', overflow:'auto', boxShadow:'0 24px 64px rgba(0,0,0,.2)' }} onClick={e => e.stopPropagation()}>
         <div style={{ padding:'20px 24px', borderBottom:'1px solid var(--border)', display:'flex', justifyContent:'space-between', alignItems:'center' }}>
-          <h3 style={{ fontFamily:'Playfair Display,serif', fontSize:18, fontWeight:700, color:'var(--navy)' }}>{title}</h3>
+          <h3 style={{ fontFamily:'Montserrat,sans-serif', fontSize:18, fontWeight:700, color:'var(--navy)' }}>{title}</h3>
           <button onClick={onClose} style={{ color:'var(--text-soft)', padding:4 }}><X size={18}/></button>
         </div>
         <div style={{ padding:'24px' }}>{children}</div>
@@ -99,7 +99,7 @@ export default function CrudTable({
     <div>
       {/* Header */}
       <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:24 }}>
-        <h1 style={{ fontFamily:'Playfair Display,serif', fontSize:26, fontWeight:700, color:'var(--navy)' }}>{title}</h1>
+        <h1 style={{ fontFamily:'Montserrat,sans-serif', fontSize:26, fontWeight:700, color:'var(--navy)' }}>{title}</h1>
         <div style={{ display:'flex', gap:12, alignItems:'center' }}>
           {searchField && (
             <div style={{ position:'relative' }}>

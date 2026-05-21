@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+﻿import { useEffect, useRef, useState } from 'react';
 import { Check, ImagePlus, X } from 'lucide-react';
 import api from '../../lib/api';
 
@@ -59,7 +59,7 @@ function CropModal({ file, onClose, onUpload }) {
     <div style={{ position:'fixed', inset:0, zIndex:4000, background:'rgba(0,0,0,.55)', display:'flex', alignItems:'center', justifyContent:'center', padding:24 }}>
       <div style={{ width:'100%', maxWidth:520, background:'#fff', borderRadius:14, boxShadow:'0 24px 64px rgba(0,0,0,.25)', overflow:'hidden' }}>
         <div style={{ padding:'18px 22px', borderBottom:'1px solid var(--border)', display:'flex', justifyContent:'space-between', alignItems:'center' }}>
-          <h3 style={{ fontFamily:'Playfair Display,serif', fontSize:18, fontWeight:700, color:'var(--navy)' }}>Ajustar foto</h3>
+          <h3 style={{ fontFamily:'Montserrat,sans-serif', fontSize:18, fontWeight:700, color:'var(--navy)' }}>Ajustar foto</h3>
           <button type="button" onClick={onClose} style={{ width:34, height:34, borderRadius:8, color:'var(--text-soft)' }}><X size={18}/></button>
         </div>
         <div style={{ padding:22 }}>

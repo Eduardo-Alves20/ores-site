@@ -61,55 +61,6 @@ const migrations = [
     INDEX idx_active_order (active, display_order)
   ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci`,
 
-  // Palavra do Dia (cache automático)
-  `CREATE TABLE IF NOT EXISTS word_of_day_cache (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    date_key DATE NOT NULL UNIQUE,
-    source_url VARCHAR(700) NOT NULL,
-    source_title VARCHAR(300),
-    source_description TEXT,
-    reading_html LONGTEXT,
-    gospel_html LONGTEXT,
-    pope_words_html LONGTEXT,
-    fetched_at DATETIME NOT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    INDEX idx_fetched_at (fetched_at),
-    INDEX idx_date_key (date_key)
-  ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci`,
-
-  // Mass schedule
-  `CREATE TABLE IF NOT EXISTS mass_schedule (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    day_name VARCHAR(20) NOT NULL,
-    day_short VARCHAR(5) NOT NULL,
-    day_order TINYINT NOT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-  ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci`,
-
-  `CREATE TABLE IF NOT EXISTS mass_times (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    schedule_id INT NOT NULL,
-    time_value VARCHAR(5) NOT NULL,
-    priest_sigla VARCHAR(10),
-    FOREIGN KEY (schedule_id) REFERENCES mass_schedule(id) ON DELETE CASCADE
-  ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci`,
-
-  // Priests
-  `CREATE TABLE IF NOT EXISTS priests (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    name VARCHAR(150) NOT NULL,
-    sigla VARCHAR(10) NOT NULL,
-    role VARCHAR(100) NOT NULL,
-    bio TEXT,
-    photo_url VARCHAR(500),
-    display_order INT DEFAULT 0,
-    active TINYINT(1) DEFAULT 1,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-  ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci`,
-
   // Events
   `CREATE TABLE IF NOT EXISTS events (
     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -144,36 +95,7 @@ const migrations = [
     INDEX idx_published (published, published_at)
   ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci`,
 
-  // Prayer groups
-  `CREATE TABLE IF NOT EXISTS prayer_groups (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    name VARCHAR(200) NOT NULL,
-    day_of_week VARCHAR(50),
-    time_value VARCHAR(20),
-    location VARCHAR(200),
-    description TEXT,
-    coordinator_phone VARCHAR(30),
-    image_url VARCHAR(500),
-    active TINYINT(1) DEFAULT 1,
-    display_order INT DEFAULT 0,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-  ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci`,
-
-  // Prayer group gallery slides
-  `CREATE TABLE IF NOT EXISTS prayer_group_slides (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    title VARCHAR(200),
-    subtitle VARCHAR(300),
-    image_url VARCHAR(500) NOT NULL,
-    display_order INT DEFAULT 0,
-    active TINYINT(1) DEFAULT 1,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    INDEX idx_active_order (active, display_order)
-  ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci`,
-
-  // Pastorals & movements
+  // Projects (formerly pastorals)
   `CREATE TABLE IF NOT EXISTS pastorals (
     id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(200) NOT NULL,
@@ -193,7 +115,7 @@ const migrations = [
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
   ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci`,
 
-  // Pastoral gallery slides
+  // Project gallery slides (formerly pastoral_slides)
   `CREATE TABLE IF NOT EXISTS pastoral_slides (
     id INT AUTO_INCREMENT PRIMARY KEY,
     title VARCHAR(200),
@@ -206,22 +128,26 @@ const migrations = [
     INDEX idx_active_order (active, display_order)
   ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci`,
 
-  // Communities (sectors)
-  `CREATE TABLE IF NOT EXISTS communities (
+  // Regional Units (Unidades Regionais)
+  `CREATE TABLE IF NOT EXISTS regional_units (
     id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(200) NOT NULL,
-    neighborhood VARCHAR(200),
+    city VARCHAR(100) NOT NULL,
+    state VARCHAR(50) DEFAULT 'RJ',
+    address VARCHAR(300),
+    phone VARCHAR(30),
+    email VARCHAR(255),
+    coordinator VARCHAR(200),
     description TEXT,
     image_url VARCHAR(500),
-    coordinator_name VARCHAR(200),
-    coordinator_phone VARCHAR(30),
+    maps_url VARCHAR(700),
     active TINYINT(1) DEFAULT 1,
     display_order INT DEFAULT 0,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
   ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci`,
 
-  // Facilities
+  // Facilities (Espaço ORES spaces)
   `CREATE TABLE IF NOT EXISTS facilities (
     id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(200) NOT NULL,
@@ -234,25 +160,7 @@ const migrations = [
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
   ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci`,
 
-  // Room bookings
-  `CREATE TABLE IF NOT EXISTS room_bookings (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    facility_id INT NOT NULL,
-    title VARCHAR(200) NOT NULL,
-    description TEXT,
-    booking_date DATE NOT NULL,
-    start_time TIME NOT NULL,
-    end_time TIME NOT NULL,
-    requester_name VARCHAR(150),
-    requester_phone VARCHAR(30),
-    status ENUM('pending','confirmed','cancelled') DEFAULT 'pending',
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    FOREIGN KEY (facility_id) REFERENCES facilities(id) ON DELETE CASCADE,
-    INDEX idx_date (booking_date)
-  ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci`,
-
-  // Social services
+  // Social programs/services
   `CREATE TABLE IF NOT EXISTS social_services (
     id INT AUTO_INCREMENT PRIMARY KEY,
     title VARCHAR(200) NOT NULL,
@@ -278,20 +186,6 @@ const migrations = [
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
   ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci`,
 
-  // Homilies
-  `CREATE TABLE IF NOT EXISTS homilies (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    title VARCHAR(300) NOT NULL,
-    priest_name VARCHAR(150),
-    type ENUM('Homilia','Reflexão','Podcast') DEFAULT 'Homilia',
-    duration VARCHAR(20),
-    audio_url VARCHAR(500),
-    published_at DATE,
-    active TINYINT(1) DEFAULT 1,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-  ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci`,
-
   // Contact messages
   `CREATE TABLE IF NOT EXISTS contact_messages (
     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -303,22 +197,6 @@ const migrations = [
     read_at DATETIME NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     INDEX idx_read (read_at)
-  ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci`,
-
-  // Confessions schedule
-  `CREATE TABLE IF NOT EXISTS confession_schedule (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    day_name VARCHAR(20) NOT NULL,
-    times VARCHAR(100) NOT NULL,
-    display_order INT DEFAULT 0
-  ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci`,
-
-  // Priest mass assignments
-  `CREATE TABLE IF NOT EXISTS priest_masses (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    priest_id INT NOT NULL,
-    mass_label VARCHAR(50) NOT NULL,
-    FOREIGN KEY (priest_id) REFERENCES priests(id) ON DELETE CASCADE
   ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci`,
 
   // Audit log
@@ -337,16 +215,29 @@ const migrations = [
   ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci`,
 ];
 
-const alterMigrations = [
-  `ALTER TABLE pastorals ADD COLUMN IF NOT EXISTS address VARCHAR(300) AFTER location`,
-  `ALTER TABLE pastorals ADD COLUMN IF NOT EXISTS map_url VARCHAR(700) AFTER address`,
-  `ALTER TABLE pastorals ADD COLUMN IF NOT EXISTS image_url VARCHAR(500) AFTER map_url`,
-  `ALTER TABLE news ADD COLUMN IF NOT EXISTS external_url VARCHAR(700) AFTER image_url`,
-  `ALTER TABLE word_of_day_cache ADD COLUMN IF NOT EXISTS source_description TEXT AFTER source_title`,
-  `ALTER TABLE word_of_day_cache ADD COLUMN IF NOT EXISTS reading_html LONGTEXT AFTER source_description`,
-  `ALTER TABLE word_of_day_cache ADD COLUMN IF NOT EXISTS gospel_html LONGTEXT AFTER reading_html`,
-  `ALTER TABLE word_of_day_cache ADD COLUMN IF NOT EXISTS pope_words_html LONGTEXT AFTER gospel_html`,
+const alterColumnMigrations = [
+  { table: 'pastorals', column: 'address', definition: 'VARCHAR(300) AFTER location' },
+  { table: 'pastorals', column: 'map_url', definition: 'VARCHAR(700) AFTER address' },
+  { table: 'pastorals', column: 'image_url', definition: 'VARCHAR(500) AFTER map_url' },
+  { table: 'news', column: 'external_url', definition: 'VARCHAR(700) AFTER image_url' },
 ];
+
+async function columnExists(conn, table, column) {
+  const [rows] = await conn.execute(
+    `SELECT COUNT(*) AS n
+     FROM INFORMATION_SCHEMA.COLUMNS
+     WHERE TABLE_SCHEMA = DATABASE()
+       AND TABLE_NAME = ?
+       AND COLUMN_NAME = ?`,
+    [table, column]
+  );
+  return rows[0]?.n > 0;
+}
+
+async function addColumnIfMissing(conn, { table, column, definition }) {
+  if (await columnExists(conn, table, column)) return;
+  await conn.execute(`ALTER TABLE \`${table}\` ADD COLUMN \`${column}\` ${definition}`);
+}
 
 async function runMigrations() {
   const conn = await pool.getConnection();
@@ -355,8 +246,8 @@ async function runMigrations() {
     for (const sql of migrations) {
       await conn.execute(sql);
     }
-    for (const sql of alterMigrations) {
-      await conn.execute(sql);
+    for (const migration of alterColumnMigrations) {
+      await addColumnIfMissing(conn, migration);
     }
     console.log('Migrations completed successfully.');
   } catch (err) {

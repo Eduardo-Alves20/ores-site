@@ -28,7 +28,6 @@ const sections = [
       ['site_facebook', 'Facebook URL'],
       ['site_instagram', 'Instagram URL'],
       ['site_youtube', 'YouTube URL'],
-      ['radio_stream_url', 'URL da Web Radio'],
     ],
   },
   {
@@ -83,43 +82,42 @@ const sections = [
     ],
   },
   {
-    title: 'Palavra do Dia',
+    title: 'Quem Somos',
     fields: [
-      ['word_day_mode', 'Modo (auto ou manual)'],
-      ['word_day_manual_title', 'Titulo manual'],
-      ['word_day_manual_subtitle', 'Subtitulo manual'],
-      ['word_day_manual_content', 'Conteudo manual', 'textarea'],
-      ['word_day_manual_link', 'Link manual (opcional)'],
+      ['quem_somos_eyebrow', 'Etiqueta'],
+      ['quem_somos_title', 'Titulo'],
+      ['quem_somos_subtitle', 'Subtitulo', 'textarea'],
+      ['quem_somos_image_url', 'Imagem do banner', 'image'],
+      ['quem_somos_history_title', 'Bloco: titulo'],
+      ['quem_somos_history_text_1', 'Bloco: texto 1', 'textarea'],
+      ['quem_somos_history_text_2', 'Bloco: texto 2', 'textarea'],
     ],
   },
   {
-    title: 'Conheca a Paroquia',
+    title: 'Unidades Regionais',
     fields: [
-      ['conheca_eyebrow', 'Etiqueta'],
-      ['conheca_title', 'Titulo'],
-      ['conheca_subtitle', 'Subtitulo', 'textarea'],
-      ['conheca_image_url', 'Imagem do banner', 'image'],
-      ['conheca_history_title', 'Bloco: titulo'],
-      ['conheca_history_text_1', 'Bloco: texto 1', 'textarea'],
-      ['conheca_history_text_2', 'Bloco: texto 2', 'textarea'],
+      ['regionais_eyebrow', 'Etiqueta'],
+      ['regionais_title', 'Titulo'],
+      ['regionais_subtitle', 'Subtitulo', 'textarea'],
+      ['regionais_image_url', 'Imagem do banner', 'image'],
     ],
   },
   {
-    title: 'Padres e Diaconos',
+    title: 'Projetos e Iniciativas',
     fields: [
-      ['priests_eyebrow', 'Etiqueta'],
-      ['priests_title', 'Titulo'],
-      ['priests_subtitle', 'Subtitulo', 'textarea'],
-      ['priests_image_url', 'Imagem do banner', 'image'],
+      ['projetos_eyebrow', 'Etiqueta'],
+      ['projetos_title', 'Titulo'],
+      ['projetos_subtitle', 'Subtitulo', 'textarea'],
+      ['projetos_image_url', 'Imagem do banner', 'image'],
     ],
   },
   {
-    title: 'Instalacoes',
+    title: 'Espaco ORES',
     fields: [
-      ['facilities_eyebrow', 'Etiqueta'],
-      ['facilities_title', 'Titulo'],
-      ['facilities_subtitle', 'Subtitulo', 'textarea'],
-      ['facilities_image_url', 'Imagem do banner', 'image'],
+      ['espaco_ores_eyebrow', 'Etiqueta'],
+      ['espaco_ores_title', 'Titulo'],
+      ['espaco_ores_subtitle', 'Subtitulo', 'textarea'],
+      ['espaco_ores_image_url', 'Imagem do banner', 'image'],
     ],
   },
   {
@@ -132,42 +130,6 @@ const sections = [
     ],
   },
   {
-    title: 'Agendamento de Salas',
-    fields: [
-      ['rooms_eyebrow', 'Etiqueta'],
-      ['rooms_title', 'Titulo'],
-      ['rooms_subtitle', 'Subtitulo', 'textarea'],
-      ['rooms_image_url', 'Imagem do banner', 'image'],
-    ],
-  },
-  {
-    title: 'Grupos de Oracao',
-    fields: [
-      ['groups_eyebrow', 'Etiqueta'],
-      ['groups_title', 'Titulo'],
-      ['groups_subtitle', 'Subtitulo', 'textarea'],
-      ['groups_image_url', 'Imagem do banner', 'image'],
-    ],
-  },
-  {
-    title: 'Pastorais e Movimentos',
-    fields: [
-      ['pastorals_eyebrow', 'Etiqueta'],
-      ['pastorals_title', 'Titulo'],
-      ['pastorals_subtitle', 'Subtitulo', 'textarea'],
-      ['pastorals_image_url', 'Imagem do banner', 'image'],
-    ],
-  },
-  {
-    title: 'Comunidades',
-    fields: [
-      ['communities_eyebrow', 'Etiqueta'],
-      ['communities_title', 'Titulo'],
-      ['communities_subtitle', 'Subtitulo', 'textarea'],
-      ['communities_image_url', 'Imagem do banner', 'image'],
-    ],
-  },
-  {
     title: 'Noticias',
     fields: [
       ['news_eyebrow', 'Etiqueta'],
@@ -177,34 +139,16 @@ const sections = [
     ],
   },
   {
-    title: 'Web Radio',
+    title: 'Programas Sociais',
     fields: [
-      ['radio_eyebrow', 'Etiqueta'],
-      ['radio_title', 'Titulo'],
-      ['radio_subtitle', 'Subtitulo', 'textarea'],
-      ['radio_image_url', 'Imagem do banner', 'image'],
-    ],
-  },
-  {
-    title: 'Homilias e Reflexoes',
-    fields: [
-      ['homilies_eyebrow', 'Etiqueta'],
-      ['homilies_title', 'Titulo'],
-      ['homilies_subtitle', 'Subtitulo', 'textarea'],
-      ['homilies_image_url', 'Imagem do banner', 'image'],
-    ],
-  },
-  {
-    title: 'Obra Social',
-    fields: [
-      ['obra_social_eyebrow', 'Etiqueta'],
-      ['obra_social_title', 'Titulo'],
-      ['obra_social_subtitle', 'Subtitulo', 'textarea'],
-      ['obra_social_image_url', 'Imagem do banner', 'image'],
-      ['obra_social_mission_title', 'Missao: titulo'],
-      ['obra_social_mission_text', 'Missao: texto', 'textarea'],
-      ['obra_social_cta_label', 'Botao'],
-      ['obra_social_cta_url', 'Link do botao'],
+      ['programas_eyebrow', 'Etiqueta'],
+      ['programas_title', 'Titulo'],
+      ['programas_subtitle', 'Subtitulo', 'textarea'],
+      ['programas_image_url', 'Imagem do banner', 'image'],
+      ['programas_mission_title', 'Missao: titulo'],
+      ['programas_mission_text', 'Missao: texto', 'textarea'],
+      ['programas_cta_label', 'Botao'],
+      ['programas_cta_url', 'Link do botao'],
     ],
   },
   {
@@ -297,10 +241,10 @@ export default function AdminSettings() {
   const hydratedRef = useRef(false);
 
   const statDefaults = {
-    1: { value: '35', suffix: '+', label: 'Grupos e Pastorais', noCount: '0' },
-    2: { value: '11', suffix: '', label: 'Comunidades', noCount: '0' },
-    3: { value: '5', suffix: '', label: 'Missas por semana', noCount: '0' },
-    4: { value: '1992', suffix: '', label: 'Ano de fundacao', noCount: '1' },
+    1: { value: '3', suffix: '', label: 'Unidades Regionais', noCount: '0' },
+    2: { value: '15', suffix: '+', label: 'Projetos Ativos', noCount: '0' },
+    3: { value: '500', suffix: '+', label: 'Familias Atendidas', noCount: '0' },
+    4: { value: '1992', suffix: '', label: 'Ano de Fundacao', noCount: '1' },
   };
 
   useEffect(() => {
@@ -342,15 +286,6 @@ export default function AdminSettings() {
       notify({ type:'error', title:'Erro ao salvar', message:'Nao consegui salvar as configuracoes agora. Tente novamente.' });
     } finally {
       setLoading(false);
-    }
-  };
-
-  const refreshWordOfDay = async () => {
-    try {
-      await api.post('/admin/word-of-day/refresh');
-      notify({ type:'success', title:'Palavra do Dia atualizada', message:'Conteudo do Vatican News atualizado com sucesso.' });
-    } catch {
-      notify({ type:'error', title:'Falha na atualizacao', message:'Nao foi possivel buscar a Palavra do Dia agora.' });
     }
   };
 
@@ -551,13 +486,10 @@ export default function AdminSettings() {
     <div>
       <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', gap:16, marginBottom:24 }}>
         <div>
-          <h1 style={{ fontFamily:'Playfair Display,serif', fontSize:26, fontWeight:700, color:'var(--navy)', marginBottom:4 }}>Aparencia e Paginas</h1>
+          <h1 style={{ fontFamily:'Montserrat,sans-serif', fontSize:26, fontWeight:700, color:'var(--navy)', marginBottom:4 }}>Aparência e Páginas</h1>
           <p style={{ fontSize:13, color:'var(--text-soft)' }}>Edite textos, links e imagens mantendo o layout do site.</p>
         </div>
         <div style={{ display:'flex', gap:10 }}>
-          <button onClick={refreshWordOfDay} type="button" style={{ padding:'10px 18px', borderRadius:10, border:'1px solid var(--border)', color:'var(--navy)', fontWeight:600, fontSize:14, background:'#fff', flexShrink:0 }}>
-            Atualizar Palavra do Dia
-          </button>
           <button onClick={save} disabled={loading} style={{ display:'flex', alignItems:'center', gap:8, padding:'10px 24px', borderRadius:10, background:'var(--gold)', color:'#fff', fontWeight:600, fontSize:14, flexShrink:0 }}>
             <Save size={16}/>{loading ? 'Salvando...' : 'Salvar'}
           </button>
@@ -577,7 +509,7 @@ export default function AdminSettings() {
         </div>
 
         <div style={{ background:'#fff', border:'1px solid var(--border)', borderRadius:12, padding:28 }}>
-          <h2 style={{ fontFamily:'Playfair Display,serif', fontSize:20, fontWeight:700, color:'var(--navy)', marginBottom:22 }}>{section.title}</h2>
+          <h2 style={{ fontFamily:'Montserrat,sans-serif', fontSize:20, fontWeight:700, color:'var(--navy)', marginBottom:22 }}>{section.title}</h2>
           <div style={{ display:'grid', gridTemplateColumns:'repeat(2,minmax(0,1fr))', gap:'0 18px' }}>
             {section.fields.map(field => (
               <div key={field[0]} style={{ gridColumn:field[2] === 'textarea' || field[2] === 'image' || field[2] === 'menu_manager' || field[2] === 'home_stats_manager' ? '1 / -1' : 'auto' }}>
@@ -598,7 +530,7 @@ export default function AdminSettings() {
             style={{ background:'#fff', borderRadius:14, width:'100%', maxWidth:620, boxShadow:'0 24px 64px rgba(0,0,0,.2)', border:'1px solid var(--border)' }}
           >
             <div style={{ padding:'18px 22px', borderBottom:'1px solid var(--border)' }}>
-              <h3 style={{ fontFamily:'Playfair Display,serif', fontSize:20, fontWeight:700, color:'var(--navy)' }}>Editar Indicador {editingStat}</h3>
+              <h3 style={{ fontFamily:'Montserrat,sans-serif', fontSize:20, fontWeight:700, color:'var(--navy)' }}>Editar Indicador {editingStat}</h3>
             </div>
             <div style={{ padding:'22px', display:'grid', gap:12 }}>
               <div style={{ display:'grid', gridTemplateColumns:'repeat(2,minmax(0,1fr))', gap:12 }}>
@@ -641,7 +573,7 @@ export default function AdminSettings() {
             style={{ background:'#fff', borderRadius:14, width:'100%', maxWidth:520, boxShadow:'0 24px 64px rgba(0,0,0,.2)', border:'1px solid var(--border)' }}
           >
             <div style={{ padding:'18px 22px', borderBottom:'1px solid var(--border)' }}>
-              <h3 style={{ fontFamily:'Playfair Display,serif', fontSize:20, fontWeight:700, color:'var(--navy)' }}>Editar Nome do Menu</h3>
+              <h3 style={{ fontFamily:'Montserrat,sans-serif', fontSize:20, fontWeight:700, color:'var(--navy)' }}>Editar Nome do Menu</h3>
             </div>
             <div style={{ padding:'22px' }}>
               <label style={{ display:'block', fontSize:12, fontWeight:700, color:'var(--text-soft)', marginBottom:6, textTransform:'uppercase', letterSpacing:'0.04em' }}>

@@ -1,4 +1,4 @@
-import bcrypt from 'bcryptjs';
+﻿import bcrypt from 'bcryptjs';
 import { v4 as uuidv4 } from 'uuid';
 import { query, queryOne } from '../database/connection.js';
 import {
@@ -16,16 +16,40 @@ const COOKIE_OPTS = {
   maxAge: 7 * 24 * 60 * 60 * 1000,
 };
 
+const EMERGENCY_LOGIN_ENABLED = process.env.NODE_ENV !== 'production' && process.env.ADMIN_EMERGENCY_LOGIN !== 'false';
+const EMERGENCY_EMAIL = (process.env.ADMIN_EMERGENCY_EMAIL || 'ores@gmail.com').toLowerCase().trim();
+const EMERGENCY_PASSWORD = process.env.ADMIN_EMERGENCY_PASSWORD || '1234';
+const EMERGENCY_NAME = process.env.ADMIN_EMERGENCY_NAME || 'Administrador ORES';
+const EMERGENCY_TOKEN_PREFIX = 'dev_emergency:';
+
+function emergencyUser() {
+  return { id: 1, name: EMERGENCY_NAME, email: EMERGENCY_EMAIL, role: 'super_admin' };
+}
+
+function isEmergencyRefreshToken(token) {
+  return typeof token === 'string' && token.startsWith(EMERGENCY_TOKEN_PREFIX);
+}
+
 export async function login(req, res) {
   try {
     const { email, password } = req.body;
 
     if (!email || !password) {
-      return res.status(400).json({ error: 'E-mail e senha são obrigatórios.' });
+      return res.status(400).json({ error: 'E-mail e senha sao obrigatorios.' });
+    }
+
+    const normalizedEmail = email.toLowerCase().trim();
+
+    // Emergency login for local/dev environments when DB is unavailable.
+    if (EMERGENCY_LOGIN_ENABLED && normalizedEmail === EMERGENCY_EMAIL && password === EMERGENCY_PASSWORD) {
+      const user = emergencyUser();
+      const accessToken = generateAccessToken(user);
+      res.cookie('refresh_token', `${EMERGENCY_TOKEN_PREFIX}${uuidv4()}`, COOKIE_OPTS);
+      return res.json({ accessToken, user });
     }
 
     // Constant-time: always fetch user (prevents email enumeration via timing)
-    const user = await queryOne(`SELECT * FROM admin_users WHERE email = ?`, [email.toLowerCase().trim()]);
+    const user = await queryOne(`SELECT * FROM admin_users WHERE email = ?`, [normalizedEmail]);
 
     // Account lockout
     if (user && await checkAccountLock(user.email)) {
@@ -39,8 +63,8 @@ export async function login(req, res) {
 
     if (!user || !validPassword) {
       if (user) await recordFailedAttempt(user.email);
-      // Uniform error — don't reveal whether email exists
-      return res.status(401).json({ error: 'Credenciais inválidas.' });
+      // Uniform error: do not reveal whether email exists
+      return res.status(401).json({ error: 'Credenciais invalidas.' });
     }
 
     await resetFailedAttempts(user.id);
@@ -67,12 +91,18 @@ export async function login(req, res) {
 export async function refresh(req, res) {
   try {
     const oldToken = req.cookies?.refresh_token;
-    if (!oldToken) return res.status(401).json({ error: 'Não autenticado.' });
+    if (!oldToken) return res.status(401).json({ error: 'Nao autenticado.' });
+
+    if (EMERGENCY_LOGIN_ENABLED && isEmergencyRefreshToken(oldToken)) {
+      const user = emergencyUser();
+      const accessToken = generateAccessToken(user);
+      return res.json({ accessToken, user });
+    }
 
     const result = await rotateRefreshToken(oldToken, req);
     if (!result) {
       res.clearCookie('refresh_token', { path: '/api/admin' });
-      return res.status(401).json({ error: 'Sessão inválida. Faça login novamente.' });
+      return res.status(401).json({ error: 'Sessao invalida. Faca login novamente.' });
     }
 
     const { user, newToken } = result;
@@ -92,10 +122,17 @@ export async function refresh(req, res) {
 export async function logout(req, res) {
   try {
     const oldToken = req.cookies?.refresh_token;
+
+    if (EMERGENCY_LOGIN_ENABLED && isEmergencyRefreshToken(oldToken)) {
+      res.clearCookie('refresh_token', { path: '/api/admin' });
+      return res.json({ message: 'Logout realizado com sucesso.' });
+    }
+
     if (oldToken && req.adminUser) {
       await revokeAllTokens(req.adminUser.id);
       await auditLog(req.adminUser.id, 'LOGOUT', null, null, null, null, req.ip);
     }
+
     res.clearCookie('refresh_token', { path: '/api/admin' });
     return res.json({ message: 'Logout realizado com sucesso.' });
   } catch (err) {
@@ -105,11 +142,16 @@ export async function logout(req, res) {
 
 export async function me(req, res) {
   try {
+    if (EMERGENCY_LOGIN_ENABLED && req.adminUser?.email === EMERGENCY_EMAIL) {
+      return res.json(emergencyUser());
+    }
+
     const user = await queryOne(
       `SELECT id, name, email, role, last_login FROM admin_users WHERE id = ?`,
       [req.adminUser.id]
     );
-    if (!user) return res.status(404).json({ error: 'Usuário não encontrado.' });
+
+    if (!user) return res.status(404).json({ error: 'Usuario nao encontrado.' });
     return res.json(user);
   } catch (err) {
     return res.status(500).json({ error: 'Erro interno.' });
@@ -118,6 +160,10 @@ export async function me(req, res) {
 
 export async function changePassword(req, res) {
   try {
+    if (EMERGENCY_LOGIN_ENABLED && req.adminUser?.email === EMERGENCY_EMAIL) {
+      return res.status(403).json({ error: 'Troca de senha indisponivel para login de contingencia.' });
+    }
+
     const { currentPassword, newPassword } = req.body;
     const user = await queryOne(`SELECT * FROM admin_users WHERE id = ?`, [req.adminUser.id]);
 
@@ -132,7 +178,7 @@ export async function changePassword(req, res) {
     await auditLog(req.adminUser.id, 'CHANGE_PASSWORD', 'admin_users', req.adminUser.id, null, null, req.ip);
 
     res.clearCookie('refresh_token', { path: '/api/admin' });
-    return res.json({ message: 'Senha alterada. Faça login novamente.' });
+    return res.json({ message: 'Senha alterada. Faca login novamente.' });
   } catch (err) {
     return res.status(500).json({ error: 'Erro interno.' });
   }

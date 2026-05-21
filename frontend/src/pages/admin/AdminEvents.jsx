@@ -1,6 +1,6 @@
 import CrudTable from './CrudTable';
 
-const CATS = ['Pastoral Familiar','Juventude','Evento Social','Oração','Gestão','Liturgia','Campanha','Paróquia','Outro'];
+const CATS = ['Formação','Juventude','Evento Social','Reunião','Gestão','Capacitação','Campanha','ORES','Outro'];
 
 export default function AdminEvents() {
   return (

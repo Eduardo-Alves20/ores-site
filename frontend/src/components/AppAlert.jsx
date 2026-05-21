@@ -1,4 +1,4 @@
-import { createContext, useCallback, useContext, useMemo, useRef, useState } from 'react';
+﻿import { createContext, useCallback, useContext, useMemo, useRef, useState } from 'react';
 import { AlertTriangle, CheckCircle2, Info, X, XCircle } from 'lucide-react';
 
 const AlertContext = createContext(null);
@@ -67,7 +67,7 @@ export function AlertProvider({ children }) {
                 </div>
                 <div style={{ flex:1, minWidth:0 }}>
                   <div style={{ display:'flex', justifyContent:'space-between', gap:14, alignItems:'flex-start' }}>
-                    <h3 style={{ fontFamily:'Playfair Display,serif', fontSize:22, color:'var(--navy)', fontWeight:700, lineHeight:1.2 }}>{alert.title}</h3>
+                    <h3 style={{ fontFamily:'Montserrat,sans-serif', fontSize:22, color:'var(--navy)', fontWeight:700, lineHeight:1.2 }}>{alert.title}</h3>
                     <button type="button" onClick={() => close(false)} style={{ color:'var(--text-soft)', padding:2, flexShrink:0 }} aria-label="Fechar">
                       <X size={18} />
                     </button>

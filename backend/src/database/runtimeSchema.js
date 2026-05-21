@@ -1,6 +1,6 @@
 import { query } from './connection.js';
 
-const runtimeMigrations = [
+const runtimeCreateMigrations = [
   // Features adicionadas depois do primeiro deploy.
   `CREATE TABLE IF NOT EXISTS hero_slides (
     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -32,48 +32,61 @@ const runtimeMigrations = [
     INDEX idx_active_order (active, display_order)
   ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci`,
 
-  `CREATE TABLE IF NOT EXISTS prayer_group_slides (
+  `CREATE TABLE IF NOT EXISTS regional_units (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    title VARCHAR(200),
-    subtitle VARCHAR(300),
-    image_url VARCHAR(500) NOT NULL,
-    display_order INT DEFAULT 0,
+    name VARCHAR(200) NOT NULL,
+    city VARCHAR(100) NOT NULL,
+    state VARCHAR(50) DEFAULT 'RJ',
+    address VARCHAR(300),
+    phone VARCHAR(30),
+    email VARCHAR(255),
+    coordinator VARCHAR(200),
+    description TEXT,
+    image_url VARCHAR(500),
+    maps_url VARCHAR(700),
     active TINYINT(1) DEFAULT 1,
+    display_order INT DEFAULT 0,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    INDEX idx_active_order (active, display_order)
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
   ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci`,
-
-  `CREATE TABLE IF NOT EXISTS word_of_day_cache (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    date_key DATE NOT NULL UNIQUE,
-    source_url VARCHAR(700) NOT NULL,
-    source_title VARCHAR(300),
-    source_description TEXT,
-    reading_html LONGTEXT,
-    gospel_html LONGTEXT,
-    pope_words_html LONGTEXT,
-    fetched_at DATETIME NOT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    INDEX idx_fetched_at (fetched_at),
-    INDEX idx_date_key (date_key)
-  ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci`,
-
-  `ALTER TABLE news ADD COLUMN IF NOT EXISTS external_url VARCHAR(700) AFTER image_url`,
-  `ALTER TABLE pastorals ADD COLUMN IF NOT EXISTS address VARCHAR(300) AFTER location`,
-  `ALTER TABLE pastorals ADD COLUMN IF NOT EXISTS map_url VARCHAR(700) AFTER address`,
-  `ALTER TABLE pastorals ADD COLUMN IF NOT EXISTS image_url VARCHAR(500) AFTER map_url`,
-  `ALTER TABLE prayer_groups ADD COLUMN IF NOT EXISTS image_url VARCHAR(500) AFTER coordinator_phone`,
-  `ALTER TABLE communities ADD COLUMN IF NOT EXISTS description TEXT AFTER neighborhood`,
-  `ALTER TABLE communities ADD COLUMN IF NOT EXISTS image_url VARCHAR(500) AFTER description`,
-  `ALTER TABLE homilies ADD COLUMN IF NOT EXISTS video_url VARCHAR(500) AFTER audio_url`,
 ];
 
+const runtimeAlterColumnMigrations = [
+  { table: 'news', column: 'external_url', definition: 'VARCHAR(700) AFTER image_url' },
+  { table: 'pastorals', column: 'address', definition: 'VARCHAR(300) AFTER location' },
+  { table: 'pastorals', column: 'map_url', definition: 'VARCHAR(700) AFTER address' },
+  { table: 'pastorals', column: 'image_url', definition: 'VARCHAR(500) AFTER map_url' },
+];
+
+async function columnExists(table, column) {
+  const rows = await query(
+    `SELECT COUNT(*) AS n
+     FROM INFORMATION_SCHEMA.COLUMNS
+     WHERE TABLE_SCHEMA = DATABASE()
+       AND TABLE_NAME = ?
+       AND COLUMN_NAME = ?`,
+    [table, column]
+  );
+  return rows[0]?.n > 0;
+}
+
+async function addColumnIfMissing({ table, column, definition }) {
+  if (await columnExists(table, column)) return;
+  await query(`ALTER TABLE \`${table}\` ADD COLUMN \`${column}\` ${definition}`);
+}
+
 export async function ensureRuntimeSchema() {
-  for (const sql of runtimeMigrations) {
+  for (const sql of runtimeCreateMigrations) {
     try {
       await query(sql);
+    } catch (err) {
+      console.error('Runtime schema check failed:', err?.message || err);
+    }
+  }
+
+  for (const migration of runtimeAlterColumnMigrations) {
+    try {
+      await addColumnIfMissing(migration);
     } catch (err) {
       console.error('Runtime schema check failed:', err?.message || err);
     }

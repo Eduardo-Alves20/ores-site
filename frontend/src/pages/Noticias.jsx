@@ -44,7 +44,7 @@ function NewsCard({ newsItem }) {
           <span style={{ fontSize: 10, fontWeight: 700, letterSpacing: '0.06em', textTransform: 'uppercase', padding: '2px 8px', borderRadius: 100, background: 'rgba(26,39,68,.08)', color: 'var(--navy)' }}>{newsItem.category}</span>
           <span style={{ fontSize: 11, color: 'var(--text-soft)' }}>{formatDate(newsItem.published_at)}</span>
         </div>
-        <h3 style={{ fontFamily: 'Playfair Display,serif', fontSize: 18, fontWeight: 700, color: 'var(--navy)', marginBottom: 10, lineHeight: 1.35 }}>{title}</h3>
+        <h3 style={{ fontFamily: 'Montserrat,sans-serif', fontSize: 18, fontWeight: 700, color: 'var(--navy)', marginBottom: 10, lineHeight: 1.35 }}>{title}</h3>
         <p style={{ fontSize: 13, color: 'var(--text-mid)', lineHeight: 1.65, marginBottom: 14 }}>{summary}</p>
         <span style={{ fontSize: 13, fontWeight: 700, color: 'var(--gold)' }}>Saiba mais {'->'}</span>
       </div>
@@ -83,7 +83,7 @@ export function NoticiasList() {
 
   return (
     <div className="animate-page">
-      <PageHeader headerKey="news" eyebrow="Comunicacao" title="Noticias" subtitle="Fique por dentro das novidades da paroquia." />
+      <PageHeader headerKey="news" eyebrow="Comunicação" title="Notícias" subtitle="Fique por dentro das novidades e iniciativas da ORES." />
       <section style={{ padding: '72px 24px', maxWidth: 1200, margin: '0 auto' }}>
         {loading ? <p style={{ textAlign: 'center', color: 'var(--text-soft)' }}>Carregando...</p> : (
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(240px,1fr))', gap: 24 }}>
@@ -122,7 +122,7 @@ export function NoticiaDetalhe() {
           <div className="news-detail-card" style={{ background: '#fff', borderRadius: 12, border: '1px solid var(--border)', padding: '40px' }}>
             <div className="news-detail-top" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12, marginBottom: 20 }}>
               <div className="news-detail-title" style={{ flex: 1, minWidth: 0 }}>
-                <h1 className="news-detail-heading" style={{ fontFamily: 'Playfair Display,serif', fontSize: 'clamp(26px,4vw,38px)', color: 'var(--navy)', lineHeight: 1.2, fontWeight: 700 }}>
+                <h1 className="news-detail-heading" style={{ fontFamily: 'Montserrat,sans-serif', fontSize: 'clamp(26px,4vw,38px)', color: 'var(--navy)', lineHeight: 1.2, fontWeight: 700 }}>
                   {detailTitle}
                 </h1>
               </div>

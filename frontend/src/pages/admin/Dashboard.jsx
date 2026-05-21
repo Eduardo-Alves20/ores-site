@@ -1,4 +1,4 @@
-import { useFetch } from '../../hooks/useFetch';
+﻿import { useFetch } from '../../hooks/useFetch';
 import { Calendar, Newspaper, MessageSquare, Clock } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth.jsx';
@@ -20,7 +20,7 @@ function StatCard({ icon, label, value, color, to }) {
     >
       <div style={{ width: 48, height: 48, borderRadius: 12, background: `${color}22`, display: 'flex', alignItems: 'center', justifyContent: 'center', color, flexShrink: 0 }}>{icon}</div>
       <div>
-        <div style={{ fontSize: 28, fontWeight: 700, color: 'var(--navy)', fontFamily: 'Playfair Display,serif' }}>{value}</div>
+        <div style={{ fontSize: 28, fontWeight: 700, color: 'var(--navy)', fontFamily: 'Montserrat,sans-serif' }}>{value}</div>
         <div style={{ fontSize: 13, color: 'var(--text-soft)' }}>{label}</div>
       </div>
     </Link>
@@ -39,7 +39,7 @@ export default function Dashboard() {
   return (
     <div>
       <div style={{ marginBottom: 32 }}>
-        <h1 style={{ fontFamily: 'Playfair Display,serif', fontSize: 28, fontWeight: 700, color: 'var(--navy)', marginBottom: 4 }}>Ola, {user?.name?.split(' ')[0]}!</h1>
+        <h1 style={{ fontFamily: 'Montserrat,sans-serif', fontSize: 28, fontWeight: 700, color: 'var(--navy)', marginBottom: 4 }}>Ola, {user?.name?.split(' ')[0]}!</h1>
         <p style={{ fontSize: 14, color: 'var(--text-soft)' }}>Bem-vindo ao painel administrativo da {siteName}.</p>
       </div>
 
@@ -55,7 +55,7 @@ export default function Dashboard() {
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 24 }}>
             <div style={{ background: '#fff', borderRadius: 12, border: '1px solid var(--border)', overflow: 'hidden' }}>
               <div style={{ padding: '16px 20px', borderBottom: '1px solid var(--border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <h3 style={{ fontFamily: 'Playfair Display,serif', fontSize: 16, fontWeight: 700, color: 'var(--navy)' }}>Mensagens Recentes</h3>
+                <h3 style={{ fontFamily: 'Montserrat,sans-serif', fontSize: 16, fontWeight: 700, color: 'var(--navy)' }}>Mensagens Recentes</h3>
                 <Link to="/admin/messages" style={{ fontSize: 12, color: 'var(--gold)', fontWeight: 600 }}>Ver todas →</Link>
               </div>
               {msgs.length === 0 ? <p style={{ padding: '20px', color: 'var(--text-soft)', fontSize: 13 }}>Nenhuma mensagem.</p> : msgs.map((m, i) => (
@@ -72,7 +72,7 @@ export default function Dashboard() {
 
             <div style={{ background: '#fff', borderRadius: 12, border: '1px solid var(--border)', overflow: 'hidden' }}>
               <div style={{ padding: '16px 20px', borderBottom: '1px solid var(--border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <h3 style={{ fontFamily: 'Playfair Display,serif', fontSize: 16, fontWeight: 700, color: 'var(--navy)' }}>Atividade Recente</h3>
+                <h3 style={{ fontFamily: 'Montserrat,sans-serif', fontSize: 16, fontWeight: 700, color: 'var(--navy)' }}>Atividade Recente</h3>
                 <Link to="/admin/audit" style={{ fontSize: 12, color: 'var(--gold)', fontWeight: 600 }}>Ver log →</Link>
               </div>
               {logs.length === 0 ? <p style={{ padding: '20px', color: 'var(--text-soft)', fontSize: 13 }}>Nenhuma atividade.</p> : logs.map((l, i) => (

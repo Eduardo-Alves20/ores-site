@@ -8,10 +8,10 @@ import { useAppAlert } from '../components/AppAlert';
 import api from '../lib/api';
 
 const AREA_DEFAULTS = [
-  { icon: 'heart', title: 'Pastoral da Saude', desc: 'Visitas a hospitais e doentes em casa, oferecendo conforto espiritual e material.' },
-  { icon: 'users', title: 'Pastoral Social', desc: 'Acoes de solidariedade, distribuicao de alimentos e apoio as familias carentes.' },
-  { icon: 'book', title: 'Catequese', desc: 'Formacao de criancas e jovens nos sacramentos da iniciacao crista.' },
-  { icon: 'handshake', title: 'Obra Social', desc: 'Apoio na farmacia comunitaria, cursos, bazar e atendimento social.' },
+  { icon: 'heart', title: 'Assistencia Social', desc: 'Apoio direto as familias em vulnerabilidade, distribuicao de alimentos e atendimento social.' },
+  { icon: 'users', title: 'Programas de Capacitacao', desc: 'Suporte na execucao de cursos profissionalizantes e oficinas de reintegracao.' },
+  { icon: 'book', title: 'Educacao e Formacao', desc: 'Aulas de reforco, alfabetizacao e preparacao para o mercado de trabalho.' },
+  { icon: 'handshake', title: 'Projetos Comunitarios', desc: 'Participacao em projetos nas Unidades Regionais e acoes de impacto social.' },
 ];
 
 const AREA_ICONS = {
@@ -88,8 +88,8 @@ export default function Voluntario() {
               <div style={{ background:'#fff', borderRadius:12, border:'1px solid var(--border)', padding:'32px 24px', textAlign:'center', transition:'transform .2s,box-shadow .2s' }}
                 onMouseEnter={e => { e.currentTarget.style.transform='translateY(-3px)'; e.currentTarget.style.boxShadow='0 8px 28px rgba(0,0,0,.07)'; }}
                 onMouseLeave={e => { e.currentTarget.style.transform=''; e.currentTarget.style.boxShadow=''; }}>
-                <div style={{ width:60, height:60, borderRadius:'50%', background:'rgba(184,148,90,.1)', display:'flex', alignItems:'center', justifyContent:'center', margin:'0 auto 16px', color:'var(--gold)' }}>{a.icon}</div>
-                <h3 style={{ fontFamily:'Playfair Display,serif', fontSize:17, fontWeight:700, color:'var(--navy)', marginBottom:10 }}>{a.title}</h3>
+                <div style={{ width:60, height:60, borderRadius:'50%', background:'rgba(25,118,210,.1)', display:'flex', alignItems:'center', justifyContent:'center', margin:'0 auto 16px', color:'var(--gold)' }}>{a.icon}</div>
+                <h3 style={{ fontFamily:'Montserrat,sans-serif', fontSize:17, fontWeight:700, color:'var(--navy)', marginBottom:10 }}>{a.title}</h3>
                 <RichTextContent html={a.desc} style={{ fontSize:13, color:'var(--text-mid)', lineHeight:1.65 }} />
               </div>
             </Reveal>
@@ -98,10 +98,10 @@ export default function Voluntario() {
         <Reveal>
           <div className="volunteer-contact" style={{ background:'#fff', borderRadius:16, border:'1px solid var(--border)', overflow:'hidden', display:'grid', gridTemplateColumns:'0.9fr 1.1fr', boxShadow:'0 12px 36px rgba(26,39,68,.08)' }}>
             <div style={{ background:'var(--navy)', padding:'42px', color:'#fff' }}>
-              <h2 style={{ fontFamily:'Playfair Display,serif', fontSize:28, color:'#fff', fontWeight:700, marginBottom:16 }}>{s.voluntario_cta_title || 'Pronto para servir?'}</h2>
+              <h2 style={{ fontFamily:'Montserrat,sans-serif', fontSize:28, color:'#fff', fontWeight:700, marginBottom:16 }}>{s.voluntario_cta_title || 'Pronto para servir?'}</h2>
               <RichTextContent
                 html={s.voluntario_cta_text}
-                fallback="Entre em contato com a secretaria paroquial ou nos envie uma mensagem. Teremos prazer em apresentar as oportunidades de voluntariado."
+                fallback="Entre em contato com a equipe da ORES ou nos envie uma mensagem. Teremos prazer em apresentar as oportunidades de voluntariado."
                 dark
                 style={{ fontSize:15, color:'rgba(255,255,255,.68)', lineHeight:1.75 }}
               />

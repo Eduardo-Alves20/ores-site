@@ -38,7 +38,6 @@ router.get('/dashboard', adm.getDashboardStats);
 router.get('/settings', adm.getSettings);
 router.put('/settings', adm.updateSettings);
 router.post('/media', adm.uploadMedia);
-router.post('/word-of-day/refresh', adm.refreshWordOfDay);
 
 router.get('/hero-slides', adm.listHeroSlides);
 router.post('/hero-slides', [
@@ -68,61 +67,31 @@ router.post('/news', [
 router.put('/news/:id', adm.updateNews);
 router.delete('/news/:id', adm.deleteNews);
 
-// ── Priests ──────────────────────────────────────────────────────────────────
-router.get('/priests', adm.listPriests);
-router.post('/priests', [
+// ── Regional Units ────────────────────────────────────────────────────────────
+router.get('/regionais', adm.listRegionais);
+router.post('/regionais', [
   body('name').trim().isLength({ min: 3 }),
-  body('sigla').trim().isLength({ min: 1, max: 10 }),
-  body('role').trim().isLength({ min: 3 }),
+  body('city').trim().isLength({ min: 2 }),
   validateRequest,
-], adm.createPriest);
-router.put('/priests/:id', adm.updatePriest);
-router.delete('/priests/:id', adm.deletePriest);
+], adm.createRegional);
+router.put('/regionais/:id', adm.updateRegional);
+router.delete('/regionais/:id', adm.deleteRegional);
 
-// ── Mass schedule ────────────────────────────────────────────────────────────
-router.get('/mass-schedule', adm.listMassSchedule);
-router.put('/mass-schedule/:id', adm.updateMassDay);
+// ── Projects (pastorals table) ────────────────────────────────────────────────
+router.get('/projetos', adm.listPastorals);
+router.post('/projetos', adm.createPastoral);
+router.put('/projetos/:id', adm.updatePastoral);
+router.delete('/projetos/:id', adm.deletePastoral);
+router.get('/projeto-slides', adm.listPastoralSlides);
+router.post('/projeto-slides', adm.createPastoralSlide);
+router.put('/projeto-slides/:id', adm.updatePastoralSlide);
+router.delete('/projeto-slides/:id', adm.deletePastoralSlide);
 
-// ── Prayer groups ─────────────────────────────────────────────────────────────
-router.get('/groups', adm.listGroups);
-router.post('/groups', adm.createGroup);
-router.put('/groups/:id', adm.updateGroup);
-router.delete('/groups/:id', adm.deleteGroup);
-router.get('/group-slides', adm.listGroupSlides);
-router.post('/group-slides', adm.createGroupSlide);
-router.put('/group-slides/:id', adm.updateGroupSlide);
-router.delete('/group-slides/:id', adm.deleteGroupSlide);
-
-// ── Pastorals ────────────────────────────────────────────────────────────────
-router.get('/pastorals', adm.listPastorals);
-router.post('/pastorals', adm.createPastoral);
-router.put('/pastorals/:id', adm.updatePastoral);
-router.delete('/pastorals/:id', adm.deletePastoral);
-router.get('/pastoral-slides', adm.listPastoralSlides);
-router.post('/pastoral-slides', adm.createPastoralSlide);
-router.put('/pastoral-slides/:id', adm.updatePastoralSlide);
-router.delete('/pastoral-slides/:id', adm.deletePastoralSlide);
-
-// ── Communities ──────────────────────────────────────────────────────────────
-router.get('/communities', adm.listCommunities);
-router.post('/communities', adm.createCommunity);
-router.put('/communities/:id', adm.updateCommunity);
-router.delete('/communities/:id', adm.deleteCommunity);
-
-// ── Facilities ───────────────────────────────────────────────────────────────
+// ── Facilities (Espaço ORES) ──────────────────────────────────────────────────
 router.get('/facilities', adm.listFacilities);
+router.post('/facilities', adm.createFacility);
 router.put('/facilities/:id', adm.updateFacility);
-
-// ── Room bookings ─────────────────────────────────────────────────────────────
-router.get('/bookings', adm.listBookings);
-router.put('/bookings/:id', adm.updateBookingStatus);
-
-// ── Homilies ─────────────────────────────────────────────────────────────────
-router.post('/homilies/media', adm.uploadHomilyMedia);
-router.get('/homilies', adm.listHomilies);
-router.post('/homilies', adm.createHomily);
-router.put('/homilies/:id', adm.updateHomily);
-router.delete('/homilies/:id', adm.deleteHomily);
+router.delete('/facilities/:id', adm.deleteFacility);
 
 // ── Courses ──────────────────────────────────────────────────────────────────
 router.get('/courses', adm.listCourses);
@@ -130,9 +99,11 @@ router.post('/courses', adm.createCourse);
 router.put('/courses/:id', adm.updateCourse);
 router.delete('/courses/:id', adm.deleteCourse);
 
-// ── Social services ───────────────────────────────────────────────────────────
+// ── Social programs ───────────────────────────────────────────────────────────
 router.get('/services', adm.listServices);
+router.post('/services', adm.createService);
 router.put('/services/:id', adm.updateService);
+router.delete('/services/:id', adm.deleteService);
 
 // ── Messages ──────────────────────────────────────────────────────────────────
 router.get('/messages', adm.listMessages);

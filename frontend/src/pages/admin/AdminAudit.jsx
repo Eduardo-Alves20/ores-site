@@ -1,10 +1,10 @@
-import { useFetch } from '../../hooks/useFetch';
+﻿import { useFetch } from '../../hooks/useFetch';
 
 export default function AdminAudit() {
   const { data: logs, loading } = useFetch('/admin/audit-log');
   return (
     <div>
-      <h1 style={{ fontFamily:'Playfair Display,serif', fontSize:26, fontWeight:700, color:'var(--navy)', marginBottom:24 }}>Log de Auditoria</h1>
+      <h1 style={{ fontFamily:'Montserrat,sans-serif', fontSize:26, fontWeight:700, color:'var(--navy)', marginBottom:24 }}>Log de Auditoria</h1>
       <div style={{ background:'#fff', borderRadius:12, border:'1px solid var(--border)', overflow:'hidden' }}>
         {loading ? <div style={{ padding:40, textAlign:'center', color:'var(--text-soft)' }}>Carregando...</div> : (
           <div style={{ overflowX:'auto' }}>

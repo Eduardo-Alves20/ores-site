@@ -1,4 +1,4 @@
-import { useState } from 'react';
+﻿import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth.jsx';
 import { useFetch } from '../../hooks/useFetch';
@@ -31,8 +31,8 @@ export default function AdminLogin() {
     <div style={{ minHeight:'100vh', background:'var(--navy)', display:'flex', alignItems:'center', justifyContent:'center', padding:24 }}>
       <div style={{ width:'100%', maxWidth:400 }}>
         <div style={{ textAlign:'center', marginBottom:40 }}>
-          <div style={{ width:56, height:56, borderRadius:'50%', background:'var(--gold)', display:'flex', alignItems:'center', justifyContent:'center', fontSize:24, color:'#fff', fontFamily:'Playfair Display,serif', fontWeight:700, margin:'0 auto 16px' }}>✦</div>
-          <h1 style={{ fontFamily:'Playfair Display,serif', fontSize:26, color:'#fff', fontWeight:700, marginBottom:4 }}>Painel Administrativo</h1>
+          <div style={{ width:56, height:56, borderRadius:'50%', background:'var(--gold)', display:'flex', alignItems:'center', justifyContent:'center', fontSize:24, color:'#fff', fontFamily:'Montserrat,sans-serif', fontWeight:700, margin:'0 auto 16px' }}>✦</div>
+          <h1 style={{ fontFamily:'Montserrat,sans-serif', fontSize:26, color:'#fff', fontWeight:700, marginBottom:4 }}>Painel Administrativo</h1>
           <p style={{ fontSize:13, color:'rgba(255,255,255,.45)' }}>{siteName}</p>
         </div>
 

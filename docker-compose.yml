@@ -1,0 +1,72 @@
+services:
+  db:
+    image: mysql:8.0
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ores_root_2026
+      MYSQL_DATABASE: ores_db
+      MYSQL_USER: ores_user
+      MYSQL_PASSWORD: ores_pass_2026
+    volumes:
+      - db_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-pores_root_2026"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    networks:
+      - ores_net
+
+  backend:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "3001:3001"
+    environment:
+      NODE_ENV: development
+      PORT: 3001
+      DB_HOST: db
+      DB_PORT: 3306
+      DB_NAME: ores_db
+      DB_USER: ores_user
+      DB_PASS: ores_pass_2026
+      JWT_ACCESS_SECRET: ores_jwt_access_secret_docker_dev_2026_change_me
+      JWT_REFRESH_SECRET: ores_jwt_refresh_secret_docker_dev_2026_change_me
+      JWT_ACCESS_EXPIRES: 15m
+      JWT_REFRESH_EXPIRES: 7d
+      CSRF_SECRET: ores_csrf_secret_docker_dev_2026
+      FRONTEND_URL: http://localhost:5173
+      COOKIE_DOMAIN: localhost
+      COOKIE_SECURE: "false"
+      BACKUP_ENABLED: "false"
+    volumes:
+      - uploads_data:/app/uploads
+    networks:
+      - ores_net
+
+  frontend:
+    build:
+      context: .
+      dockerfile: frontend/Dockerfile
+    restart: unless-stopped
+    depends_on:
+      - backend
+    ports:
+      - "5173:5173"
+    environment:
+      VITE_BACKEND_PROXY: http://backend:3001
+    networks:
+      - ores_net
+
+volumes:
+  db_data:
+  uploads_data:
+
+networks:
+  ores_net:
+    driver: bridge

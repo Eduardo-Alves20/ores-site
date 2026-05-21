@@ -9,31 +9,15 @@ const router = Router();
 router.get('/home', pub.getHomeData);
 router.get('/site-info', pub.getSiteInfo);
 router.get('/hero-slides', pub.getHeroSlides);
-router.get('/word-of-day', pub.getWordOfDay);
-router.get('/mass-schedule', pub.getMassSchedule);
 router.get('/events', pub.getEvents);
-router.get('/priests', pub.getPriests);
 router.get('/news', pub.getNews);
 router.get('/news/:slug', pub.getNewsItem);
-router.get('/prayer-groups', pub.getPrayerGroups);
-router.get('/prayer-group-slides', pub.getPrayerGroupSlides);
-router.get('/pastorals', pub.getPastorals);
-router.get('/pastoral-slides', pub.getPastoralSlides);
-router.get('/communities', pub.getCommunities);
+router.get('/projetos', pub.getProjetos);
+router.get('/projeto-slides', pub.getProjetoSlides);
+router.get('/regionais', pub.getRegionais);
 router.get('/facilities', pub.getFacilities);
-router.get('/room-bookings', pub.getRoomBookings);
 router.get('/social', pub.getSocialServices);
-router.get('/homilies', pub.getHomilies);
-
-router.post('/room-bookings', [
-  body('facility_id').isInt({ min: 1 }),
-  body('title').trim().isLength({ min: 3, max: 200 }),
-  body('booking_date').isDate(),
-  body('start_time').matches(/^\d{2}:\d{2}$/),
-  body('end_time').matches(/^\d{2}:\d{2}$/),
-  body('requester_name').trim().isLength({ min: 2, max: 150 }),
-  validateRequest,
-], pub.createRoomBooking);
+router.get('/courses', pub.getCourses);
 
 router.post('/contact', contactRateLimit, [
   body('name').trim().isLength({ min: 2, max: 150 }).withMessage('Nome inválido.'),

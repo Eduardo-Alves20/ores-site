@@ -1,4 +1,4 @@
-export default function RichTextContent({ html, fallback = '', className = '', dark = false, style }) {
+﻿export default function RichTextContent({ html, fallback = '', className = '', dark = false, style }) {
   const content = html || fallback;
   if (!content) return null;
 
@@ -31,7 +31,7 @@ export default function RichTextContent({ html, fallback = '', className = '', d
         .rich-text-content h2,
         .rich-text-content h3,
         .rich-text-content h4 {
-          font-family: 'Playfair Display,serif';
+          font-family: 'Montserrat,sans-serif';
           color: var(--navy);
           font-weight: 700;
           line-height: 1.3;

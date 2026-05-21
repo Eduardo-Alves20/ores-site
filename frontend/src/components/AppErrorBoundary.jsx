@@ -1,4 +1,4 @@
-import { Component } from 'react';
+﻿import { Component } from 'react';
 
 export default class AppErrorBoundary extends Component {
   constructor(props) {
@@ -20,7 +20,7 @@ export default class AppErrorBoundary extends Component {
     return (
       <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 24, background: 'var(--cream)' }}>
         <div style={{ maxWidth: 560, width: '100%', background: '#fff', border: '1px solid var(--border)', borderRadius: 14, padding: 28, textAlign: 'center' }}>
-          <h1 style={{ fontFamily: 'Playfair Display,serif', color: 'var(--navy)', fontSize: 30, marginBottom: 10 }}>Opa, algo deu errado</h1>
+          <h1 style={{ fontFamily: 'Montserrat,sans-serif', color: 'var(--navy)', fontSize: 30, marginBottom: 10 }}>Opa, algo deu errado</h1>
           <p style={{ color: 'var(--text-mid)', fontSize: 14, lineHeight: 1.7, marginBottom: 18 }}>
             Nao foi possivel carregar esta pagina agora.
           </p>

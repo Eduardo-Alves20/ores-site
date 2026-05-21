@@ -1,4 +1,4 @@
-import { useState } from 'react';
+﻿import { useState } from 'react';
 import { useFetch } from '../hooks/useFetch';
 import PageHeader from '../components/PageHeader';
 import { ChevronLeft, ChevronRight, Clock, MapPin } from 'lucide-react';
@@ -7,17 +7,18 @@ import { parseDateOnly, formatEventDate } from '../lib/date';
 const MONTHS = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
 const DAYS = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
 const CAT_COLORS = {
-  'Pastoral Familiar': '#6366f1',
+  Formação: '#6366f1',
+  Formacao: '#6366f1',
   Juventude: '#f59e0b',
   'Evento Social': '#10b981',
-  Oração: '#3b82f6',
-  Oracao: '#3b82f6',
+  Reunião: '#3b82f6',
+  Reuniao: '#3b82f6',
   Gestão: '#8b5cf6',
   Gestao: '#8b5cf6',
-  Liturgia: '#ec4899',
   Campanha: '#ef4444',
-  Paróquia: '#b8945a',
-  Paroquia: '#b8945a',
+  Capacitação: '#1976d2',
+  Capacitacao: '#1976d2',
+  ORES: '#0d2d5e',
 };
 
 export default function Calendario() {
@@ -75,14 +76,14 @@ export default function Calendario() {
 
   return (
     <div className="animate-page">
-      <PageHeader eyebrow="Paróquia" title="Calendário de Eventos" subtitle="Acompanhe as celebrações e atividades da nossa comunidade." />
+      <PageHeader eyebrow="ORES" title="Calendário de Eventos" subtitle="Acompanhe os eventos e atividades das nossas unidades e programas." />
       <section className="calendar-section" style={{ padding: '72px 24px', maxWidth: 1100, margin: '0 auto' }}>
         <div className="calendar-card" style={{ background: '#fff', borderRadius: 16, border: '1px solid var(--border)', overflow: 'hidden', boxShadow: '0 4px 24px rgba(0,0,0,.06)' }}>
           <div className="calendar-month-header" style={{ background: 'var(--navy)', padding: '20px 28px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
             <button onClick={prev} style={{ color: '#fff', opacity: 0.7, padding: 8, borderRadius: 8, transition: 'opacity .15s' }} onMouseEnter={(e) => { e.currentTarget.style.opacity = 1; }} onMouseLeave={(e) => { e.currentTarget.style.opacity = '.7'; }}>
               <ChevronLeft size={20} />
             </button>
-            <h2 className="calendar-month-title" style={{ fontFamily: 'Playfair Display,serif', fontSize: 22, color: '#fff', fontWeight: 700 }}>{MONTHS[month]} {year}</h2>
+            <h2 className="calendar-month-title" style={{ fontFamily: 'Montserrat,sans-serif', fontSize: 22, color: '#fff', fontWeight: 700 }}>{MONTHS[month]} {year}</h2>
             <button onClick={next} style={{ color: '#fff', opacity: 0.7, padding: 8, borderRadius: 8, transition: 'opacity .15s' }} onMouseEnter={(e) => { e.currentTarget.style.opacity = 1; }} onMouseLeave={(e) => { e.currentTarget.style.opacity = '.7'; }}>
               <ChevronRight size={20} />
             </button>
@@ -136,7 +137,7 @@ export default function Calendario() {
 
         {eventsInMonth.length > 0 && (
           <div style={{ marginTop: 40 }}>
-            <h3 style={{ fontFamily: 'Playfair Display,serif', fontSize: 22, fontWeight: 700, color: 'var(--navy)', marginBottom: 20 }}>Eventos de {MONTHS[month]}</h3>
+            <h3 style={{ fontFamily: 'Montserrat,sans-serif', fontSize: 22, fontWeight: 700, color: 'var(--navy)', marginBottom: 20 }}>Eventos de {MONTHS[month]}</h3>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
               {eventDays.map((day) => (
                 <div
@@ -145,7 +146,7 @@ export default function Calendario() {
                   key={day}
                   style={{ scrollMarginTop: 96, borderRadius: 12, transition: 'background .25s, box-shadow .25s' }}
                 >
-                  <h4 style={{ fontFamily: 'Playfair Display,serif', fontSize: 18, fontWeight: 700, color: 'var(--navy)', marginBottom: 10 }}>
+                  <h4 style={{ fontFamily: 'Montserrat,sans-serif', fontSize: 18, fontWeight: 700, color: 'var(--navy)', marginBottom: 10 }}>
                     Dia {String(day).padStart(2, '0')}
                   </h4>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>

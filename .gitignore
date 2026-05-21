@@ -25,6 +25,20 @@ npm-debug.log*
 yarn-debug.log*
 pnpm-debug.log*
 
+# Production env (never commitar)
+.env.production
+
+# Dev artifacts
+admin_cookies.txt
+login_body.json
+login_headers.txt
+login_payload.json
+refresh_body.json
+refresh_headers.txt
+ui_admin_cookies.txt
+ui_login_body.json
+ui_login_headers.txt
+
 # OS and editors
 .DS_Store
 Thumbs.db

@@ -1,43 +1,33 @@
-import { useEffect, useState } from 'react';
+﻿import { useEffect, useState } from 'react';
 import { useFetch } from '../hooks/useFetch';
 import { normalizeMediaUrl } from '../lib/media';
 import RichTextContent from './RichTextContent';
 
 const HEADER_KEYS = {
-  'Conheca a Paroquia': 'conheca',
-  'Conheça a Paróquia': 'conheca',
-  'Conheça a PES': 'conheca',
-  'Obra Social': 'obra_social',
+  'Quem Somos': 'quem_somos',
   'Quero ser Voluntario': 'voluntario',
   'Quero ser Voluntário': 'voluntario',
+  Voluntariado: 'voluntario',
   'Noticias': 'news',
   'Notícias': 'news',
-  'Web Radio': 'radio',
-  'Web Rádio': 'radio',
-  'Web Rádio PES': 'radio',
-  'Homilias e Reflexoes': 'homilies',
-  'Homilias e Reflexões': 'homilies',
   Contato: 'contact',
-  'Padres e Diaconos': 'priests',
-  'Padres e Diáconos': 'priests',
-  Instalacoes: 'facilities',
-  'Instalações': 'facilities',
+  'Espaco ORES': 'espaco_ores',
+  'Espaço ORES': 'espaco_ores',
+  'Unidades Regionais': 'regionais',
+  'Projetos': 'projetos',
+  'Projetos e Iniciativas': 'projetos',
+  'Programas Sociais': 'programas',
   'Calendario de Eventos': 'calendar',
   'Calendário de Eventos': 'calendar',
-  'Agendamento de Salas': 'rooms',
-  'Grupos de Oracao': 'groups',
-  'Grupos de Oração': 'groups',
-  'Pastorais e Movimentos': 'pastorals',
-  'Comunidades (Setores)': 'communities',
 };
 
-export default function PageHeader({ eyebrow, title, subtitle, headerKey, children }) {
+export default function PageHeader({ eyebrow, title, subtitle, headerKey, imageUrl, children }) {
   const { data } = useFetch('/site-info');
   const prefix = headerKey || HEADER_KEYS[title];
   const e = prefix ? data?.[`${prefix}_eyebrow`] || eyebrow : eyebrow;
   const t = prefix ? data?.[`${prefix}_title`] || title : title;
   const s = prefix ? data?.[`${prefix}_subtitle`] || subtitle : subtitle;
-  const image = normalizeMediaUrl(prefix ? data?.[`${prefix}_image_url`] : null);
+  const image = normalizeMediaUrl(imageUrl || (prefix ? data?.[`${prefix}_image_url`] : null));
   const [imageFailed, setImageFailed] = useState(false);
   const showImage = image && !imageFailed;
 
@@ -67,12 +57,12 @@ export default function PageHeader({ eyebrow, title, subtitle, headerKey, childr
       ) : (
         <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(180deg,#2a2a2a,#161616)' }} />
       )}
-      <div style={{ position: 'absolute', inset: 0, background: 'radial-gradient(ellipse at 50% 120%,rgba(184,148,90,.06) 0%,transparent 58%)' }} />
+      <div style={{ position: 'absolute', inset: 0, background: 'radial-gradient(ellipse at 50% 120%,rgba(25,118,210,.06) 0%,transparent 58%)' }} />
       <div style={{ position: 'absolute', top: -80, right: -80, width: 300, height: 300, borderRadius: '50%', border: '1px solid rgba(255,255,255,.03)' }} />
       <div style={{ position: 'absolute', top: -40, right: -40, width: 180, height: 180, borderRadius: '50%', border: '1px solid rgba(255,255,255,.025)' }} />
       <div style={{ maxWidth: 1200, margin: '0 auto', position: 'relative', textAlign: 'center' }}>
         {e && <div style={{ fontSize: 11, fontWeight: 600, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--gold-light)', marginBottom: 16 }}>{e}</div>}
-        <h1 style={{ fontFamily: 'Playfair Display,serif', fontSize: 'clamp(30px,5vw,52px)', fontWeight: 700, color: '#fff', textShadow: '0 2px 12px rgba(0,0,0,.38)', marginBottom: s ? 16 : 0 }}>{t}</h1>
+        <h1 style={{ fontFamily: 'Montserrat,sans-serif', fontSize: 'clamp(30px,5vw,52px)', fontWeight: 700, color: '#fff', textShadow: '0 2px 12px rgba(0,0,0,.38)', marginBottom: s ? 16 : 0 }}>{t}</h1>
         {s && (
           <RichTextContent
             html={s}

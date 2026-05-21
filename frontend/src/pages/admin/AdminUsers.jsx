@@ -1,4 +1,4 @@
-import { useState } from 'react';
+﻿import { useState } from 'react';
 import { useFetch } from '../../hooks/useFetch';
 import api from '../../lib/api';
 import { useAuth } from '../../hooks/useAuth.jsx';
@@ -45,7 +45,7 @@ export default function AdminUsers() {
   return (
     <div>
       <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:24 }}>
-        <h1 style={{ fontFamily:'Playfair Display,serif', fontSize:26, fontWeight:700, color:'var(--navy)' }}>Usuários Administrativos</h1>
+        <h1 style={{ fontFamily:'Montserrat,sans-serif', fontSize:26, fontWeight:700, color:'var(--navy)' }}>Usuários Administrativos</h1>
         <button onClick={() => { setModal(true); setForm({ name:'', email:'', password:'', role:'editor' }); setError(''); }} style={{ display:'flex', alignItems:'center', gap:6, padding:'9px 20px', borderRadius:10, background:'var(--gold)', color:'#fff', fontWeight:600, fontSize:13 }}>
           <Plus size={16}/> Novo usuário
         </button>
@@ -77,7 +77,7 @@ export default function AdminUsers() {
         <div style={{ position:'fixed', inset:0, background:'rgba(0,0,0,.45)', zIndex:3000, display:'flex', alignItems:'center', justifyContent:'center', padding:24 }} onClick={() => setModal(false)}>
           <div style={{ background:'#fff', borderRadius:14, width:'100%', maxWidth:460, padding:'28px 24px' }} onClick={e => e.stopPropagation()}>
             <div style={{ display:'flex', justifyContent:'space-between', marginBottom:20 }}>
-              <h3 style={{ fontFamily:'Playfair Display,serif', fontSize:18, fontWeight:700, color:'var(--navy)' }}>Novo Usuário Admin</h3>
+              <h3 style={{ fontFamily:'Montserrat,sans-serif', fontSize:18, fontWeight:700, color:'var(--navy)' }}>Novo Usuário Admin</h3>
               <button onClick={() => setModal(false)} style={{ color:'var(--text-soft)' }}><X size={18}/></button>
             </div>
             {[

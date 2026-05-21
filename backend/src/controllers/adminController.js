@@ -6,14 +6,9 @@ import multer from 'multer';
 import path from 'path';
 import fs from 'fs';
 import { randomUUID } from 'crypto';
-import { execFile } from 'child_process';
-import { promisify } from 'util';
-import { refreshWordOfDayCache } from '../services/wordOfDayService.js';
 import { uploadsDir } from '../utils/uploads.js';
 
 fs.mkdirSync(uploadsDir, { recursive: true });
-const execFileAsync = promisify(execFile);
-const MAX_HOMILY_MEDIA_DURATION_SECONDS = 10 * 60 * 60;
 
 const upload = multer({
   storage: multer.diskStorage({
@@ -32,78 +27,10 @@ const upload = multer({
   },
 }).single('file');
 
-const uploadAudioVideo = multer({
-  storage: multer.diskStorage({
-    destination: (_req, _file, cb) => cb(null, uploadsDir),
-    filename: (_req, file, cb) => {
-      const ext = path.extname(file.originalname || '').toLowerCase();
-      cb(null, `${Date.now()}-${randomUUID()}${ext}`);
-    },
-  }),
-  fileFilter: (_req, file, cb) => {
-    if (!/^(audio|video)\//.test(file.mimetype)) {
-      return cb(new Error('Formato inválido. Envie um arquivo de áudio ou vídeo.'));
-    }
-    cb(null, true);
-  },
-}).single('file');
-
-function removeUploadedFile(filePath) {
-  try {
-    fs.unlinkSync(filePath);
-  } catch {
-    // Ignore cleanup errors.
-  }
-}
-
-function parseDurationFromProbeJson(raw) {
-  try {
-    const parsed = JSON.parse(String(raw || '{}'));
-    const durations = [];
-    const formatDuration = Number(parsed?.format?.duration);
-    if (Number.isFinite(formatDuration) && formatDuration > 0) durations.push(formatDuration);
-    if (Array.isArray(parsed?.streams)) {
-      for (const stream of parsed.streams) {
-        const streamDuration = Number(stream?.duration);
-        if (Number.isFinite(streamDuration) && streamDuration > 0) durations.push(streamDuration);
-      }
-    }
-    if (!durations.length) return null;
-    return Math.max(...durations);
-  } catch {
-    return null;
-  }
-}
-
-async function getMediaDurationSeconds(filePath) {
-  try {
-    const { stdout } = await execFileAsync('ffprobe', [
-      '-v', 'error',
-      '-show_entries', 'format=duration:stream=duration',
-      '-of', 'json',
-      filePath,
-    ]);
-    const durationSeconds = parseDurationFromProbeJson(stdout);
-    if (!Number.isFinite(durationSeconds) || durationSeconds <= 0) {
-      const err = new Error('Duracao de midia invalida.');
-      err.code = 'INVALID_MEDIA_DURATION';
-      throw err;
-    }
-    return durationSeconds;
-  } catch (err) {
-    if (err?.code === 'ENOENT') {
-      const notAvailable = new Error('ffprobe nao disponivel.');
-      notAvailable.code = 'FFPROBE_NOT_AVAILABLE';
-      throw notAvailable;
-    }
-    throw err;
-  }
-}
-
 const SETTINGS_KEYS = [
   'site_name', 'site_tagline', 'site_logo_url', 'site_address', 'site_email', 'site_whatsapp',
-  'site_phone', 'site_facebook', 'site_instagram', 'site_youtube', 'radio_stream_url',
-  'daily_message', 'secretary_hours', 'maps_url',
+  'site_phone', 'site_facebook', 'site_instagram', 'site_youtube',
+  'secretary_hours', 'maps_url',
   'hero_eyebrow', 'hero_title', 'hero_subtitle', 'hero_image_url', 'hero_primary_label',
   'hero_primary_url', 'hero_secondary_label', 'hero_secondary_url',
   'home_quick_title', 'home_mission_eyebrow', 'home_mission_title', 'home_mission_text',
@@ -114,60 +41,49 @@ const SETTINGS_KEYS = [
   'home_stat_3_value', 'home_stat_3_suffix', 'home_stat_3_label', 'home_stat_3_no_count',
   'home_stat_4_value', 'home_stat_4_suffix', 'home_stat_4_label', 'home_stat_4_no_count',
   'donation_enabled', 'donation_eyebrow', 'donation_title', 'donation_text', 'donation_pix_key',
-  'donation_background_url',
-  'donation_qr_url', 'donation_button_label', 'donation_gallery_1_url', 'donation_gallery_1_caption',
-  'donation_gallery_2_url', 'donation_gallery_2_caption', 'donation_gallery_3_url',
-  'donation_gallery_3_caption',
-  'conheca_eyebrow', 'conheca_title', 'conheca_subtitle', 'conheca_history_title',
-  'conheca_history_text_1', 'conheca_history_text_2',
-  'voluntario_eyebrow', 'voluntario_title', 'voluntario_subtitle', 'voluntario_cta_title',
-  'voluntario_cta_text', 'voluntario_cta_label', 'voluntario_cta_url',
+  'donation_background_url', 'donation_qr_url', 'donation_button_label',
+  'donation_gallery_1_url', 'donation_gallery_1_caption',
+  'donation_gallery_2_url', 'donation_gallery_2_caption',
+  'donation_gallery_3_url', 'donation_gallery_3_caption',
+  'quem_somos_eyebrow', 'quem_somos_title', 'quem_somos_subtitle', 'quem_somos_image_url',
+  'quem_somos_history_title', 'quem_somos_history_text_1', 'quem_somos_history_text_2',
+  'voluntario_eyebrow', 'voluntario_title', 'voluntario_subtitle', 'voluntario_image_url',
+  'voluntario_cta_title', 'voluntario_cta_text', 'voluntario_cta_label', 'voluntario_cta_url',
   'voluntario_area_1_icon', 'voluntario_area_1_title', 'voluntario_area_1_desc',
   'voluntario_area_2_icon', 'voluntario_area_2_title', 'voluntario_area_2_desc',
   'voluntario_area_3_icon', 'voluntario_area_3_title', 'voluntario_area_3_desc',
   'voluntario_area_4_icon', 'voluntario_area_4_title', 'voluntario_area_4_desc',
-  'obra_social_eyebrow', 'obra_social_title', 'obra_social_subtitle', 'obra_social_mission_title',
-  'obra_social_mission_text', 'obra_social_cta_label', 'obra_social_cta_url',
-  'conheca_image_url', 'voluntario_image_url', 'obra_social_image_url',
-  'news_eyebrow', 'news_title', 'news_subtitle', 'radio_eyebrow', 'radio_title', 'radio_subtitle',
-  'homilies_eyebrow', 'homilies_title', 'homilies_subtitle', 'contact_eyebrow', 'contact_title',
-  'contact_subtitle', 'priests_eyebrow', 'priests_title', 'priests_subtitle',
-  'facilities_eyebrow', 'facilities_title', 'facilities_subtitle', 'calendar_eyebrow',
-  'calendar_title', 'calendar_subtitle', 'rooms_eyebrow', 'rooms_title', 'rooms_subtitle',
-  'groups_eyebrow', 'groups_title', 'groups_subtitle', 'pastorals_eyebrow',
-  'pastorals_title', 'pastorals_subtitle', 'communities_eyebrow', 'communities_title',
-  'communities_subtitle',
-  'news_image_url', 'radio_image_url', 'homilies_image_url', 'contact_image_url',
-  'priests_image_url', 'facilities_image_url', 'calendar_image_url', 'rooms_image_url',
-  'groups_image_url', 'pastorals_image_url', 'communities_image_url',
-  'menu_public_home', 'menu_public_parish', 'menu_public_about', 'menu_public_priests',
-  'menu_public_facilities', 'menu_public_calendar', 'menu_public_rooms', 'menu_public_community',
-  'menu_public_groups', 'menu_public_pastorals', 'menu_public_communities', 'menu_public_family',
-  'menu_public_volunteer', 'menu_public_media', 'menu_public_news', 'menu_public_radio',
-  'menu_public_homilies', 'menu_public_social', 'menu_public_social_about',
-  'menu_public_social_services', 'menu_public_social_courses', 'menu_public_contact',
-  'menu_public_home_enabled', 'menu_public_parish_enabled', 'menu_public_about_enabled', 'menu_public_priests_enabled',
-  'menu_public_facilities_enabled', 'menu_public_calendar_enabled', 'menu_public_rooms_enabled', 'menu_public_community_enabled',
-  'menu_public_groups_enabled', 'menu_public_pastorals_enabled', 'menu_public_communities_enabled', 'menu_public_family_enabled',
-  'menu_public_volunteer_enabled', 'menu_public_media_enabled', 'menu_public_news_enabled', 'menu_public_radio_enabled',
-  'menu_public_homilies_enabled', 'menu_public_social_enabled', 'menu_public_social_about_enabled',
-  'menu_public_social_services_enabled', 'menu_public_social_courses_enabled', 'menu_public_contact_enabled',
+  'obra_social_eyebrow', 'obra_social_title', 'obra_social_subtitle', 'obra_social_image_url',
+  'obra_social_mission_title', 'obra_social_mission_text', 'obra_social_cta_label', 'obra_social_cta_url',
+  'regionais_eyebrow', 'regionais_title', 'regionais_subtitle', 'regionais_image_url',
+  'projetos_eyebrow', 'projetos_title', 'projetos_subtitle', 'projetos_image_url',
+  'espaco_ores_eyebrow', 'espaco_ores_title', 'espaco_ores_subtitle', 'espaco_ores_image_url',
+  'news_eyebrow', 'news_title', 'news_subtitle', 'news_image_url',
+  'contact_eyebrow', 'contact_title', 'contact_subtitle', 'contact_image_url',
+  'calendar_eyebrow', 'calendar_title', 'calendar_subtitle', 'calendar_image_url',
+  'programs_image_url', 'courses_image_url', 'projects_image_url', 'regionais_page_image_url',
+  'menu_public_home', 'menu_public_sobre', 'menu_public_quem_somos', 'menu_public_regionais',
+  'menu_public_projetos', 'menu_public_espaco', 'menu_public_programas', 'menu_public_programas_sobre',
+  'menu_public_programas_cursos', 'menu_public_galeria', 'menu_public_noticias', 'menu_public_eventos',
+  'menu_public_voluntario', 'menu_public_contato',
+  'menu_public_home_enabled', 'menu_public_sobre_enabled', 'menu_public_quem_somos_enabled',
+  'menu_public_regionais_enabled', 'menu_public_projetos_enabled', 'menu_public_espaco_enabled',
+  'menu_public_programas_enabled', 'menu_public_programas_sobre_enabled',
+  'menu_public_programas_cursos_enabled', 'menu_public_galeria_enabled',
+  'menu_public_noticias_enabled', 'menu_public_eventos_enabled',
+  'menu_public_voluntario_enabled', 'menu_public_contato_enabled',
   'menu_admin_dashboard', 'menu_admin_settings', 'menu_admin_hero_slides',
-  'menu_admin_divider_content', 'menu_admin_news', 'menu_admin_events', 'menu_admin_homilies',
-  'menu_admin_divider_parish', 'menu_admin_priests', 'menu_admin_mass', 'menu_admin_facilities',
-  'menu_admin_bookings', 'menu_admin_divider_community', 'menu_admin_groups',
-  'menu_admin_pastorals', 'menu_admin_communities', 'menu_admin_divider_social',
-  'menu_admin_services', 'menu_admin_courses', 'menu_admin_divider_system',
-  'menu_admin_messages', 'menu_admin_users', 'menu_admin_audit',
+  'menu_admin_divider_conteudo', 'menu_admin_news', 'menu_admin_events',
+  'menu_admin_divider_ong', 'menu_admin_regionais', 'menu_admin_projetos', 'menu_admin_espaco',
+  'menu_admin_divider_programas', 'menu_admin_services', 'menu_admin_courses',
+  'menu_admin_divider_system', 'menu_admin_messages', 'menu_admin_users', 'menu_admin_audit',
   'menu_admin_dashboard_enabled', 'menu_admin_settings_enabled', 'menu_admin_hero_slides_enabled',
-  'menu_admin_divider_content_enabled', 'menu_admin_news_enabled', 'menu_admin_events_enabled', 'menu_admin_homilies_enabled',
-  'menu_admin_divider_parish_enabled', 'menu_admin_priests_enabled', 'menu_admin_mass_enabled', 'menu_admin_facilities_enabled',
-  'menu_admin_bookings_enabled', 'menu_admin_divider_community_enabled', 'menu_admin_groups_enabled',
-  'menu_admin_pastorals_enabled', 'menu_admin_communities_enabled', 'menu_admin_divider_social_enabled',
-  'menu_admin_services_enabled', 'menu_admin_courses_enabled', 'menu_admin_divider_system_enabled',
-  'menu_admin_messages_enabled', 'menu_admin_users_enabled', 'menu_admin_audit_enabled',
-  'word_day_mode', 'word_day_manual_title', 'word_day_manual_subtitle',
-  'word_day_manual_content', 'word_day_manual_link',
+  'menu_admin_divider_conteudo_enabled', 'menu_admin_news_enabled', 'menu_admin_events_enabled',
+  'menu_admin_divider_ong_enabled', 'menu_admin_regionais_enabled', 'menu_admin_projetos_enabled',
+  'menu_admin_espaco_enabled', 'menu_admin_divider_programas_enabled',
+  'menu_admin_services_enabled', 'menu_admin_courses_enabled',
+  'menu_admin_divider_system_enabled', 'menu_admin_messages_enabled',
+  'menu_admin_users_enabled', 'menu_admin_audit_enabled',
 ];
 
 // ── Generic CRUD helpers ─────────────────────────────────────────────────────
@@ -213,12 +129,11 @@ async function deleteRecord(req, res, table, recordId) {
 function slugify(value) {
   const slug = String(value || '')
     .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[̀-ͯ]/g, '')
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/^-+|-+$/g, '')
     .slice(0, 280);
-
   return slug || 'noticia';
 }
 
@@ -226,24 +141,23 @@ async function uniqueNewsSlug(baseSlug, ignoreId = null) {
   let suffix = 2;
   const cleanBase = slugify(baseSlug);
   let candidate = cleanBase;
-
   while (true) {
     const params = ignoreId ? [candidate, ignoreId] : [candidate];
     const where = ignoreId ? 'slug = ? AND id <> ?' : 'slug = ?';
     const existing = await queryOne(`SELECT id FROM news WHERE ${where}`, params);
     if (!existing) return candidate;
-
     const suffixText = `-${suffix++}`;
     candidate = `${cleanBase.slice(0, 300 - suffixText.length)}${suffixText}`;
   }
 }
+
 // ── Dashboard stats ──────────────────────────────────────────────────────────
 export async function getDashboardStats(req, res) {
   try {
     const [eventCount] = await query(`SELECT COUNT(*) as n FROM events WHERE active = 1`);
     const [newsCount] = await query(`SELECT COUNT(*) as n FROM news WHERE published = 1`);
     const [msgCount] = await query(`SELECT COUNT(*) as n FROM contact_messages WHERE read_at IS NULL`);
-    const [bookingCount] = await query(`SELECT COUNT(*) as n FROM room_bookings WHERE status = 'pending'`);
+    const [regionalCount] = await query(`SELECT COUNT(*) as n FROM regional_units WHERE active = 1`);
     const recentLogs = await query(`SELECT al.*, au.name as admin_name FROM audit_log al LEFT JOIN admin_users au ON au.id = al.admin_id ORDER BY al.created_at DESC LIMIT 10`);
     const recentMessages = await query(`SELECT * FROM contact_messages ORDER BY created_at DESC LIMIT 5`);
 
@@ -252,7 +166,7 @@ export async function getDashboardStats(req, res) {
         events: eventCount.n,
         news: newsCount.n,
         unreadMessages: msgCount.n,
-        pendingBookings: bookingCount.n,
+        regionais: regionalCount.n,
       },
       recentLogs,
       recentMessages,
@@ -276,34 +190,13 @@ export async function getSettings(req, res) {
 export async function updateSettings(req, res) {
   try {
     const richTextKeys = new Set([
-      'site_address',
-      'hero_subtitle',
-      'daily_message',
-      'home_mission_text',
-      'donation_text',
-      'word_day_manual_content',
-      'conheca_subtitle',
-      'conheca_history_text_1',
-      'conheca_history_text_2',
-      'priests_subtitle',
-      'facilities_subtitle',
-      'calendar_subtitle',
-      'rooms_subtitle',
-      'groups_subtitle',
-      'pastorals_subtitle',
-      'communities_subtitle',
-      'news_subtitle',
-      'radio_subtitle',
-      'homilies_subtitle',
-      'obra_social_subtitle',
-      'obra_social_mission_text',
-      'voluntario_subtitle',
-      'voluntario_cta_text',
-      'voluntario_area_1_desc',
-      'voluntario_area_2_desc',
-      'voluntario_area_3_desc',
-      'voluntario_area_4_desc',
-      'contact_subtitle',
+      'site_address', 'hero_subtitle', 'home_mission_text', 'donation_text',
+      'quem_somos_subtitle', 'quem_somos_history_text_1', 'quem_somos_history_text_2',
+      'voluntario_subtitle', 'voluntario_cta_text',
+      'voluntario_area_1_desc', 'voluntario_area_2_desc', 'voluntario_area_3_desc', 'voluntario_area_4_desc',
+      'obra_social_subtitle', 'obra_social_mission_text',
+      'regionais_subtitle', 'projetos_subtitle', 'espaco_ores_subtitle',
+      'news_subtitle', 'contact_subtitle', 'calendar_subtitle',
     ]);
 
     for (const key of SETTINGS_KEYS) {
@@ -331,33 +224,6 @@ export async function uploadMedia(req, res) {
     const url = `/uploads/${req.file.filename}`;
     await auditLog(req.adminUser.id, 'UPLOAD_MEDIA', 'uploads', null, null, { url, name: req.file.originalname }, req.ip);
     return res.status(201).json({ url });
-  });
-}
-
-export async function uploadHomilyMedia(req, res) {
-  uploadAudioVideo(req, res, async (err) => {
-    if (err) return res.status(400).json({ error: err.message || 'Erro no upload.' });
-    if (!req.file) return res.status(400).json({ error: 'Arquivo obrigatorio.' });
-    const url = `/uploads/${req.file.filename}`;
-    const mediaType = req.file.mimetype.startsWith('audio/') ? 'audio' : 'video';
-    let durationSeconds = null;
-    try {
-      durationSeconds = await getMediaDurationSeconds(req.file.path);
-    } catch {
-      const fallbackDuration = Number(req.body?.duration_seconds);
-      if (Number.isFinite(fallbackDuration) && fallbackDuration > 0) {
-        durationSeconds = fallbackDuration;
-      } else {
-        removeUploadedFile(req.file.path);
-        return res.status(422).json({ error: 'Nao foi possivel validar a duracao da midia. Envie outro arquivo.' });
-      }
-    }
-    if (durationSeconds > MAX_HOMILY_MEDIA_DURATION_SECONDS) {
-      removeUploadedFile(req.file.path);
-      return res.status(422).json({ error: 'A midia excede o limite de 10 horas.' });
-    }
-    await auditLog(req.adminUser.id, 'UPLOAD_HOMILY_MEDIA', 'uploads', null, null, { url, name: req.file.originalname, mediaType }, req.ip);
-    return res.status(201).json({ url, mediaType, duration_seconds: Math.round(durationSeconds) });
   });
 }
 
@@ -401,16 +267,6 @@ export async function deleteHeroSlide(req, res) {
   return deleteRecord(req, res, 'hero_slides', parseInt(req.params.id));
 }
 
-export async function refreshWordOfDay(req, res) {
-  try {
-    const row = await refreshWordOfDayCache();
-    await auditLog(req.adminUser.id, 'REFRESH_WORD_OF_DAY', 'word_of_day_cache', null, null, { date: row.date_key }, req.ip);
-    return res.json({ message: 'Palavra do dia atualizada.', date: row.date_key, source_url: row.source_url });
-  } catch {
-    return res.status(500).json({ error: 'Falha ao atualizar a Palavra do dia.' });
-  }
-}
-
 // ── Events ───────────────────────────────────────────────────────────────────
 export async function listEvents(req, res) {
   return res.json(await list('events', 'event_date, start_time'));
@@ -450,13 +306,8 @@ export async function createNews(req, res) {
     const [result] = await pool.execute(
       `INSERT INTO news (title, slug, category, summary, content, image_url, external_url) VALUES (?, ?, ?, ?, ?, ?, ?)`,
       [
-        sanitizeText(title),
-        newsSlug,
-        sanitizeText(category),
-        sanitizeText(summary),
-        sanitizeRichText(content),
-        sanitizeText(image_url),
-        sanitizeText(external_url),
+        sanitizeText(title), newsSlug, sanitizeText(category), sanitizeText(summary),
+        sanitizeRichText(content), sanitizeText(image_url), sanitizeText(external_url),
       ]
     );
     await auditLog(req.adminUser.id, 'CREATE_NEWS', 'news', result.insertId, null, req.body, req.ip);
@@ -473,14 +324,9 @@ export async function updateNews(req, res) {
     const old = await queryOne(`SELECT title FROM news WHERE id = ?`, [recordId]);
     req.body.slug = await uniqueNewsSlug(req.body.slug || req.body.title || old?.title, recordId);
   }
-
-  return updateRecord(
-    req,
-    res,
-    'news',
+  return updateRecord(req, res, 'news',
     ['title', 'slug', 'category', 'summary', 'content', 'image_url', 'external_url', 'published'],
-    recordId,
-    { richTextFields: ['content'] }
+    recordId, { richTextFields: ['content'] }
   );
 }
 
@@ -488,130 +334,43 @@ export async function deleteNews(req, res) {
   return deleteRecord(req, res, 'news', parseInt(req.params.id));
 }
 
-// ── Priests ──────────────────────────────────────────────────────────────────
-export async function listPriests(req, res) {
-  return res.json(await list('priests', 'display_order'));
+// ── Regional Units ────────────────────────────────────────────────────────────
+export async function listRegionais(req, res) {
+  return res.json(await list('regional_units', 'display_order, id'));
 }
 
-export async function createPriest(req, res) {
+export async function createRegional(req, res) {
   try {
-    const { name, sigla, role, bio, photo_url, display_order } = req.body;
+    const { name, city, state, address, phone, email, coordinator, description, image_url, maps_url, display_order } = req.body;
     const [result] = await pool.execute(
-      `INSERT INTO priests (name, sigla, role, bio, photo_url, display_order) VALUES (?, ?, ?, ?, ?, ?)`,
-      [sanitizeText(name), sanitizeText(sigla), sanitizeText(role), sanitizeText(bio), sanitizeText(photo_url), display_order || 0]
+      `INSERT INTO regional_units (name, city, state, address, phone, email, coordinator, description, image_url, maps_url, display_order) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      [
+        sanitizeText(name), sanitizeText(city), sanitizeText(state || 'RJ'),
+        sanitizeText(address), sanitizeText(phone), sanitizeText(email),
+        sanitizeText(coordinator), sanitizeRichText(description),
+        sanitizeText(image_url), sanitizeText(maps_url), display_order || 0,
+      ]
     );
-    await auditLog(req.adminUser.id, 'CREATE_PRIEST', 'priests', result.insertId, null, req.body, req.ip);
+    await auditLog(req.adminUser.id, 'CREATE_REGIONAL', 'regional_units', result.insertId, null, req.body, req.ip);
     return res.status(201).json({ id: result.insertId });
   } catch (err) {
     return res.status(500).json({ error: 'Erro interno.' });
   }
 }
 
-export async function updatePriest(req, res) {
-  return updateRecord(req, res, 'priests', ['name', 'sigla', 'role', 'bio', 'photo_url', 'display_order', 'active'], parseInt(req.params.id));
-}
-
-export async function deletePriest(req, res) {
-  return deleteRecord(req, res, 'priests', parseInt(req.params.id));
-}
-
-// ── Mass schedule ────────────────────────────────────────────────────────────
-export async function listMassSchedule(req, res) {
-  const [scheduleRaw, times] = await Promise.all([
-    query(`SELECT * FROM mass_schedule ORDER BY day_order`),
-    query(`SELECT id, schedule_id, time_value AS time, priest_sigla AS sigla FROM mass_times`),
-  ]);
-  for (const s of scheduleRaw) {
-    s.times = times.filter(t => t.schedule_id === s.id);
-  }
-  return res.json(scheduleRaw);
-}
-
-export async function updateMassDay(req, res) {
-  try {
-    const scheduleId = parseInt(req.params.id);
-    const { times } = req.body; // [{ time: '07:00', sigla: 'MVS' }]
-    await query(`DELETE FROM mass_times WHERE schedule_id = ?`, [scheduleId]);
-    if (Array.isArray(times)) {
-      for (const t of times) {
-        await query(`INSERT INTO mass_times (schedule_id, time_value, priest_sigla) VALUES (?, ?, ?)`,
-          [scheduleId, t.time, t.sigla || null]);
-      }
-    }
-    await auditLog(req.adminUser.id, 'UPDATE_MASS_SCHEDULE', 'mass_times', scheduleId, null, req.body, req.ip);
-    return res.json({ message: 'Horários atualizados.' });
-  } catch (err) {
-    return res.status(500).json({ error: 'Erro interno.' });
-  }
-}
-
-// ── Prayer groups ─────────────────────────────────────────────────────────────
-export async function listGroups(req, res) {
-  return res.json(await list('prayer_groups', 'display_order'));
-}
-
-export async function createGroup(req, res) {
-  try {
-    const { name, day_of_week, time_value, location, description, coordinator_phone, image_url, display_order } = req.body;
-    const [result] = await pool.execute(
-      `INSERT INTO prayer_groups (name, day_of_week, time_value, location, description, coordinator_phone, image_url, display_order) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
-      [sanitizeText(name), sanitizeText(day_of_week), sanitizeText(time_value), sanitizeText(location), sanitizeRichText(description), sanitizeText(coordinator_phone), sanitizeText(image_url), display_order || 0]
-    );
-    await auditLog(req.adminUser.id, 'CREATE_GROUP', 'prayer_groups', result.insertId, null, req.body, req.ip);
-    return res.status(201).json({ id: result.insertId });
-  } catch (err) {
-    return res.status(500).json({ error: 'Erro interno.' });
-  }
-}
-
-export async function updateGroup(req, res) {
-  return updateRecord(
-    req,
-    res,
-    'prayer_groups',
-    ['name', 'day_of_week', 'time_value', 'location', 'description', 'coordinator_phone', 'image_url', 'display_order', 'active'],
+export async function updateRegional(req, res) {
+  return updateRecord(req, res, 'regional_units',
+    ['name', 'city', 'state', 'address', 'phone', 'email', 'coordinator', 'description', 'image_url', 'maps_url', 'display_order', 'active'],
     parseInt(req.params.id),
     { richTextFields: ['description'] }
   );
 }
 
-export async function deleteGroup(req, res) {
-  return deleteRecord(req, res, 'prayer_groups', parseInt(req.params.id));
+export async function deleteRegional(req, res) {
+  return deleteRecord(req, res, 'regional_units', parseInt(req.params.id));
 }
 
-export async function listGroupSlides(req, res) {
-  return res.json(await list('prayer_group_slides', 'display_order, id'));
-}
-
-export async function createGroupSlide(req, res) {
-  try {
-    const { title, subtitle, image_url, display_order, active } = req.body;
-    const [result] = await pool.execute(
-      `INSERT INTO prayer_group_slides (title, subtitle, image_url, display_order, active) VALUES (?, ?, ?, ?, ?)`,
-      [
-        sanitizeText(title),
-        sanitizeText(subtitle),
-        sanitizeText(image_url),
-        display_order || 0,
-        active === undefined ? 1 : Number(active) ? 1 : 0,
-      ]
-    );
-    await auditLog(req.adminUser.id, 'CREATE_GROUP_SLIDE', 'prayer_group_slides', result.insertId, null, req.body, req.ip);
-    return res.status(201).json({ id: result.insertId });
-  } catch (err) {
-    return res.status(500).json({ error: 'Erro interno.' });
-  }
-}
-
-export async function updateGroupSlide(req, res) {
-  return updateRecord(req, res, 'prayer_group_slides', ['title', 'subtitle', 'image_url', 'display_order', 'active'], parseInt(req.params.id));
-}
-
-export async function deleteGroupSlide(req, res) {
-  return deleteRecord(req, res, 'prayer_group_slides', parseInt(req.params.id));
-}
-
-// ── Pastorals ────────────────────────────────────────────────────────────────
+// ── Projects (pastorals table) ────────────────────────────────────────────────
 export async function listPastorals(req, res) {
   return res.json(await list('pastorals', 'category, display_order'));
 }
@@ -623,7 +382,7 @@ export async function createPastoral(req, res) {
       `INSERT INTO pastorals (name, category, description, coordinator, phone, meeting_day, meeting_time, location, address, map_url, image_url, display_order) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       [sanitizeText(name), sanitizeText(category), sanitizeRichText(description), sanitizeText(coordinator), sanitizeText(phone), sanitizeText(meeting_day), sanitizeText(meeting_time), sanitizeText(location), sanitizeText(address), sanitizeText(map_url), sanitizeText(image_url), display_order || 0]
     );
-    await auditLog(req.adminUser.id, 'CREATE_PASTORAL', 'pastorals', result.insertId, null, req.body, req.ip);
+    await auditLog(req.adminUser.id, 'CREATE_PROJETO', 'pastorals', result.insertId, null, req.body, req.ip);
     return res.status(201).json({ id: result.insertId });
   } catch (err) {
     return res.status(500).json({ error: 'Erro interno.' });
@@ -631,13 +390,9 @@ export async function createPastoral(req, res) {
 }
 
 export async function updatePastoral(req, res) {
-  return updateRecord(
-    req,
-    res,
-    'pastorals',
+  return updateRecord(req, res, 'pastorals',
     ['name', 'category', 'description', 'coordinator', 'phone', 'meeting_day', 'meeting_time', 'location', 'address', 'map_url', 'image_url', 'display_order', 'active'],
-    parseInt(req.params.id),
-    { richTextFields: ['description'] }
+    parseInt(req.params.id), { richTextFields: ['description'] }
   );
 }
 
@@ -654,15 +409,9 @@ export async function createPastoralSlide(req, res) {
     const { title, subtitle, image_url, display_order, active } = req.body;
     const [result] = await pool.execute(
       `INSERT INTO pastoral_slides (title, subtitle, image_url, display_order, active) VALUES (?, ?, ?, ?, ?)`,
-      [
-        sanitizeText(title),
-        sanitizeText(subtitle),
-        sanitizeText(image_url),
-        display_order || 0,
-        active === undefined ? 1 : Number(active) ? 1 : 0,
-      ]
+      [sanitizeText(title), sanitizeText(subtitle), sanitizeText(image_url), display_order || 0, active === undefined ? 1 : Number(active) ? 1 : 0]
     );
-    await auditLog(req.adminUser.id, 'CREATE_PASTORAL_SLIDE', 'pastoral_slides', result.insertId, null, req.body, req.ip);
+    await auditLog(req.adminUser.id, 'CREATE_PROJETO_SLIDE', 'pastoral_slides', result.insertId, null, req.body, req.ip);
     return res.status(201).json({ id: result.insertId });
   } catch (err) {
     return res.status(500).json({ error: 'Erro interno.' });
@@ -677,91 +426,31 @@ export async function deletePastoralSlide(req, res) {
   return deleteRecord(req, res, 'pastoral_slides', parseInt(req.params.id));
 }
 
-// ── Communities ──────────────────────────────────────────────────────────────
-export async function listCommunities(req, res) {
-  return res.json(await list('communities', 'display_order'));
+// ── Facilities (Espaço ORES) ──────────────────────────────────────────────────
+export async function listFacilities(req, res) {
+  return res.json(await list('facilities', 'display_order'));
 }
 
-export async function createCommunity(req, res) {
+export async function createFacility(req, res) {
   try {
-    const { name, neighborhood, description, image_url, coordinator_name, coordinator_phone, display_order } = req.body;
+    const { name, description, icon, capacity, display_order } = req.body;
     const [result] = await pool.execute(
-      `INSERT INTO communities (name, neighborhood, description, image_url, coordinator_name, coordinator_phone, display_order) VALUES (?, ?, ?, ?, ?, ?, ?)`,
-      [sanitizeText(name), sanitizeText(neighborhood), sanitizeRichText(description), sanitizeText(image_url), sanitizeText(coordinator_name), sanitizeText(coordinator_phone), display_order || 0]
+      `INSERT INTO facilities (name, description, icon, capacity, display_order) VALUES (?, ?, ?, ?, ?)`,
+      [sanitizeText(name), sanitizeRichText(description), sanitizeText(icon), capacity || null, display_order || 0]
     );
-    await auditLog(req.adminUser.id, 'CREATE_COMMUNITY', 'communities', result.insertId, null, req.body, req.ip);
+    await auditLog(req.adminUser.id, 'CREATE_FACILITY', 'facilities', result.insertId, null, req.body, req.ip);
     return res.status(201).json({ id: result.insertId });
   } catch (err) {
     return res.status(500).json({ error: 'Erro interno.' });
   }
-}
-
-export async function updateCommunity(req, res) {
-  return updateRecord(
-    req,
-    res,
-    'communities',
-    ['name', 'neighborhood', 'description', 'image_url', 'coordinator_name', 'coordinator_phone', 'display_order', 'active'],
-    parseInt(req.params.id),
-    { richTextFields: ['description'] }
-  );
-}
-
-export async function deleteCommunity(req, res) {
-  return deleteRecord(req, res, 'communities', parseInt(req.params.id));
-}
-
-// ── Facilities ───────────────────────────────────────────────────────────────
-export async function listFacilities(req, res) {
-  return res.json(await list('facilities', 'display_order'));
 }
 
 export async function updateFacility(req, res) {
   return updateRecord(req, res, 'facilities', ['name', 'description', 'icon', 'capacity', 'display_order', 'active'], parseInt(req.params.id));
 }
 
-// ── Room bookings ─────────────────────────────────────────────────────────────
-export async function listBookings(req, res) {
-  try {
-    const bookings = await query(
-      `SELECT rb.*, f.name AS facility_name FROM room_bookings rb
-       JOIN facilities f ON f.id = rb.facility_id ORDER BY rb.booking_date DESC`
-    );
-    return res.json(bookings);
-  } catch (err) {
-    return res.status(500).json({ error: 'Erro interno.' });
-  }
-}
-
-export async function updateBookingStatus(req, res) {
-  return updateRecord(req, res, 'room_bookings', ['status'], parseInt(req.params.id));
-}
-
-// ── Homilies ─────────────────────────────────────────────────────────────────
-export async function listHomilies(req, res) {
-  return res.json(await list('homilies', 'published_at DESC'));
-}
-
-export async function createHomily(req, res) {
-  try {
-    const { title, priest_name, type, duration, audio_url, video_url, published_at } = req.body;
-    const [result] = await pool.execute(
-      `INSERT INTO homilies (title, priest_name, type, duration, audio_url, video_url, published_at) VALUES (?, ?, ?, ?, ?, ?, ?)`,
-      [sanitizeText(title), sanitizeText(priest_name), type, sanitizeText(duration), sanitizeText(audio_url), sanitizeText(video_url), published_at || null]
-    );
-    await auditLog(req.adminUser.id, 'CREATE_HOMILY', 'homilies', result.insertId, null, req.body, req.ip);
-    return res.status(201).json({ id: result.insertId });
-  } catch (err) {
-    return res.status(500).json({ error: 'Erro interno.' });
-  }
-}
-
-export async function updateHomily(req, res) {
-  return updateRecord(req, res, 'homilies', ['title', 'priest_name', 'type', 'duration', 'audio_url', 'video_url', 'published_at', 'active'], parseInt(req.params.id));
-}
-
-export async function deleteHomily(req, res) {
-  return deleteRecord(req, res, 'homilies', parseInt(req.params.id));
+export async function deleteFacility(req, res) {
+  return deleteRecord(req, res, 'facilities', parseInt(req.params.id));
 }
 
 // ── Courses ──────────────────────────────────────────────────────────────────
@@ -791,13 +480,31 @@ export async function deleteCourse(req, res) {
   return deleteRecord(req, res, 'courses', parseInt(req.params.id));
 }
 
-// ── Social services ───────────────────────────────────────────────────────────
+// ── Social programs ───────────────────────────────────────────────────────────
 export async function listServices(req, res) {
   return res.json(await list('social_services', 'display_order'));
 }
 
+export async function createService(req, res) {
+  try {
+    const { title, description, icon, display_order } = req.body;
+    const [result] = await pool.execute(
+      `INSERT INTO social_services (title, description, icon, display_order) VALUES (?, ?, ?, ?)`,
+      [sanitizeText(title), sanitizeRichText(description), sanitizeText(icon), display_order || 0]
+    );
+    await auditLog(req.adminUser.id, 'CREATE_SERVICE', 'social_services', result.insertId, null, req.body, req.ip);
+    return res.status(201).json({ id: result.insertId });
+  } catch (err) {
+    return res.status(500).json({ error: 'Erro interno.' });
+  }
+}
+
 export async function updateService(req, res) {
   return updateRecord(req, res, 'social_services', ['title', 'description', 'icon', 'display_order', 'active'], parseInt(req.params.id));
+}
+
+export async function deleteService(req, res) {
+  return deleteRecord(req, res, 'social_services', parseInt(req.params.id));
 }
 
 // ── Contact messages ──────────────────────────────────────────────────────────
@@ -871,4 +578,3 @@ export async function getAuditLog(req, res) {
     return res.status(500).json({ error: 'Erro interno.' });
   }
 }
-

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+﻿import { useState } from 'react';
 import { useFetch } from '../../hooks/useFetch';
 import api from '../../lib/api';
 import { Trash2 } from 'lucide-react';
@@ -37,7 +37,7 @@ export default function AdminMessages() {
 
   return (
     <div>
-      <h1 style={{ fontFamily:'Playfair Display,serif', fontSize:26, fontWeight:700, color:'var(--navy)', marginBottom:24 }}>Mensagens de Contato e Voluntariado</h1>
+      <h1 style={{ fontFamily:'Montserrat,sans-serif', fontSize:26, fontWeight:700, color:'var(--navy)', marginBottom:24 }}>Mensagens de Contato e Voluntariado</h1>
       <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:24 }}>
         <div style={{ background:'#fff', borderRadius:12, border:'1px solid var(--border)', overflow:'hidden' }}>
           {loading ? <div style={{ padding:40, textAlign:'center', color:'var(--text-soft)' }}>Carregando...</div> : (
@@ -60,7 +60,7 @@ export default function AdminMessages() {
           <div style={{ background:'#fff', borderRadius:12, border:'1px solid var(--border)', padding:'24px' }}>
             <div style={{ display:'flex', justifyContent:'space-between', alignItems:'flex-start', marginBottom:20 }}>
               <div>
-                <h3 style={{ fontFamily:'Playfair Display,serif', fontSize:18, fontWeight:700, color:'var(--navy)', marginBottom:4 }}>{selected.name}</h3>
+                <h3 style={{ fontFamily:'Montserrat,sans-serif', fontSize:18, fontWeight:700, color:'var(--navy)', marginBottom:4 }}>{selected.name}</h3>
                 <div style={{ fontSize:12, color:'var(--text-soft)' }}>{selected.email}{selected.phone && ` · ${selected.phone}`}</div>
               </div>
               <button onClick={() => del(selected.id)} style={{ color:'#ef4444', padding:'4px 8px', borderRadius:6 }}><Trash2 size={16}/></button>

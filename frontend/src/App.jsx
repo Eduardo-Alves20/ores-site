@@ -1,27 +1,19 @@
 import { BrowserRouter, Routes, Route, Navigate, useLocation, Outlet } from 'react-router-dom';
 import { AuthProvider, useAuth } from './hooks/useAuth';
-import { AudioPlayerProvider } from './contexts/AudioPlayerContext';
-import PersistentAudioPlayer from './components/PersistentAudioPlayer';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import { useFetch } from './hooks/useFetch';
 
 import Home from './pages/Home';
-import Conheca from './pages/Conheca';
-import Padres from './pages/Padres';
-import Instalacoes from './pages/Instalacoes';
-import Calendario from './pages/Calendario';
-import Salas from './pages/Salas';
-import Grupos from './pages/Grupos';
-import Pastorais from './pages/Pastorais';
-import Comunidades from './pages/Comunidades';
+import QuemSomos from './pages/QuemSomos';
+import Regionais from './pages/Regionais';
+import Projetos from './pages/Projetos';
+import EspacoORES from './pages/EspacoORES';
 import Voluntario from './pages/Voluntario';
 import { NoticiasList, NoticiaDetalhe } from './pages/Noticias';
-import WebRadio from './pages/Radio';
-import Homilias from './pages/Homilias';
 import ObraSocial from './pages/ObraSocial';
 import Contato from './pages/Contato';
-import PalavraDoDia from './pages/PalavraDoDia';
+import Calendario from './pages/Calendario';
 
 import AdminLogin from './pages/admin/AdminLogin';
 import AdminLayout from './pages/admin/AdminLayout';
@@ -30,14 +22,9 @@ import AdminSettings from './pages/admin/AdminSettings';
 import AdminHeroSlides from './pages/admin/AdminHeroSlides';
 import AdminEvents from './pages/admin/AdminEvents';
 import AdminNews from './pages/admin/AdminNews';
-import AdminPriests from './pages/admin/AdminPriests';
-import AdminMass from './pages/admin/AdminMass';
-import AdminGroups from './pages/admin/AdminGroups';
+import AdminRegionais from './pages/admin/AdminRegionais';
 import AdminPastorals from './pages/admin/AdminPastorals';
-import AdminCommunities from './pages/admin/AdminCommunities';
-import AdminFacilities from './pages/admin/AdminFacilities';
-import AdminBookings from './pages/admin/AdminBookings';
-import AdminHomilies from './pages/admin/AdminHomilies';
+import AdminEspaco from './pages/admin/AdminEspaco';
 import AdminCourses from './pages/admin/AdminCourses';
 import AdminServices from './pages/admin/AdminServices';
 import AdminMessages from './pages/admin/AdminMessages';
@@ -73,7 +60,6 @@ export default function App() {
   return (
     <BrowserRouter>
       <AuthProvider>
-        <AudioPlayerProvider>
         <Routes>
           <Route path="/admin/login" element={<AdminLogin />} />
           <Route path="/admin" element={<RequireAuth><AdminLayout /></RequireAuth>}>
@@ -83,14 +69,9 @@ export default function App() {
             <Route path="hero-slides" element={<AdminHeroSlides />} />
             <Route path="events" element={<AdminEvents />} />
             <Route path="news" element={<AdminNews />} />
-            <Route path="priests" element={<AdminPriests />} />
-            <Route path="mass" element={<AdminMass />} />
-            <Route path="groups" element={<AdminGroups />} />
-            <Route path="pastorals" element={<AdminPastorals />} />
-            <Route path="communities" element={<AdminCommunities />} />
-            <Route path="facilities" element={<AdminFacilities />} />
-            <Route path="bookings" element={<AdminBookings />} />
-            <Route path="homilies" element={<AdminHomilies />} />
+            <Route path="regionais" element={<AdminRegionais />} />
+            <Route path="projetos" element={<AdminPastorals />} />
+            <Route path="espaco" element={<AdminEspaco />} />
             <Route path="courses" element={<AdminCourses />} />
             <Route path="services" element={<AdminServices />} />
             <Route path="messages" element={<AdminMessages />} />
@@ -99,30 +80,20 @@ export default function App() {
           </Route>
           <Route path="/" element={<PublicLayout />}>
             <Route index element={<Home />} />
-            <Route path="conheca" element={<Conheca />} />
-            <Route path="padres" element={<Padres />} />
-            <Route path="instalacoes" element={<Instalacoes />} />
-            <Route path="calendario" element={<Calendario />} />
-            <Route path="salas" element={<Salas />} />
-            <Route path="grupos" element={<Grupos />} />
-            <Route path="pastorais" element={<Pastorais />} />
-            <Route path="comunidades" element={<Comunidades />} />
-            <Route path="familiar" element={<Pastorais />} />
+            <Route path="quem-somos" element={<QuemSomos />} />
+            <Route path="regionais" element={<Regionais />} />
+            <Route path="projetos" element={<Projetos />} />
+            <Route path="espaco-ores" element={<EspacoORES />} />
             <Route path="voluntario" element={<Voluntario />} />
             <Route path="noticias" element={<NoticiasList />} />
             <Route path="noticias/:slug" element={<NoticiaDetalhe />} />
-            <Route path="radio" element={<WebRadio />} />
-            <Route path="homilias" element={<Homilias />} />
-            <Route path="obra-social" element={<ObraSocial />} />
-            <Route path="servicos" element={<ObraSocial />} />
+            <Route path="programas" element={<ObraSocial />} />
             <Route path="cursos" element={<ObraSocial />} />
+            <Route path="calendario" element={<Calendario />} />
             <Route path="contato" element={<Contato />} />
-            <Route path="palavra-do-dia" element={<PalavraDoDia />} />
             <Route path="*" element={<Navigate to="/" replace />} />
           </Route>
         </Routes>
-        <PersistentAudioPlayer />
-        </AudioPlayerProvider>
       </AuthProvider>
     </BrowserRouter>
   );

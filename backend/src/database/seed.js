@@ -7,95 +7,99 @@ async function seed() {
   console.log('Seeding database...');
 
   // Admin user
-  const hash = await bcrypt.hash('Admin@PES2026!', 12);
-  await query(`INSERT IGNORE INTO admin_users (name, email, password_hash, role) VALUES (?, ?, ?, ?)`,
-    ['Administrador', 'admin@teste.com', hash, 'super_admin']);
+  const hash = await bcrypt.hash('1234', 12);
+  await query(
+    `INSERT INTO admin_users (name, email, password_hash, role) VALUES (?, ?, ?, ?)
+     ON DUPLICATE KEY UPDATE name = VALUES(name), password_hash = VALUES(password_hash), role = VALUES(role)`,
+    ['Administrador ORES', 'ores@gmail.com', hash, 'super_admin']
+  );
 
   // Site settings
   const settings = [
-    ['site_name', 'Paróquia Sagrada Família'],
-    ['site_tagline', 'Painel Admin'],
+    ['site_name', 'ORES'],
+    ['site_tagline', 'Organização de Reintegração e Estímulo à Socialização'],
     ['site_logo_url', ''],
-    ['site_address', 'Av. Cassiopéia, 461 — Jardim Satélite, São José dos Campos/SP — 12230-011'],
-    ['site_email', 'secretaria@paroquiaespiritosanto.com.br'],
-    ['site_whatsapp', '(12) 9-9189-4287'],
-    ['site_phone', '(12) 3931-2959'],
+    ['site_address', 'Rio de Janeiro — RJ'],
+    ['site_email', 'contato@ores.org.br'],
+    ['site_whatsapp', ''],
+    ['site_phone', ''],
     ['site_facebook', ''],
     ['site_instagram', ''],
     ['site_youtube', ''],
-    ['radio_stream_url', ''],
-    ['daily_message', 'Vinde a mim todos os que estais cansados e sobrecarregados, e eu vos darei descanso. (Mt 11,28)'],
-    ['secretary_hours', 'Seg–Sex 8h–17h30 | Sáb 8h–12h'],
+    ['secretary_hours', 'Seg–Sex 9h–17h'],
+    ['maps_url', ''],
     ['hero_eyebrow', 'Bem-vindo à'],
-    ['hero_title', 'Uma comunidade unida no Espírito Santo'],
-    ['hero_subtitle', 'Venha fazer parte desta família de fé. Missas, grupos, pastorais e muito mais para toda a família.'],
+    ['hero_title', 'Transformando vidas através da reintegração social'],
+    ['hero_subtitle', 'A ORES atua há anos promovendo a reintegração, o estímulo à socialização e o desenvolvimento humano de pessoas em situação de vulnerabilidade.'],
     ['hero_image_url', ''],
-    ['hero_primary_label', 'Conheça a Paróquia'],
-    ['hero_primary_url', '/conheca'],
+    ['hero_primary_label', 'Conheça a ORES'],
+    ['hero_primary_url', '/quem-somos'],
     ['hero_secondary_label', 'Fale Conosco'],
     ['hero_secondary_url', '/contato'],
-    ['home_quick_title', 'O que você está procurando?'],
+    ['home_quick_title', 'O que a ORES oferece?'],
     ['home_mission_eyebrow', 'Nossa Missão'],
-    ['home_mission_title', 'Evangelizar, celebrar e servir com amor'],
-    ['home_mission_text', 'A Paróquia Espírito Santo é uma comunidade viva que celebra os sacramentos, promove a formação cristã e serve à sociedade com amor fraterno.'],
+    ['home_mission_title', 'Reintegrar, estimular e transformar'],
+    ['home_mission_text', 'A ORES é uma organização sem fins lucrativos dedicada à reintegração social de pessoas em situação de vulnerabilidade, oferecendo programas, cursos e acolhimento humano com dignidade e respeito.'],
     ['home_mission_primary_label', 'Saiba mais'],
-    ['home_mission_primary_url', '/conheca'],
+    ['home_mission_primary_url', '/quem-somos'],
     ['home_mission_secondary_label', 'Seja voluntário'],
     ['home_mission_secondary_url', '/voluntario'],
     ['donation_enabled', '1'],
-    ['donation_eyebrow', 'Contribua com a comunidade'],
-    ['donation_title', 'Sua doação ajuda a manter nossas obras vivas'],
-    ['donation_text', 'Com a sua generosidade, conseguimos cuidar da igreja, apoiar pastorais, realizar ações sociais e acolher melhor cada família que passa por aqui. Qualquer valor faz diferença.'],
+    ['donation_eyebrow', 'Apoie nossa causa'],
+    ['donation_title', 'Sua doação transforma vidas'],
+    ['donation_text', 'Com o seu apoio, conseguimos manter nossos programas sociais, cursos profissionalizantes e ações de reintegração. Cada contribuição faz diferença na vida de quem mais precisa.'],
     ['donation_pix_key', ''],
     ['donation_background_url', ''],
     ['donation_qr_url', ''],
     ['donation_button_label', 'Copiar chave Pix'],
     ['donation_gallery_1_url', ''],
-    ['donation_gallery_1_caption', 'Manutenção e cuidado dos espaços da paróquia'],
+    ['donation_gallery_1_caption', 'Programas de reintegração e acolhimento'],
     ['donation_gallery_2_url', ''],
-    ['donation_gallery_2_caption', 'Apoio às ações sociais e famílias atendidas'],
+    ['donation_gallery_2_caption', 'Cursos e capacitação profissional'],
     ['donation_gallery_3_url', ''],
-    ['donation_gallery_3_caption', 'Eventos, formações e evangelização da comunidade'],
-    ['conheca_eyebrow', 'Paróquia'],
-    ['conheca_title', 'Conheça a Paróquia'],
-    ['conheca_subtitle', 'Tudo sobre a Paróquia Espírito Santo de São José dos Campos.'],
-    ['conheca_image_url', ''],
-    ['conheca_history_title', 'Nossa História'],
-    ['conheca_history_text_1', 'A Paróquia Espírito Santo está localizada no Jardim Satélite, em São José dos Campos/SP. Com décadas de história, a paróquia serve a comunidade com fé, caridade e evangelização.'],
-    ['conheca_history_text_2', 'Nossa missão é evangelizar, celebrar os sacramentos e promover o desenvolvimento integral da pessoa humana, à luz do Evangelho e do Magistério da Igreja.'],
-    ['voluntario_eyebrow', 'Comunidade'],
+    ['donation_gallery_3_caption', 'Ações sociais e atendimento às famílias'],
+    ['quem_somos_eyebrow', 'Sobre a ORES'],
+    ['quem_somos_title', 'Quem Somos'],
+    ['quem_somos_subtitle', 'Conheça nossa história, missão e valores.'],
+    ['quem_somos_image_url', ''],
+    ['quem_somos_history_title', 'Nossa História'],
+    ['quem_somos_history_text_1', 'A ORES — Organização de Reintegração e Estímulo à Socialização — é uma entidade sem fins lucrativos que nasceu da necessidade de oferecer suporte e acolhimento a pessoas em situação de vulnerabilidade social.'],
+    ['quem_somos_history_text_2', 'Com unidades em diferentes regiões do Rio de Janeiro, a ORES desenvolve projetos, programas e cursos que promovem a dignidade humana, a autonomia e a reinserção social.'],
+    ['voluntario_eyebrow', 'Voluntariado'],
     ['voluntario_title', 'Quero ser Voluntário'],
-    ['voluntario_subtitle', 'Junte-se a nós! Há muitas formas de servir ao próximo.'],
+    ['voluntario_subtitle', 'Junte-se a nós! Há muitas formas de contribuir com a transformação social.'],
     ['voluntario_image_url', ''],
-    ['voluntario_cta_title', 'Pronto para servir?'],
-    ['voluntario_cta_text', 'Entre em contato com a secretaria paroquial ou nos envie uma mensagem. Teremos prazer em apresentar as oportunidades de voluntariado.'],
+    ['voluntario_cta_title', 'Pronto para fazer a diferença?'],
+    ['voluntario_cta_text', 'Entre em contato com nossa equipe ou nos envie uma mensagem. Teremos prazer em apresentar as oportunidades de voluntariado disponíveis em sua região.'],
     ['voluntario_cta_label', 'Entrar em Contato'],
     ['voluntario_cta_url', '/contato'],
-    ['obra_social_eyebrow', 'Obra Social'],
-    ['obra_social_title', 'Obra Social Notre Dame de Fátima'],
-    ['obra_social_subtitle', 'Servindo a comunidade com amor e solidariedade há décadas.'],
+    ['obra_social_eyebrow', 'Programas'],
+    ['obra_social_title', 'Programas Sociais da ORES'],
+    ['obra_social_subtitle', 'Serviços e programas para reintegração e desenvolvimento social.'],
     ['obra_social_image_url', ''],
-    ['obra_social_mission_title', 'Nossa Missão Social'],
-    ['obra_social_mission_text', 'A Obra Social Nossa Senhora de Fátima é o braço assistencial da Paróquia Espírito Santo, oferecendo serviços gratuitos e cursos profissionalizantes para famílias em situação de vulnerabilidade.'],
+    ['obra_social_mission_title', 'Nossa Atuação Social'],
+    ['obra_social_mission_text', 'A ORES oferece uma série de programas e serviços voltados ao atendimento de pessoas em situação de vulnerabilidade, promovendo sua reintegração à sociedade com dignidade e autonomia.'],
     ['obra_social_cta_label', 'Seja Voluntário'],
     ['obra_social_cta_url', '/voluntario'],
-    ['maps_url', 'https://maps.google.com/?q=Av.+Cassiopeia,+461,+Jardim+Satélite,+São+José+dos+Campos'],
+    ['regionais_eyebrow', 'Nossa Presença'],
+    ['regionais_title', 'Unidades Regionais'],
+    ['regionais_subtitle', 'A ORES está presente em diferentes regiões do Rio de Janeiro, levando apoio e transformação a quem mais precisa.'],
+    ['regionais_image_url', ''],
+    ['projetos_eyebrow', 'Iniciativas'],
+    ['projetos_title', 'Nossos Projetos'],
+    ['projetos_subtitle', 'Conheça os projetos e iniciativas que desenvolvemos para transformar realidades.'],
+    ['projetos_image_url', ''],
+    ['espaco_ores_eyebrow', 'Espaço ORES'],
+    ['espaco_ores_title', 'Espaço ORES'],
+    ['espaco_ores_subtitle', 'Conheça nossos espaços de atendimento e convivência.'],
+    ['espaco_ores_image_url', ''],
     ['news_image_url', ''],
-    ['radio_image_url', ''],
-    ['homilies_image_url', ''],
     ['contact_image_url', ''],
-    ['priests_image_url', ''],
-    ['facilities_image_url', ''],
     ['calendar_image_url', ''],
-    ['rooms_image_url', ''],
-    ['groups_image_url', ''],
-    ['pastorals_image_url', ''],
-    ['communities_image_url', ''],
-    ['word_day_mode', 'auto'],
-    ['word_day_manual_title', 'Palavra do Dia'],
-    ['word_day_manual_subtitle', ''],
-    ['word_day_manual_content', ''],
-    ['word_day_manual_link', ''],
+    ['programs_image_url', ''],
+    ['courses_image_url', ''],
+    ['projects_image_url', ''],
+    ['regionais_page_image_url', ''],
   ];
   for (const [k, v] of settings) {
     await query(`INSERT INTO site_settings (\`key\`, value) VALUES (?, ?) ON DUPLICATE KEY UPDATE value = VALUES(value)`, [k, v]);
@@ -108,11 +112,11 @@ async function seed() {
        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       [
         'Bem-vindo à',
-        'Uma comunidade unida no Espírito Santo',
-        'Venha fazer parte desta família de fé. Missas, grupos, pastorais e muito mais para toda a família.',
+        'Transformando vidas através da reintegração social',
+        'A ORES atua promovendo a reintegração, o estímulo à socialização e o desenvolvimento humano de pessoas em situação de vulnerabilidade.',
         '',
-        'Conheça a Paróquia',
-        '/conheca',
+        'Conheça a ORES',
+        '/quem-somos',
         'Fale Conosco',
         '/contato',
         6000,
@@ -122,186 +126,122 @@ async function seed() {
     );
   }
 
-  // Mass schedule
-  const days = [
-    { name: 'Segunda', short: 'Seg', order: 1, times: [{ t: '07:00', p: 'JMM' }] },
-    { name: 'Terça', short: 'Ter', order: 2, times: [{ t: '07:00', p: 'LS' }, { t: '19:30', p: 'RF' }] },
-    { name: 'Quarta', short: 'Qua', order: 3, times: [{ t: '07:00', p: 'MVS' }, { t: '19:30', p: 'PC' }] },
-    { name: 'Quinta', short: 'Qui', order: 4, times: [{ t: '07:00', p: 'LS' }, { t: '12:15', p: 'MVS' }, { t: '19:30', p: 'MVS' }] },
-    { name: 'Sexta', short: 'Sex', order: 5, times: [{ t: '07:00', p: 'MVS' }, { t: '15:00', p: 'RF' }] },
-    { name: 'Sábado', short: 'Sáb', order: 6, times: [{ t: '07:00', p: 'MVS' }, { t: '10:00', p: 'RF' }, { t: '19:00', p: 'MVS' }] },
-    { name: 'Domingo', short: 'Dom', order: 7, times: [{ t: '07:00', p: 'RF' }, { t: '09:30', p: 'LS' }, { t: '12:00', p: 'LS' }, { t: '17:00', p: 'MVS' }, { t: '19:30', p: 'MVS' }] },
-  ];
-  for (const d of days) {
-    const [res] = await pool.execute(
-      `INSERT IGNORE INTO mass_schedule (day_name, day_short, day_order) VALUES (?, ?, ?)`,
-      [d.name, d.short, d.order]
-    );
-    const scheduleId = res.insertId || (await query(`SELECT id FROM mass_schedule WHERE day_order = ?`, [d.order]))[0]?.id;
-    if (scheduleId) {
-      await query(`DELETE FROM mass_times WHERE schedule_id = ?`, [scheduleId]);
-      for (const t of d.times) {
-        await query(`INSERT INTO mass_times (schedule_id, time_value, priest_sigla) VALUES (?, ?, ?)`, [scheduleId, t.t, t.p]);
-      }
-    }
-  }
-
-  // Confession schedule
-  await query(`DELETE FROM confession_schedule`);
-  const confessions = [
-    ['Quinta', '09h | 15h', 1],
-    ['Sexta', '09h', 2],
-    ['Sábado', '09h', 3],
-  ];
-  for (const [d, t, o] of confessions) {
-    await query(`INSERT INTO confession_schedule (day_name, times, display_order) VALUES (?, ?, ?)`, [d, t, o]);
-  }
-
-  // Priests
-  const priests = [
-    { name: 'Pe. Matheus Viana dos Santos', sigla: 'MVS', role: 'Pároco', bio: 'Padre responsável pela administração pastoral da Paróquia Espírito Santo, conduzindo a comunidade com dedicação e espiritualidade.', order: 1 },
-    { name: 'Pe. Lucas Rosa da Silva', sigla: 'LS', role: 'Padre Associado', bio: 'Padre associado comprometido com a evangelização e o cuidado pastoral dos fiéis da comunidade.', order: 2 },
-    { name: 'Pe. Rogério Felix Machado', sigla: 'RF', role: 'Padre Associado', bio: 'Padre associado dedicado ao serviço sacramental e à animação litúrgica da paróquia.', order: 3 },
-    { name: 'Diác. José Mauro Miranda', sigla: 'JMM', role: 'Diácono Permanente', bio: 'Diácono permanente que serve a comunidade com missas, celebrações e acompanhamento espiritual.', order: 4 },
-  ];
-  for (const p of priests) {
-    const [res] = await pool.execute(
-      `INSERT IGNORE INTO priests (name, sigla, role, bio, display_order) VALUES (?, ?, ?, ?, ?)`,
-      [p.name, p.sigla, p.role, p.bio, p.order]
-    );
-    if (res.insertId) {
-      const masses = { MVS: ['Qua 07h','Qui 12h15','Qui 19h30','Sex 07h','Sáb 07h','Sáb 19h','Dom 17h','Dom 19h30'], LS: ['Ter 07h','Qui 07h','Dom 09h30','Dom 12h'], RF: ['Ter 19h30','Sex 15h','Sáb 10h','Dom 07h'], JMM: ['Seg 07h'] };
-      for (const m of (masses[p.sigla] || [])) {
-        await query(`INSERT INTO priest_masses (priest_id, mass_label) VALUES (?, ?)`, [res.insertId, m]);
-      }
+  // Regional Units
+  const [{ n: regionalCount }] = await query(`SELECT COUNT(*) AS n FROM regional_units`);
+  if (regionalCount === 0) {
+    const units = [
+      ['ORES Rio de Janeiro', 'Rio de Janeiro', 'RJ', '', '', 'rj@ores.org.br', '', 'Unidade sede da ORES, localizada na cidade do Rio de Janeiro. Oferece todos os programas e serviços da organização.', '', '', 1],
+      ['ORES Petrópolis', 'Petrópolis', 'RJ', '', '', 'petropolis@ores.org.br', '', 'Unidade da ORES em Petrópolis, com programas de reintegração e o Projeto Educa+.', '', '', 2],
+      ['ORES Região dos Lagos', 'Região dos Lagos', 'RJ', '', '', 'lagos@ores.org.br', '', 'Unidade da ORES na Região dos Lagos, levando suporte e oportunidades às comunidades locais.', '', '', 3],
+    ];
+    for (const [name, city, state, address, phone, email, coordinator, description, image_url, maps_url, display_order] of units) {
+      await query(
+        `INSERT INTO regional_units (name, city, state, address, phone, email, coordinator, description, image_url, maps_url, display_order) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        [name, city, state, address, phone, email, coordinator, description, image_url, maps_url, display_order]
+      );
     }
   }
 
   // Events
-  const events = [
-    ['Encontro de Legitimação de Casais', '2026-04-25', '14:00', '20:00', 'Espaço Vida', 'Pastoral Familiar', ''],
-    ['Encontro do Grupo de Jovens Metanoia', '2026-04-25', '17:00', '18:00', 'Santuário', 'Juventude', ''],
-    ['Arraiá dos Vicentinos', '2026-04-25', '18:00', '22:00', 'Sede dos Vicentinos', 'Evento Social', ''],
-    ['Terço dos Homens', '2026-04-28', '19:30', null, 'Santuário de Adoração', 'Oração', ''],
-    ['Terço das Mulheres', '2026-04-30', '18:30', null, 'Santuário de Adoração', 'Oração', ''],
-    ['Reunião do Conselho Pastoral', '2026-05-03', '20:00', null, 'Sala de Reuniões', 'Gestão', ''],
-  ];
-  for (const [title, date, start, end, local, cat, desc] of events) {
-    await query(`INSERT IGNORE INTO events (title, event_date, start_time, end_time, location, category, description) VALUES (?, ?, ?, ?, ?, ?, ?)`,
-      [title, date, start, end, local, cat, desc]);
+  const [{ n: eventCount }] = await query(`SELECT COUNT(*) AS n FROM events`);
+  if (eventCount === 0) {
+    const events = [
+      ['Oficina de Capacitação Profissional', '2026-05-20', '09:00', '12:00', 'ORES Rio de Janeiro', 'Capacitação', 'Oficina gratuita de capacitação para inserção no mercado de trabalho.'],
+      ['Encontro de Voluntários', '2026-05-24', '14:00', '17:00', 'ORES Petrópolis', 'Voluntariado', 'Encontro trimestral de voluntários da ORES Petrópolis.'],
+      ['Dia da Família ORES', '2026-06-07', '10:00', '16:00', 'ORES Região dos Lagos', 'Evento Social', 'Evento comemorativo com atividades para toda a família.'],
+      ['Palestra: Saúde Mental e Reintegração', '2026-06-14', '18:00', '20:00', 'ORES Rio de Janeiro', 'Saúde', 'Palestra aberta sobre saúde mental no processo de reintegração social.'],
+      ['Formatura do Projeto Educa+', '2026-06-28', '16:00', '19:00', 'ORES Petrópolis', 'Educação', 'Cerimônia de formatura dos participantes do Projeto Educa+ em Petrópolis.'],
+    ];
+    for (const [title, date, start, end, local, cat, desc] of events) {
+      await query(`INSERT IGNORE INTO events (title, event_date, start_time, end_time, location, category, description) VALUES (?, ?, ?, ?, ?, ?, ?)`,
+        [title, date, start, end, local, cat, desc]);
+    }
   }
 
   // News
-  const news = [
-    { title: 'Grupo de Jovens Paráclito é criado na paróquia', slug: 'grupo-jovens-paraclito', category: 'Comunidade', summary: 'Criado em abril de 2026, o Grupo de Jovens Paráclito tem o objetivo de oferecer espiritualidade e formação para jovens a partir de 18 anos.' },
-    { title: 'Campanha da Fraternidade 2026 é lançada', slug: 'campanha-fraternidade-2026', category: 'Campanha', summary: 'A Campanha da Fraternidade 2026 foi lançada com tema voltado à solidariedade e ao cuidado com o próximo.' },
-    { title: 'Obra Social abre inscrições para cursos gratuitos', slug: 'obra-social-cursos-gratuitos', category: 'Obra Social', summary: 'A Obra Social Nossa Senhora de Fátima abre vagas para cursos profissionalizantes gratuitos.' },
-    { title: 'Pastoral do Surdo celebra 34 anos de fundação', slug: 'pastoral-surdo-34-anos', category: 'Pastoral', summary: 'A Pastoral do Surdo da Paróquia Espírito Santo comemora 34 anos desde sua fundação em 1992.' },
-    { title: 'Semana Santa 2026: programação completa', slug: 'semana-santa-2026', category: 'Liturgia', summary: 'Confira a programação completa das celebrações da Semana Santa na Paróquia Espírito Santo.' },
-    { title: 'Motoclube Ruah realiza ação social no Satélite', slug: 'motoclube-ruah-acao-social', category: 'Ação Social', summary: 'O Motoclube Ruah realizou mais uma ação social distribuindo alimentos e itens de necessidade básica.' },
-  ];
-  for (const n of news) {
-    await query(`INSERT IGNORE INTO news (title, slug, category, summary, published_at) VALUES (?, ?, ?, ?, NOW())`,
-      [n.title, n.slug, n.category, n.summary]);
+  const [{ n: newsCount }] = await query(`SELECT COUNT(*) AS n FROM news`);
+  if (newsCount === 0) {
+    const news = [
+      { title: 'Projeto Educa+ inicia nova turma em Petrópolis', slug: 'projeto-educa-nova-turma-petropolis', category: 'Educação', summary: 'O Projeto Educa+ da ORES Petrópolis abre inscrições para nova turma de capacitação educacional.' },
+      { title: 'ORES Região dos Lagos realiza ação social na comunidade', slug: 'acao-social-regiao-dos-lagos', category: 'Ação Social', summary: 'A unidade da Região dos Lagos levou atendimento e recursos para famílias em situação de vulnerabilidade.' },
+      { title: 'Nova parceria amplia atendimento da ORES Rio de Janeiro', slug: 'nova-parceria-ores-rio', category: 'Institucional', summary: 'A ORES firmou nova parceria para ampliar o alcance dos seus programas de reintegração na capital.' },
+      { title: 'ORES abre vagas para voluntários em todas as unidades', slug: 'vagas-voluntarios-ores', category: 'Voluntariado', summary: 'A organização está recrutando voluntários para atuar nos programas sociais, cursos e atendimento às famílias.' },
+      { title: 'Capacitação profissional beneficia dezenas de famílias', slug: 'capacitacao-profissional-familias', category: 'Capacitação', summary: 'Cursos de capacitação promovidos pela ORES ajudam participantes a ingressar no mercado de trabalho.' },
+      { title: 'ORES celebra aniversário com evento aberto à comunidade', slug: 'aniversario-ores-evento', category: 'Institucional', summary: 'Em comemoração ao aniversário da organização, a ORES realiza evento aberto com atividades para toda a família.' },
+    ];
+    for (const n of news) {
+      await query(`INSERT IGNORE INTO news (title, slug, category, summary, published_at) VALUES (?, ?, ?, ?, NOW())`,
+        [n.title, n.slug, n.category, n.summary]);
+    }
   }
 
-  // Prayer groups
-  const groups = [
-    ['Grupo de Oração Ágape', 'Segunda-feira', '19h30', 'Salão Paroquial', 'Grupo de renovação carismática com louvor, adoração e partilha da Palavra.', '(12) 98815-1718'],
-    ['Grupo de Oração Fonte de Vida', 'Terça-feira', '20h', 'Sala Verde 2', 'Encontros de oração, cura interior e evangelização para jovens e adultos.', '(12) 99230-4112'],
-    ['Grupo de Oração Chama de Amor', 'Quarta-feira', '19h30', 'Santuário de Adoração', 'Dedicado à adoração eucarística e à intercessão pelas famílias da comunidade.', '(12) 98538-3773'],
-    ['Grupo de Oração Pentecostes', 'Quinta-feira', '20h', 'Salão Paroquial', 'Louvor carismático com foco na ação do Espírito Santo e nos dons espirituais.', '(12) 99718-1300'],
-    ['Grupo de Oração Ruah', 'Sexta-feira', '19h30', 'Sala Verde 1', 'Oração contemplativa, lectio divina e formação espiritual para adultos.', '(12) 99216-7307'],
-    ['Vigília de Oração', 'Primeira sexta do mês', '23h–02h', 'Igreja Principal', 'Vigília mensal de adoração eucarística com louvor, confissão e intercessão.', '(12) 98126-5135'],
-    ['Terço dos Homens', 'Segunda-feira', '19h30', 'Santuário de Adoração', 'Poderoso meio de resgatar homens para a Igreja, fortalecendo famílias cristãs.', '(12) 99787-0047'],
-    ['Terço das Mulheres', 'Quarta-feira', '18h30', 'Santuário de Adoração', 'Grupo de mulheres que rezam o Santo Terço pelas famílias e vocações semanalmente.', ''],
-    ['Liturgia das Horas', 'Seg a Sex', '07h30', 'Santuário de Adoração', 'Oração comunitária com Laudes, Véspera e Completas — coração da Igreja.', '(12) 98803-6850'],
-  ];
-  for (let i = 0; i < groups.length; i++) {
-    const [name, day, time, loc, desc, phone] = groups[i];
-    await query(`INSERT IGNORE INTO prayer_groups (name, day_of_week, time_value, location, description, coordinator_phone, display_order) VALUES (?, ?, ?, ?, ?, ?, ?)`,
-      [name, day, time, loc, desc, phone, i + 1]);
+  // Projects (pastorals table)
+  const [{ n: projetoCount }] = await query(`SELECT COUNT(*) AS n FROM pastorals`);
+  if (projetoCount === 0) {
+    const projects = [
+      ['Projeto Educa+', 'Educação', 'Programa de apoio educacional voltado para jovens e adultos que buscam concluir os estudos e ampliar suas oportunidades profissionais.', '', '', '', '', 'ORES Petrópolis', 'Petrópolis - RJ', '', '', 1],
+      ['Espaço ORES', 'Social', 'Espaço de convivência e acolhimento para pessoas em processo de reintegração social, oferecendo suporte, atividades e orientação.', '', '', '', '', 'ORES Rio de Janeiro', 'Rio de Janeiro - RJ', '', '', 2],
+      ['Programa de Capacitação Profissional', 'Trabalho', 'Cursos e oficinas voltados para a inserção ou reinserção no mercado de trabalho, com foco em habilidades práticas e demandadas pelo mercado.', '', '', '', '', 'Todas as unidades', '', '', '', 3],
+      ['Programa de Saúde e Bem-estar', 'Saúde', 'Ações de promoção à saúde física e mental, incluindo atendimentos, palestras e grupos de apoio para os assistidos e suas famílias.', '', '', '', '', 'ORES Rio de Janeiro', 'Rio de Janeiro - RJ', '', '', 4],
+    ];
+    for (const [name, category, description, coordinator, phone, meeting_day, meeting_time, location, address, map_url, image_url, display_order] of projects) {
+      await query(
+        `INSERT IGNORE INTO pastorals (name, category, description, coordinator, phone, meeting_day, meeting_time, location, address, map_url, image_url, display_order) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        [name, category, description, coordinator, phone, meeting_day, meeting_time, location, address, map_url, image_url, display_order]
+      );
+    }
   }
 
-  // Communities
-  const communities = [
-    ['Comunidade São Francisco de Assis', 'Vila São Francisco', 'Sergio', '(12) 99718-1300'],
-    ['Comunidade Nossa Senhora Aparecida', 'Jardim América', 'Miriam', '(12) 99675-5074'],
-    ['Comunidade São José', 'Residencial Aquarius', 'Ricardo', '(12) 99791-3072'],
-    ['Comunidade Santa Teresinha', 'Jardim Satélite Centro', 'Angela', '(12) 99779-2685'],
-    ['Comunidade Imaculada Conceição', 'Vista Verde', 'Junior', '(12) 98187-4623'],
-    ['Comunidade São Pedro e São Paulo', 'Parque Industrial', 'Monica', '(12) 98143-4589'],
-    ['Comunidade Espírito Santo', 'Jardim Morumbi', 'Fabiana', '(12) 98101-1207'],
-    ['Comunidade Nossa Senhora das Graças', 'Jardim Aquarius Ext.', 'Fabiana', '(12) 98248-1515'],
-    ['Comunidade Santo Antônio', 'Parque Residencial Aquarius', 'Igor', '(12) 98805-5752'],
-    ['Comunidade São João Batista', 'Eldorado', 'Roberta', '(12) 98877-7816'],
-    ['Comunidade Cristo Ressuscitado', 'Bosque dos Ipês', 'Felipe', '(12) 98817-1840'],
-  ];
-  for (let i = 0; i < communities.length; i++) {
-    const [name, bairro, coord, phone] = communities[i];
-    await query(`INSERT IGNORE INTO communities (name, neighborhood, coordinator_name, coordinator_phone, display_order) VALUES (?, ?, ?, ?, ?)`,
-      [name, bairro, coord, phone, i + 1]);
+  // Facilities (Espaço ORES)
+  const [{ n: facilityCount }] = await query(`SELECT COUNT(*) AS n FROM facilities`);
+  if (facilityCount === 0) {
+    const facilities = [
+      ['Salão de Atividades', 'Espaço multiuso para oficinas, cursos, reuniões e eventos comunitários.', '🏛️', 80],
+      ['Sala de Atendimento', 'Sala reservada para atendimento social individualizado e orientações.', '💬', 10],
+      ['Biblioteca Comunitária', 'Acervo de livros e materiais didáticos disponíveis para a comunidade.', '📚', 20],
+      ['Espaço de Convivência', 'Área de convivência para socialização e atividades recreativas.', '🌿', 50],
+    ];
+    for (let i = 0; i < facilities.length; i++) {
+      const [name, desc, icon, cap] = facilities[i];
+      await query(`INSERT IGNORE INTO facilities (name, description, icon, capacity, display_order) VALUES (?, ?, ?, ?, ?)`,
+        [name, desc, icon, cap, i + 1]);
+    }
   }
 
-  // Facilities
-  const facilities = [
-    ['Igreja Principal', 'Templo principal da paróquia com capacidade para centenas de fiéis, palco das missas e grandes celebrações.', '⛪', 500],
-    ['Santuário de Adoração', 'Espaço dedicado à adoração eucarística permanente e grupos de oração durante a semana.', '🕯️', 80],
-    ['Espaço Vida', 'Salão multiuso para encontros, retiros, catequese e eventos pastorais.', '🏛️', 150],
-    ['Salão Paroquial', 'Amplo salão para eventos comunitários, festividades e reuniões de grande porte.', '🏠', 300],
-    ['Sala Verde 1', 'Sala de reunião para grupos menores, pastorais e movimentos da comunidade.', '🌿', 30],
-    ['Sala Verde 2', 'Sala de reunião para grupos menores, pastorais e movimentos da comunidade.', '🌿', 30],
-    ['Secretaria Paroquial', 'Atendimento ao público de segunda a sexta, 8h–17h30, e sábados 8h–12h.', '📋', null],
-    ['Obra Social', 'Instalações dedicadas aos cursos, oficinas e serviços gratuitos à comunidade.', '🤝', null],
-  ];
-  for (let i = 0; i < facilities.length; i++) {
-    const [name, desc, icon, cap] = facilities[i];
-    await query(`INSERT IGNORE INTO facilities (name, description, icon, capacity, display_order) VALUES (?, ?, ?, ?, ?)`,
-      [name, desc, icon, cap, i + 1]);
-  }
-
-  // Social services
-  const services = [
-    ['Farmácia Comunitária', 'Disponibiliza medicamentos gratuitos ou a preço de custo para famílias carentes cadastradas.', '💊'],
-    ['Bazar Beneficente', 'Venda de roupas, calçados e utensílios a preços acessíveis. Renda revertida para a manutenção da Obra Social.', '🛍️'],
-    ['Atendimento Social', 'Equipe de assistentes sociais e voluntários para acompanhamento e orientação de famílias em vulnerabilidade.', '👥'],
-    ['Empréstimo de Equipamentos Hospitalares', 'Cadeiras de rodas, muletas, camas hospitalares e outros equipamentos disponíveis para empréstimo.', '🏥'],
-    ['Parceria com o CRAS/CREAS', 'Articulação com o poder público municipal para encaminhamento de demandas sociais e acesso a benefícios.', '🤝'],
-    ['Visitas Domiciliares', 'Voluntários visitam famílias em situação de vulnerabilidade levando assistência material e espiritual.', '🏠'],
-  ];
-  for (let i = 0; i < services.length; i++) {
-    const [title, desc, icon] = services[i];
-    await query(`INSERT IGNORE INTO social_services (title, description, icon, display_order) VALUES (?, ?, ?, ?)`,
-      [title, desc, icon, i + 1]);
+  // Social services/programs
+  const [{ n: serviceCount }] = await query(`SELECT COUNT(*) AS n FROM social_services`);
+  if (serviceCount === 0) {
+    const services = [
+      ['Atendimento Social', 'Equipe de assistentes sociais para acompanhamento, orientação e encaminhamento de famílias em situação de vulnerabilidade.', '👥'],
+      ['Apoio Psicológico', 'Sessões de apoio psicológico individuais e em grupo para pessoas em processo de reintegração social.', '🧠'],
+      ['Cesta Básica', 'Distribuição de cestas básicas para famílias cadastradas em situação de insegurança alimentar.', '🛒'],
+      ['Encaminhamento ao Mercado de Trabalho', 'Orientação e apoio para inserção ou reinserção profissional, incluindo elaboração de currículo e preparo para entrevistas.', '💼'],
+      ['Documentação e Cidadania', 'Auxílio para obtenção de documentos e acesso a direitos e benefícios sociais.', '📋'],
+      ['Acompanhamento Familiar', 'Visitas e suporte contínuo para famílias em situação de risco ou vulnerabilidade social.', '🏠'],
+    ];
+    for (let i = 0; i < services.length; i++) {
+      const [title, desc, icon] = services[i];
+      await query(`INSERT IGNORE INTO social_services (title, description, icon, display_order) VALUES (?, ?, ?, ?)`,
+        [title, desc, icon, i + 1]);
+    }
   }
 
   // Courses
-  const courses = [
-    ['Informática Básica', '3 meses', 'Seg e Qua, 9h–11h', 20, 'Introdução ao computador, internet, e-mail e ferramentas básicas de escritório.'],
-    ['Corte e Costura', '4 meses', 'Ter e Qui, 14h–16h', 15, 'Técnicas de costura para iniciantes, incluindo modelagem e confecção de peças simples.'],
-    ['Gastronomia', '2 meses', 'Sex, 9h–12h', 18, 'Culinária básica e confeitaria para geração de renda, com foco em receitas práticas.'],
-    ['Artesanato', '3 meses', 'Seg e Qua, 14h–16h', 20, 'Técnicas variadas de artesanato para produção e comercialização de produtos manuais.'],
-    ['Cabeleireiro Básico', '4 meses', 'Ter e Qui, 9h–12h', 12, 'Cortes, penteados e técnicas básicas de colorimetria para inserção no mercado de beleza.'],
-    ['Inglês Básico', '6 meses', 'Qua e Sex, 14h–16h', 25, 'Inglês comunicativo para iniciantes, com foco em conversação e situações do cotidiano.'],
-  ];
-  for (let i = 0; i < courses.length; i++) {
-    const [name, dur, sched, vac, desc] = courses[i];
-    await query(`INSERT IGNORE INTO courses (name, duration, schedule, vacancies, description, display_order) VALUES (?, ?, ?, ?, ?, ?)`,
-      [name, dur, sched, vac, desc, i + 1]);
-  }
-
-  // Homilies
-  const homilies = [
-    ['O Espírito Santo em nossa vida cotidiana', 'Pe. Matheus Viana dos Santos', 'Homilia', '18 min', '2026-04-20'],
-    ['A misericórdia de Deus não tem limites', 'Pe. Lucas Rosa da Silva', 'Reflexão', '22 min', '2026-04-13'],
-    ['Domingo de Ramos: entrar em Jerusalém com Jesus', 'Pe. Rogério Felix Machado', 'Homilia', '15 min', '2026-04-06'],
-    ['Qual é o fruto da sua oração?', 'Pe. Matheus Viana dos Santos', 'Podcast', '20 min', '2026-03-30'],
-    ['A família como escola de amor', 'Diác. José Mauro Miranda', 'Reflexão', '25 min', '2026-03-22'],
-    ['Quaresma: tempo de conversão genuína', 'Pe. Lucas Rosa da Silva', 'Homilia', '17 min', '2026-03-15'],
-  ];
-  for (const [title, priest, type, dur, date] of homilies) {
-    await query(`INSERT IGNORE INTO homilies (title, priest_name, type, duration, published_at) VALUES (?, ?, ?, ?, ?)`,
-      [title, priest, type, dur, date]);
+  const [{ n: courseCount }] = await query(`SELECT COUNT(*) AS n FROM courses`);
+  if (courseCount === 0) {
+    const courses = [
+      ['Informática Básica', '3 meses', 'Seg e Qua, 9h–11h', 20, 'Introdução ao computador, internet e ferramentas básicas de escritório para o mercado de trabalho.'],
+      ['Corte e Costura', '4 meses', 'Ter e Qui, 14h–16h', 15, 'Técnicas de costura para iniciantes, com foco na geração de renda e inserção profissional.'],
+      ['Gastronomia e Confeitaria', '2 meses', 'Sex, 9h–12h', 18, 'Culinária básica e confeitaria para geração de renda, com receitas práticas e técnicas do mercado.'],
+      ['Artesanato e Produção Manual', '3 meses', 'Seg e Qua, 14h–16h', 20, 'Técnicas de artesanato para produção e comercialização, incentivando o empreendedorismo.'],
+      ['Auxiliar Administrativo', '4 meses', 'Ter e Qui, 9h–12h', 25, 'Formação em rotinas administrativas, atendimento ao público e ferramentas de escritório.'],
+      ['Língua Portuguesa e Matemática', '6 meses', 'Qua e Sex, 14h–16h', 20, 'Preparação para o mercado de trabalho e para o ENCCEJA, focando em leitura, escrita e raciocínio lógico.'],
+    ];
+    for (let i = 0; i < courses.length; i++) {
+      const [name, dur, sched, vac, desc] = courses[i];
+      await query(`INSERT IGNORE INTO courses (name, duration, schedule, vacancies, description, display_order) VALUES (?, ?, ?, ?, ?, ?)`,
+        [name, dur, sched, vac, desc, i + 1]);
+    }
   }
 
   console.log('Seed completed.');

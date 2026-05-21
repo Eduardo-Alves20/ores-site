@@ -1,17 +1,17 @@
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap');
 @import "tailwindcss";
 
 :root {
-  --navy: #1a2744;
-  --navy-light: #243356;
-  --gold: #b8945a;
-  --gold-light: #d4aa72;
-  --cream: #f9f7f4;
-  --cream-dark: #f0ede8;
-  --text: #1c1c1c;
-  --text-mid: #444;
-  --text-soft: #7a7a7a;
-  --border: #e5e0d8;
+  --navy: #0d2d5e;
+  --navy-light: #1565c0;
+  --gold: #1976d2;
+  --gold-light: #42a5f5;
+  --cream: #f0f6ff;
+  --cream-dark: #ddeaf8;
+  --text: #1a2535;
+  --text-mid: #3a5068;
+  --text-soft: #6b85a0;
+  --border: #bdd4ed;
 }
 
 *, *::before, *::after { box-sizing: border-box; }
@@ -35,7 +35,7 @@ table { width: 100%; max-width: 100%; }
 .uploaded-media-fit {
   object-fit: contain !important;
   object-position: center center;
-  background: linear-gradient(135deg, #f8f5ef 0%, #ede6da 100%);
+  background: linear-gradient(135deg, #e8f0fb 0%, #d0e4f7 100%);
 }
 ::-webkit-scrollbar { width: 5px; }
 ::-webkit-scrollbar-track { background: transparent; }

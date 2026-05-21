@@ -1,4 +1,4 @@
-import { useState } from 'react';
+﻿import { useState } from 'react';
 import PageHeader from '../components/PageHeader';
 import Reveal from '../components/Reveal';
 import { useFetch } from '../hooks/useFetch';
@@ -45,13 +45,13 @@ export default function Contato() {
 
   return (
     <div className="animate-page">
-      <PageHeader eyebrow="Fale Conosco" title="Contato" subtitle="Entre em contato com a Secretaria Paroquial." />
+      <PageHeader eyebrow="Fale Conosco" title="Contato" subtitle="Entre em contato com a equipe da ORES." />
       <section style={{ padding:'72px 24px', maxWidth:1100, margin:'0 auto' }}>
         <div className="contato-layout" style={{ display:'grid', gridTemplateColumns:'1fr 360px', gap:32, alignItems:'start' }}>
           {/* Form */}
           <Reveal>
             <div style={{ background:'#fff', borderRadius:12, border:'1px solid var(--border)', padding:'40px' }}>
-              <h2 style={{ fontFamily:'Playfair Display,serif', fontSize:22, fontWeight:700, color:'var(--navy)', marginBottom:24 }}>Envie uma mensagem</h2>
+              <h2 style={{ fontFamily:'Montserrat,sans-serif', fontSize:22, fontWeight:700, color:'var(--navy)', marginBottom:24 }}>Envie uma mensagem</h2>
               <form onSubmit={submit} style={{ display:'flex', flexDirection:'column', gap:16 }}>
                 <div className="contato-form-grid" style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:16 }}>
                   <div>
@@ -92,7 +92,7 @@ export default function Contato() {
             <Reveal delay={100}>
               <div style={{ background:'#fff', borderRadius:12, border:'1px solid var(--border)', overflow:'hidden' }}>
                 <div style={{ background:'var(--navy)', padding:'18px 24px' }}>
-                  <h3 style={{ fontFamily:'Playfair Display,serif', fontSize:17, color:'#fff', fontWeight:600 }}>Informações</h3>
+                  <h3 style={{ fontFamily:'Montserrat,sans-serif', fontSize:17, color:'#fff', fontWeight:600 }}>Informações</h3>
                 </div>
                 <div style={{ padding:'20px 24px', display:'flex', flexDirection:'column', gap:16 }}>
                   {info.site_address && (
