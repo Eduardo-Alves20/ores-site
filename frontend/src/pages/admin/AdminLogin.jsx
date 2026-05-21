@@ -40,7 +40,7 @@ export default function AdminLogin() {
           <form onSubmit={submit} style={{ display:'flex', flexDirection:'column', gap:18 }}>
             <div>
               <label style={{ display:'block', fontSize:12, fontWeight:600, color:'rgba(255,255,255,.55)', marginBottom:8, letterSpacing:'0.05em' }}>E-MAIL</label>
-              <input type="email" required value={form.email} onChange={e => setForm({ ...form, email:e.target.value })} autoComplete="email"
+              <input type="text" required value={form.email} onChange={e => setForm({ ...form, email:e.target.value })} autoComplete="email"
                 style={{ width:'100%', padding:'12px 16px', background:'rgba(255,255,255,.06)', border:'1px solid rgba(255,255,255,.12)', borderRadius:10, color:'#fff', fontSize:14, outline:'none', transition:'border-color .2s' }}
                 onFocus={e => e.target.style.borderColor='var(--gold)'}
                 onBlur={e => e.target.style.borderColor='rgba(255,255,255,.12)'} />
