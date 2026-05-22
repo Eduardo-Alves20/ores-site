@@ -118,6 +118,27 @@ export default function Navbar({ siteInfo = {} }) {
           ))}
         </div>
 
+        <Link to="/doe" className="navbar-doe-btn" style={{
+          background: 'linear-gradient(135deg, #e53935, #ef5350)',
+          color: '#fff',
+          fontFamily: 'Montserrat,sans-serif',
+          fontWeight: 700,
+          fontSize: 13,
+          padding: '8px 20px',
+          borderRadius: 8,
+          textDecoration: 'none',
+          display: 'inline-flex',
+          alignItems: 'center',
+          gap: 6,
+          whiteSpace: 'nowrap',
+          boxShadow: '0 2px 12px rgba(229,57,53,.35)',
+          transition: 'transform .15s, box-shadow .15s',
+        }}
+          onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-1px)'; e.currentTarget.style.boxShadow = '0 4px 18px rgba(229,57,53,.45)'; }}
+          onMouseLeave={e => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = '0 2px 12px rgba(229,57,53,.35)'; }}>
+          ❤ Doe agora
+        </Link>
+
         <button type="button" aria-label={mobileOpen ? 'Fechar menu' : 'Abrir menu'} aria-expanded={mobileOpen}
           onClick={() => setMobileOpen(!mobileOpen)} style={{ color: tc }} className="mobile-toggle">
           {mobileOpen ? <X size={22} /> : <Menu size={22} />}
@@ -154,6 +175,12 @@ export default function Navbar({ siteInfo = {} }) {
                 )}
               </div>
             ))}
+            <div style={{ padding: '16px 24px' }}>
+              <Link to="/doe" onClick={() => setMobileOpen(false)}
+                style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, background: 'linear-gradient(135deg,#e53935,#ef5350)', color: '#fff', fontWeight: 700, fontSize: 15, padding: '14px', borderRadius: 10, textDecoration: 'none' }}>
+                ❤ Doe agora
+              </Link>
+            </div>
           </div>
         </div>
       )}
@@ -168,7 +195,7 @@ export default function Navbar({ siteInfo = {} }) {
         .mobile-menu-link.active,.mobile-submenu-link.active { color:var(--gold); }
         .mobile-submenu { background:var(--cream); padding:6px 0; }
         .mobile-submenu-link { display:block; min-height:44px; padding:12px 40px; color:var(--text-mid); font-size:14px; font-weight:500; }
-        @media (max-width:860px) { .desk-nav { display:none !important; } .mobile-toggle { display:flex !important; } }
+        @media (max-width:860px) { .desk-nav { display:none !important; } .mobile-toggle { display:flex !important; } .navbar-doe-btn { display:none !important; } }
         @media (min-width:861px) { .mobile-menu-shell { display:none; } }
         @keyframes mobileMenuIn { from { opacity:.4; transform:translateX(18px); } to { opacity:1; transform:translateX(0); } }
       `}</style>

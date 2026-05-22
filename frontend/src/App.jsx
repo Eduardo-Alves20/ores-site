@@ -14,6 +14,8 @@ import { NoticiasList, NoticiaDetalhe } from './pages/Noticias';
 import ObraSocial from './pages/ObraSocial';
 import Contato from './pages/Contato';
 import Calendario from './pages/Calendario';
+import Doe from './pages/Doe';
+import DoacaoConfirmada from './pages/DoacaoConfirmada';
 
 import AdminLogin from './pages/admin/AdminLogin';
 import AdminLayout from './pages/admin/AdminLayout';
@@ -91,6 +93,8 @@ export default function App() {
             <Route path="cursos" element={<ObraSocial />} />
             <Route path="calendario" element={<Calendario />} />
             <Route path="contato" element={<Contato />} />
+            <Route path="doe" element={<Doe />} />
+            <Route path="doacao-confirmada" element={<DoacaoConfirmada />} />
             <Route path="*" element={<Navigate to="/" replace />} />
           </Route>
         </Routes>
