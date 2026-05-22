@@ -61,13 +61,17 @@ export default function Doe() {
 
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 36 }}>
             {tiers.map((t) => (
-              <div key={t.amount} style={{ background: '#fff', border: '1.5px solid #e2e8f0', borderRadius: 12, padding: '16px', cursor: 'default', transition: 'border-color .2s, box-shadow .2s' }}
-                onMouseEnter={e => { e.currentTarget.style.borderColor = 'var(--gold)'; e.currentTarget.style.boxShadow = '0 4px 20px rgba(25,118,210,.1)'; }}
-                onMouseLeave={e => { e.currentTarget.style.borderColor = '#e2e8f0'; e.currentTarget.style.boxShadow = 'none'; }}>
+              <a key={t.amount}
+                href={`https://www.paypal.com/donate?hosted_button_id=${PAYPAL_BUTTON_ID}&amount=${t.amount}`}
+                target="_top"
+                rel="noopener noreferrer"
+                style={{ background: '#fff', border: '1.5px solid #e2e8f0', borderRadius: 12, padding: '16px', textDecoration: 'none', display: 'block', transition: 'border-color .2s, box-shadow .2s, transform .15s' }}
+                onMouseEnter={e => { e.currentTarget.style.borderColor = 'var(--gold)'; e.currentTarget.style.boxShadow = '0 4px 20px rgba(25,118,210,.12)'; e.currentTarget.style.transform = 'translateY(-2px)'; }}
+                onMouseLeave={e => { e.currentTarget.style.borderColor = '#e2e8f0'; e.currentTarget.style.boxShadow = 'none'; e.currentTarget.style.transform = 'translateY(0)'; }}>
                 <div style={{ fontFamily: 'Montserrat,sans-serif', fontWeight: 800, fontSize: 22, color: 'var(--navy)' }}>${t.amount}</div>
                 <div style={{ fontWeight: 600, fontSize: 13, color: 'var(--gold)', marginBottom: 4 }}>{t.label}</div>
                 <div style={{ fontSize: 12, color: '#64748b', lineHeight: 1.5 }}>{t.desc}</div>
-              </div>
+              </a>
             ))}
           </div>
 
