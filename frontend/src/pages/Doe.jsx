@@ -9,10 +9,10 @@ const impacts = [
 ];
 
 const tiers = [
-  { amount: 10,  label: 'Apoio',     desc: 'Ajuda a manter nossos projetos ativos' },
-  { amount: 25,  label: 'Amigo',     desc: 'Apoia uma família por uma semana' },
-  { amount: 50,  label: 'Parceiro',  desc: 'Financia um mês de curso profissionalizante' },
-  { amount: 100, label: 'Patrono',   desc: 'Transforma a vida de uma pessoa por um mês' },
+  { amount: 20,  label: 'Apoio',     desc: 'Ajuda a manter nossos projetos ativos' },
+  { amount: 50,  label: 'Amigo',     desc: 'Apoia uma família por uma semana' },
+  { amount: 100, label: 'Parceiro',  desc: 'Financia um mês de curso profissionalizante' },
+  { amount: 250, label: 'Patrono',   desc: 'Transforma a vida de uma pessoa por um mês' },
 ];
 
 export default function Doe() {
@@ -56,7 +56,7 @@ export default function Doe() {
             Escolha como apoiar
           </h2>
           <p style={{ fontSize: 14, color: '#64748b', marginBottom: 28, lineHeight: 1.6 }}>
-            Você decide o valor. Aceitamos doações únicas em dólares (USD) via cartão de crédito ou PayPal de qualquer país.
+            Você decide o valor. Aceitamos doações únicas em reais (BRL) via cartão de crédito ou PayPal de qualquer país.
           </p>
 
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 36 }}>
@@ -68,7 +68,7 @@ export default function Doe() {
                 style={{ background: '#fff', border: '1.5px solid #e2e8f0', borderRadius: 12, padding: '16px', textDecoration: 'none', display: 'block', transition: 'border-color .2s, box-shadow .2s, transform .15s' }}
                 onMouseEnter={e => { e.currentTarget.style.borderColor = 'var(--gold)'; e.currentTarget.style.boxShadow = '0 4px 20px rgba(25,118,210,.12)'; e.currentTarget.style.transform = 'translateY(-2px)'; }}
                 onMouseLeave={e => { e.currentTarget.style.borderColor = '#e2e8f0'; e.currentTarget.style.boxShadow = 'none'; e.currentTarget.style.transform = 'translateY(0)'; }}>
-                <div style={{ fontFamily: 'Montserrat,sans-serif', fontWeight: 800, fontSize: 22, color: 'var(--navy)' }}>${t.amount}</div>
+                <div style={{ fontFamily: 'Montserrat,sans-serif', fontWeight: 800, fontSize: 22, color: 'var(--navy)' }}>R${t.amount}</div>
                 <div style={{ fontWeight: 600, fontSize: 13, color: 'var(--gold)', marginBottom: 4 }}>{t.label}</div>
                 <div style={{ fontSize: 12, color: '#64748b', lineHeight: 1.5 }}>{t.desc}</div>
               </a>
