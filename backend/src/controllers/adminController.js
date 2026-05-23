@@ -578,3 +578,55 @@ export async function getAuditLog(req, res) {
     return res.status(500).json({ error: 'Erro interno.' });
   }
 }
+
+// ── Donations ────────────────────────────────────────────────────────────────
+export async function getDonationStats(req, res) {
+  try {
+    const rows = await query(`
+      SELECT
+        COUNT(*) AS total_count,
+        COALESCE(SUM(CASE WHEN status='completed' THEN amount ELSE 0 END), 0) AS total_amount,
+        COALESCE(AVG(CASE WHEN status='completed' THEN amount END), 0) AS avg_amount,
+        COALESCE(SUM(CASE WHEN status='completed'
+          AND MONTH(payment_date)=MONTH(NOW())
+          AND YEAR(payment_date)=YEAR(NOW())
+          THEN amount ELSE 0 END), 0) AS this_month,
+        COALESCE(SUM(CASE WHEN status='completed'
+          AND MONTH(payment_date)=MONTH(DATE_SUB(NOW(), INTERVAL 1 MONTH))
+          AND YEAR(payment_date)=YEAR(DATE_SUB(NOW(), INTERVAL 1 MONTH))
+          THEN amount ELSE 0 END), 0) AS last_month,
+        COALESCE(SUM(CASE WHEN status='completed' THEN 1 ELSE 0 END), 0) AS completed_count,
+        COALESCE(SUM(CASE WHEN status='pending' THEN 1 ELSE 0 END), 0) AS pending_count
+      FROM donations
+    `);
+    return res.json(rows[0] || {});
+  } catch (err) {
+    return res.status(500).json({ error: 'Erro interno.' });
+  }
+}
+
+export async function listDonations(req, res) {
+  try {
+    const page   = Math.max(1, parseInt(req.query.page)  || 1);
+    const limit  = Math.min(50, Math.max(1, parseInt(req.query.limit) || 20));
+    const offset = (page - 1) * limit;
+    const status = req.query.status || '';
+
+    const where  = status ? 'WHERE status = ?' : '';
+    const params = status ? [status] : [];
+
+    const countRows = await query(`SELECT COUNT(*) AS n FROM donations ${where}`, params);
+    const total     = Number(countRows[0]?.n || 0);
+
+    const rows = await query(
+      `SELECT id, txn_id, payer_email, payer_name, amount, currency, status, payment_date, item_name, created_at
+       FROM donations ${where} ORDER BY created_at DESC LIMIT ? OFFSET ?`,
+      [...params, limit, offset]
+    );
+
+    return res.json({ data: rows, total, page, limit, pages: Math.ceil(total / limit) });
+  } catch (err) {
+    return res.status(500).json({ error: 'Erro interno.' });
+  }
+}
+

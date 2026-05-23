@@ -49,6 +49,23 @@ const runtimeCreateMigrations = [
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
   ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci`,
+
+  `CREATE TABLE IF NOT EXISTS donations (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    txn_id VARCHAR(255) NOT NULL UNIQUE,
+    payer_email VARCHAR(255),
+    payer_name VARCHAR(200),
+    amount DECIMAL(10,2) NOT NULL,
+    currency VARCHAR(10) DEFAULT 'USD',
+    status ENUM('completed','pending','refunded','failed') DEFAULT 'pending',
+    payment_date DATETIME,
+    item_name VARCHAR(300),
+    raw_data JSON,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    INDEX idx_status (status),
+    INDEX idx_payment_date (payment_date),
+    INDEX idx_txn_id (txn_id)
+  ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci`,
 ];
 
 const runtimeAlterColumnMigrations = [

@@ -11,6 +11,7 @@ import fs from 'fs';
 import { securityHeaders, globalRateLimit, sanitizeRequest } from './middleware/security.js';
 import publicRoutes from './routes/public.js';
 import adminRoutes from './routes/admin.js';
+import webhookRoutes from './routes/webhook.js';
 import { uploadsDir, syncLegacyUploads } from './utils/uploads.js';
 import { ensureRuntimeSchema } from './database/runtimeSchema.js';
 import { runStartupBackup } from './utils/backup.js';
@@ -67,6 +68,7 @@ app.use('/uploads', (_req, res) => {
 });
 
 // ── API routes ────────────────────────────────────────────────────────────────
+app.use('/api/webhook', webhookRoutes);   // PUBLIC – no auth (PayPal IPN)
 app.use('/api', publicRoutes);
 app.use('/api/admin', adminRoutes);
 

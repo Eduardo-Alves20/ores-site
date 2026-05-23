@@ -110,6 +110,10 @@ router.get('/messages', adm.listMessages);
 router.put('/messages/:id/read', adm.markMessageRead);
 router.delete('/messages/:id', adm.deleteMessage);
 
+// ── Donations ────────────────────────────────────────────────────────────────
+router.get('/doacoes/stats', adm.getDonationStats);
+router.get('/doacoes', adm.listDonations);
+
 // ── Audit log ────────────────────────────────────────────────────────────────
 router.get('/audit-log', adm.getAuditLog);
 
