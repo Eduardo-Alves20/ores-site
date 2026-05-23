@@ -618,10 +618,12 @@ export async function listDonations(req, res) {
     const countRows = await query(`SELECT COUNT(*) AS n FROM donations ${where}`, params);
     const total     = Number(countRows[0]?.n || 0);
 
+    // LIMIT/OFFSET injected directly as validated integers (mysql2 execute()
+    // has issues with these as bound parameters in prepared statements)
     const rows = await query(
       `SELECT id, txn_id, payer_email, payer_name, amount, currency, status, payment_date, item_name, created_at
-       FROM donations ${where} ORDER BY created_at DESC LIMIT ? OFFSET ?`,
-      [...params, limit, offset]
+       FROM donations ${where} ORDER BY created_at DESC LIMIT ${limit} OFFSET ${offset}`,
+      params
     );
 
     return res.json({ data: rows, total, page, limit, pages: Math.ceil(total / limit) });
