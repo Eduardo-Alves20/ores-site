@@ -33,6 +33,7 @@ import AdminMessages from './pages/admin/AdminMessages';
 import AdminUsers from './pages/admin/AdminUsers';
 import AdminAudit from './pages/admin/AdminAudit';
 import AdminDoacoes from './pages/admin/AdminDoacoes';
+import Admin2FA from './pages/admin/Admin2FA';
 
 function PublicLayout() {
   const { data: siteInfo } = useFetch('/site-info');
@@ -81,6 +82,7 @@ export default function App() {
             <Route path="users" element={<AdminUsers />} />
             <Route path="audit" element={<AdminAudit />} />
             <Route path="doacoes" element={<AdminDoacoes />} />
+            <Route path="2fa" element={<Admin2FA />} />
           </Route>
           <Route path="/" element={<PublicLayout />}>
             <Route index element={<Home />} />

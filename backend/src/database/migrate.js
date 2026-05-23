@@ -238,6 +238,8 @@ const alterColumnMigrations = [
   { table: 'pastorals', column: 'map_url', definition: 'VARCHAR(700) AFTER address' },
   { table: 'pastorals', column: 'image_url', definition: 'VARCHAR(500) AFTER map_url' },
   { table: 'news', column: 'external_url', definition: 'VARCHAR(700) AFTER image_url' },
+  { table: 'admin_users', column: 'totp_secret', definition: 'VARCHAR(255) NULL AFTER password_hash' },
+  { table: 'admin_users', column: 'totp_enabled', definition: 'TINYINT(1) DEFAULT 0 AFTER totp_secret' },
 ];
 
 async function columnExists(conn, table, column) {

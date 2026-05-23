@@ -6,7 +6,7 @@ import { getSiteName } from '../../lib/branding';
 import {
   LayoutDashboard, Calendar, Newspaper, Users, MapPin, Heart, GraduationCap,
   MessageSquare, Settings, LogOut, Menu, X, Shield, ChevronRight, Handshake,
-  Images, Building2, FolderOpen, BookOpen
+  Images, Building2, FolderOpen, BookOpen, ShieldCheck
 } from 'lucide-react';
 
 function getLabel(settings, key, fallback) {
@@ -34,6 +34,7 @@ function buildMenu(s, unreadMessages = 0) {
     isEnabled(s,'menu_admin_courses_enabled') && { label: getLabel(s,'menu_admin_courses','Cursos'), to:'/admin/courses', icon:<GraduationCap size={18}/> },
     isEnabled(s,'menu_admin_divider_system_enabled') && { divider: true, label: getLabel(s,'menu_admin_divider_system','Sistema') },
     { label: 'Doações', to:'/admin/doacoes', icon:<Heart size={18}/> },
+    { label: 'Segurança (2FA)', to:'/admin/2fa', icon:<ShieldCheck size={18}/> },
     isEnabled(s,'menu_admin_messages_enabled') && { label: getLabel(s,'menu_admin_messages','Mensagens'), to:'/admin/messages', icon:<MessageSquare size={18}/>, badge: unreadMessages },
     isEnabled(s,'menu_admin_users_enabled') && { label: getLabel(s,'menu_admin_users','Usuários Admin'), to:'/admin/users', icon:<Shield size={18}/> },
     isEnabled(s,'menu_admin_audit_enabled') && { label: getLabel(s,'menu_admin_audit','Log de Auditoria'), to:'/admin/audit', icon:<BookOpen size={18}/> },

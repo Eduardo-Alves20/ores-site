@@ -22,8 +22,14 @@ export function AuthProvider({ children }) {
 
   useEffect(() => { tryRefresh(); }, [tryRefresh]);
 
-  const login = async (email, password) => {
-    const res = await api.post('/admin/auth/login', { email, password });
+  const login = async (email, password, totpCode) => {
+    const payload = { email, password };
+    if (totpCode) payload.totpCode = totpCode;
+    const res = await api.post('/admin/auth/login', payload);
+    // 2FA gate — server tells us to ask for the code before issuing a token
+    if (res.data?.requires2fa) {
+      return { requires2fa: true };
+    }
     setAccessToken(res.data.accessToken);
     setUser(res.data.user);
     return res.data;

@@ -2,6 +2,7 @@
 import { v4 as uuidv4 } from 'uuid';
 import { query, queryOne } from '../database/connection.js';
 import { validatePasswordStrength } from '../middleware/validate.js';
+import { verifyTotpForUser } from './twofaController.js';
 import {
   generateAccessToken, generateRefreshToken, storeRefreshToken,
   rotateRefreshToken, revokeAllTokens,
@@ -33,7 +34,7 @@ function isEmergencyRefreshToken(token) {
 
 export async function login(req, res) {
   try {
-    const { email, password } = req.body;
+    const { email, password, totpCode } = req.body;
 
     if (!email || !password) {
       return res.status(400).json({ error: 'E-mail e senha sao obrigatorios.' });
@@ -67,6 +68,19 @@ export async function login(req, res) {
       if (user) await recordFailedAttempt(user.email);
       // Uniform error: do not reveal whether email exists
       return res.status(401).json({ error: 'Credenciais invalidas.' });
+    }
+
+    // ── 2FA gate ───────────────────────────────────────────────────────────
+    if (user.totp_enabled) {
+      if (!totpCode) {
+        // Step 1 succeeded — signal frontend to ask for the 6-digit code
+        return res.status(200).json({ requires2fa: true });
+      }
+      if (!verifyTotpForUser(user, totpCode)) {
+        await recordFailedAttempt(user.email);
+        await auditLog(user.id, '2FA_FAILED', null, null, null, null, req.ip);
+        return res.status(401).json({ error: 'Código 2FA inválido.' });
+      }
     }
 
     await resetFailedAttempts(user.id);

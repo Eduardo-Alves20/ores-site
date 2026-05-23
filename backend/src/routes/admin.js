@@ -5,6 +5,7 @@ import { requireAuth, requireSuperAdmin } from '../middleware/auth.js';
 import { authRateLimit, authSlowDown, noCache } from '../middleware/security.js';
 import * as auth from '../controllers/authController.js';
 import * as adm from '../controllers/adminController.js';
+import * as twofa from '../controllers/twofaController.js';
 
 const router = Router();
 
@@ -30,6 +31,12 @@ router.post('/auth/change-password', [
   body('newPassword').isLength({ min: 12, max: 128 }).withMessage('Nova senha deve ter no mínimo 12 caracteres.'),
   validateRequest,
 ], auth.changePassword);
+
+// ── 2FA (TOTP) ────────────────────────────────────────────────────────────────
+router.get('/auth/2fa/status', twofa.status2FA);
+router.post('/auth/2fa/setup', twofa.setup2FA);
+router.post('/auth/2fa/enable', twofa.enable2FA);
+router.post('/auth/2fa/disable', twofa.disable2FA);
 
 // ── Dashboard ────────────────────────────────────────────────────────────────
 router.get('/dashboard', adm.getDashboardStats);
