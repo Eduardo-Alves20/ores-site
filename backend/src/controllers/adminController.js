@@ -20,8 +20,9 @@ const upload = multer({
   }),
   limits: { fileSize: 5 * 1024 * 1024 },
   fileFilter: (_req, file, cb) => {
-    if (!/^image\/(png|jpe?g|webp|gif|svg\+xml)$/.test(file.mimetype)) {
-      return cb(new Error('Formato de imagem inválido.'));
+    // SVG excluded — can contain embedded JavaScript (XSS vector)
+    if (!/^image\/(png|jpe?g|webp|gif)$/.test(file.mimetype)) {
+      return cb(new Error('Formato de imagem inválido. Use PNG, JPG, WEBP ou GIF.'));
     }
     cb(null, true);
   },

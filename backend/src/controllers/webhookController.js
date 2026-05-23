@@ -41,7 +41,12 @@ export async function handlePaypalIPN(req, res) {
     // 1. Verify with PayPal
     const verification = await verifyWithPayPal(rawBody);
     if (verification !== 'VERIFIED') {
-      console.warn('[PayPal IPN] Not verified:', verification, params);
+      // Log only non-PII fields to avoid leaking personal data in logs
+      console.warn('[PayPal IPN] Not verified:', verification, {
+        txn_type: params.txn_type,
+        payment_status: params.payment_status,
+        txn_id: params.txn_id,
+      });
       return;
     }
 
@@ -49,15 +54,17 @@ export async function handlePaypalIPN(req, res) {
     const txnType   = params.txn_type || '';
     const payStatus = (params.payment_status || '').toLowerCase();
     const mcGross   = parseFloat(params.mc_gross || 0);
-    const currency  = params.mc_currency || 'USD';
+    const currency  = params.mc_currency || 'BRL';
     const payerEmail = params.payer_email || '';
     const payerName  = [params.first_name, params.last_name].filter(Boolean).join(' ') || params.payer_business_name || '';
     const itemName   = params.item_name || 'Doação ORES';
     const paymentDate = params.payment_date ? new Date(params.payment_date) : new Date();
 
-    // Only process completed donation payments
+    // Only process valid donation payments
     if (!txnId) return;
     if (txnType && !['web_accept','donate',''].includes(txnType)) return;
+    // Reject non-positive amounts (refunds handled via status, not negative gross)
+    if (mcGross <= 0) return;
 
     // Map PayPal status → our status
     const statusMap = { completed: 'completed', pending: 'pending', refunded: 'refunded', reversed: 'refunded', failed: 'failed' };

@@ -76,6 +76,17 @@ export const contactRateLimit = rateLimit({
   message: { error: 'Limite de mensagens atingido. Tente novamente em 1 hora.' },
 });
 
+// ── Webhook rate limiter (PayPal IPN) ────────────────────────────────────────
+// PayPal sends at most a handful of IPNs per transaction.
+// Strict limit prevents flood abuse on this public endpoint.
+export const webhookRateLimit = rateLimit({
+  windowMs: 1 * 60 * 1000,
+  max: 30,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { error: 'Rate limit excedido.' },
+});
+
 // ── No-cache for admin routes ────────────────────────────────────────────────
 export function noCache(req, res, next) {
   res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
