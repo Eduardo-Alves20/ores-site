@@ -324,12 +324,24 @@ export default function Home() {
                       </div>
                     )}
                   </div>
-                  {donationQrUrl && (
-                    <div style={{ background:'#fff', border:'1px solid var(--border)', borderRadius:14, padding:14, boxShadow:'0 6px 22px rgba(0,0,0,.05)', maxWidth:220 }}>
-                      <img src={donationQrUrl} alt="QR Code Pix" onError={(e) => { e.currentTarget.style.display = 'none'; }} style={{ width:'100%', aspectRatio:'1 / 1', objectFit:'contain' }} />
-                      <div style={{ marginTop:10, textAlign:'center', fontSize:11, fontWeight:800, color:'var(--gold)', textTransform:'uppercase', letterSpacing:'0.08em' }}>Pix QR Code</div>
-                    </div>
-                  )}
+                  <div style={{ display:'flex', flexDirection:'column', gap:12 }}>
+                    {donationQrUrl && (
+                      <div style={{ background:'#fff', border:'1px solid var(--border)', borderRadius:14, padding:16, boxShadow:'0 6px 22px rgba(0,0,0,.05)', display:'flex', flexDirection:'column', alignItems:'center' }}>
+                        <img src={donationQrUrl} alt="QR Code Pix" onError={(e) => { e.currentTarget.style.display = 'none'; }} style={{ width:160, height:160, objectFit:'contain' }} />
+                        <div style={{ marginTop:10, textAlign:'center', fontSize:11, fontWeight:800, color:'var(--gold)', textTransform:'uppercase', letterSpacing:'0.08em' }}>Pix QR Code</div>
+                      </div>
+                    )}
+                    <a
+                      href="https://www.paypal.com/donate?hosted_button_id=WPZWP2RXDTYDC"
+                      target="_top"
+                      rel="noopener noreferrer"
+                      style={{ display:'flex', alignItems:'center', justifyContent:'center', gap:10, background:'#0070ba', color:'#fff', fontFamily:'Montserrat,sans-serif', fontWeight:700, fontSize:14, padding:'13px 16px', borderRadius:12, textDecoration:'none', boxShadow:'0 4px 16px rgba(0,112,186,.35)', transition:'background .2s, transform .15s' }}
+                      onMouseEnter={e => { e.currentTarget.style.background='#005ea6'; e.currentTarget.style.transform='translateY(-1px)'; }}
+                      onMouseLeave={e => { e.currentTarget.style.background='#0070ba'; e.currentTarget.style.transform='translateY(0)'; }}>
+                      <img src="https://www.paypalobjects.com/webstatic/mktg/logo/pp_cc_mark_37x23.jpg" alt="PayPal" style={{ height:18, borderRadius:3 }} />
+                      Donate with PayPal
+                    </a>
+                  </div>
                 </div>
               </div>
             </div>
