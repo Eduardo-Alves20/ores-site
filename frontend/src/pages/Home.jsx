@@ -147,7 +147,7 @@ export default function Home() {
               src={slide.image_url}
               alt=""
               onError={(e) => { e.currentTarget.parentElement.style.display = 'none'; }}
-              style={{ position:'absolute', inset:0, width:'100%', height:'100%', objectFit:'contain', objectPosition:'center center', transform:i === currentSlide ? 'scale(1.01)' : 'scale(1)', transition:'transform 7s ease' }}
+              style={{ position:'absolute', inset:0, width:'100%', height:'100%', objectFit:'cover', objectPosition:'center center', transform:i === currentSlide ? 'scale(1.01)' : 'scale(1)', transition:'transform 7s ease' }}
             />
           </div>
         ))}
