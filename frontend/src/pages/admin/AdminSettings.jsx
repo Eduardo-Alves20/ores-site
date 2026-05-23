@@ -420,10 +420,12 @@ export default function AdminSettings() {
         </div>
         {stats.map((item, idx) => (
           <div key={item.index} style={{ borderBottom: idx === stats.length - 1 ? 'none' : '1px solid var(--cream-dark)' }}>
-            <button
-              type="button"
+            <div
+              role="button"
+              tabIndex={0}
               onClick={() => setOpenStat(openStat === item.index ? 0 : item.index)}
-              style={{ width: '100%', padding: '11px 14px', display: 'grid', gridTemplateColumns: '1fr auto', alignItems: 'center', gap: 12, textAlign: 'left', background: '#fff' }}
+              onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setOpenStat(openStat === item.index ? 0 : item.index); } }}
+              style={{ width: '100%', padding: '11px 14px', display: 'grid', gridTemplateColumns: '1fr auto', alignItems: 'center', gap: 12, textAlign: 'left', background: '#fff', cursor: 'pointer' }}
             >
               <div>
                 <div style={{ fontSize: 13.5, fontWeight: 600, color: 'var(--navy)' }}>
@@ -450,7 +452,7 @@ export default function AdminSettings() {
                 </button>
                 {openStat === item.index ? <ChevronUp size={16} color="var(--text-soft)" /> : <ChevronDown size={16} color="var(--text-soft)" />}
               </div>
-            </button>
+            </div>
 
             {openStat === item.index && (
               <div style={{ padding: '0 14px 14px', background: '#fff' }}>
