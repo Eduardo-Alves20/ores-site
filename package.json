@@ -9,7 +9,9 @@
     "migrate": "npm run migrate --prefix backend",
     "seed": "npm run seed --prefix backend",
     "import:legacy": "node backend/src/database/importLegacyOres.js",
-    "setup": "npm install --prefix backend && npm install --prefix frontend && npm run migrate --prefix backend && npm run seed --prefix backend"
+    "setup": "npm install --prefix backend && npm install --prefix frontend && npm run migrate --prefix backend && npm run seed --prefix backend",
+    "audit:all": "npm audit --prefix backend --audit-level=moderate && npm audit --prefix frontend --audit-level=moderate",
+    "audit:fix": "npm audit fix --prefix backend && npm audit fix --prefix frontend"
   },
   "devDependencies": {
     "concurrently": "^8.2.2"

@@ -1,6 +1,7 @@
 ﻿import bcrypt from 'bcryptjs';
 import { v4 as uuidv4 } from 'uuid';
 import { query, queryOne } from '../database/connection.js';
+import { validatePasswordStrength } from '../middleware/validate.js';
 import {
   generateAccessToken, generateRefreshToken, storeRefreshToken,
   rotateRefreshToken, revokeAllTokens,
@@ -171,7 +172,9 @@ export async function changePassword(req, res) {
     const valid = await bcrypt.compare(currentPassword, user.password_hash);
     if (!valid) return res.status(401).json({ error: 'Senha atual incorreta.' });
 
-    if (newPassword.length < 8) return res.status(422).json({ error: 'Nova senha deve ter pelo menos 8 caracteres.' });
+    const pwdError = validatePasswordStrength(newPassword, { email: user.email });
+    if (pwdError) return res.status(422).json({ error: pwdError });
+    if (newPassword === currentPassword) return res.status(422).json({ error: 'Nova senha deve ser diferente da atual.' });
 
     const hash = await bcrypt.hash(newPassword, 12);
     await query(`UPDATE admin_users SET password_hash = ? WHERE id = ?`, [hash, req.adminUser.id]);

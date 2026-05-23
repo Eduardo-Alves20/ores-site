@@ -27,7 +27,7 @@ router.post('/auth/logout', auth.logout);
 router.get('/auth/me', auth.me);
 router.post('/auth/change-password', [
   body('currentPassword').isLength({ min: 1 }),
-  body('newPassword').isLength({ min: 8 }).withMessage('Nova senha deve ter pelo menos 8 caracteres.'),
+  body('newPassword').isLength({ min: 12, max: 128 }).withMessage('Nova senha deve ter no mínimo 12 caracteres.'),
   validateRequest,
 ], auth.changePassword);
 

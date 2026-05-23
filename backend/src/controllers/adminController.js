@@ -1,7 +1,7 @@
 import { query, queryOne } from '../database/connection.js';
 import pool from '../database/connection.js';
 import { auditLog } from '../middleware/auth.js';
-import { sanitizeText, sanitizeRichText } from '../middleware/validate.js';
+import { sanitizeText, sanitizeRichText, validatePasswordStrength } from '../middleware/validate.js';
 import multer from 'multer';
 import path from 'path';
 import fs from 'fs';
@@ -546,7 +546,8 @@ export async function createAdminUser(req, res) {
     const bcrypt = await import('bcryptjs');
     const { name, email, password, role } = req.body;
     if (!name || !email || !password) return res.status(400).json({ error: 'Nome, e-mail e senha são obrigatórios.' });
-    if (password.length < 8) return res.status(422).json({ error: 'Senha deve ter pelo menos 8 caracteres.' });
+    const pwdError = validatePasswordStrength(password, { email });
+    if (pwdError) return res.status(422).json({ error: pwdError });
     const hash = await bcrypt.default.hash(password, 12);
     const [result] = await pool.execute(
       `INSERT INTO admin_users (name, email, password_hash, role) VALUES (?, ?, ?, ?)`,
