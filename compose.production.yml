@@ -26,7 +26,7 @@ services:
     build:
       context: .
       dockerfile: frontend/Dockerfile.production
-    ports:
+    ports: !override
       - "${FRONTEND_PORT:-5173}:80"
     environment:
       VITE_BACKEND_PROXY: http://backend:3001
