@@ -5,11 +5,12 @@ import path from 'path';
 // Each variant: target size + crop strategy.
 // `position: 'attention'` makes sharp pick the most "interesting" region
 // (using entropy/edge detection) rather than a blind center crop.
+// Quality bumped to ~88 — these are banners, the extra ~20% bytes is worth it.
 export const VARIANTS = {
-  hero:   { width: 1920, height: 1080, fit: 'cover', position: 'attention', quality: 82 },
-  mobile: { width: 1080, height: 1350, fit: 'cover', position: 'attention', quality: 80 },
-  card:   { width: 800,  height: 600,  fit: 'cover', position: 'attention', quality: 80 },
-  thumb:  { width: 400,  height: 400,  fit: 'cover', position: 'attention', quality: 78 },
+  hero:   { width: 1920, height: 1080, fit: 'cover', position: 'attention', quality: 88 },
+  mobile: { width: 1080, height: 1350, fit: 'cover', position: 'attention', quality: 86 },
+  card:   { width: 800,  height: 600,  fit: 'cover', position: 'attention', quality: 84 },
+  thumb:  { width: 400,  height: 400,  fit: 'cover', position: 'attention', quality: 82 },
 };
 
 // Skip variants for animated formats (we'd lose the animation) and SVG (vector).
@@ -52,9 +53,14 @@ export async function processImage(filePath, { force = false } = {}) {
           height: opts.height,
           fit: opts.fit,
           position: opts.position,
-          withoutEnlargement: false,
+          // Don't upscale small originals — interpolation + WebP re-encode
+          // makes phone photos look mushy. Sharp keeps the original size
+          // when source is smaller; CSS handles final display scaling.
+          withoutEnlargement: true,
         })
-        .webp({ quality: opts.quality, effort: 4 })
+        // effort=6 (max) gives ~10% better compression at the cost of CPU,
+        // which is fine for upload-time processing.
+        .webp({ quality: opts.quality, effort: 6 })
         .toFile(outPath);
       generated.push(name);
     } catch (err) {
