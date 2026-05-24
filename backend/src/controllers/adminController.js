@@ -7,6 +7,7 @@ import path from 'path';
 import fs from 'fs';
 import { randomUUID } from 'crypto';
 import { uploadsDir } from '../utils/uploads.js';
+import { processImage } from '../utils/imageProcessor.js';
 
 fs.mkdirSync(uploadsDir, { recursive: true });
 
@@ -18,7 +19,9 @@ const upload = multer({
       cb(null, `${Date.now()}-${randomUUID()}${ext}`);
     },
   }),
-  limits: { fileSize: 5 * 1024 * 1024 },
+  // Sharp will compress everything to ~100-250kb anyway, so the original
+  // can be generous. 16MB covers modern phone cameras + DSLR JPGs.
+  limits: { fileSize: 16 * 1024 * 1024 },
   fileFilter: (_req, file, cb) => {
     // SVG excluded — can contain embedded JavaScript (XSS vector)
     if (!/^image\/(png|jpe?g|webp|gif)$/.test(file.mimetype)) {
@@ -223,6 +226,20 @@ export async function uploadMedia(req, res) {
     if (err) return res.status(400).json({ error: err.message || 'Erro no upload.' });
     if (!req.file) return res.status(400).json({ error: 'Arquivo obrigatório.' });
     const url = `/uploads/${req.file.filename}`;
+    const filePath = path.join(uploadsDir, req.file.filename);
+
+    // Generate responsive WebP variants. We await so the response only goes
+    // out once variants exist — that way the frontend never gets a 404 trying
+    // to load them. If sharp fails, the original URL still works.
+    try {
+      const result = await processImage(filePath);
+      if (result.errors?.length) {
+        console.warn(`[uploadMedia] partial processing for ${req.file.filename}:`, result.errors);
+      }
+    } catch (procErr) {
+      console.error(`[uploadMedia] processing failed for ${req.file.filename}:`, procErr.message);
+    }
+
     await auditLog(req.adminUser.id, 'UPLOAD_MEDIA', 'uploads', null, null, { url, name: req.file.originalname }, req.ip);
     return res.status(201).json({ url });
   });

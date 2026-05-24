@@ -2,6 +2,7 @@
 import { useFetch } from '../hooks/useFetch';
 import { normalizeMediaUrl } from '../lib/media';
 import RichTextContent from './RichTextContent';
+import ResponsiveImage from './ResponsiveImage';
 
 const HEADER_KEYS = {
   'Quem Somos': 'quem_somos',
@@ -39,16 +40,16 @@ export default function PageHeader({ eyebrow, title, subtitle, headerKey, imageU
     <div className="page-header" style={{ background: '#111', padding: '96px 24px 80px', position: 'relative', overflow: 'hidden' }}>
       {showImage ? (
         <>
-          <img
+          <ResponsiveImage
             src={image}
-            alt=""
+            kind="hero"
             onError={() => setImageFailed(true)}
-            aria-hidden="true"
             style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', filter: 'blur(16px)', transform: 'scale(1.08)', opacity: 0.55 }}
           />
-          <img
+          <ResponsiveImage
             src={image}
-            alt=""
+            kind="hero"
+            eager
             onError={() => setImageFailed(true)}
             style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center center', opacity: 1 }}
           />

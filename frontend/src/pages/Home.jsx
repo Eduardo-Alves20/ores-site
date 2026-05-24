@@ -7,6 +7,7 @@ import { Calendar, Users, Heart, Clock, MapPin, Copy, Gift, ChevronLeft, Chevron
 import { parseDateOnly } from '../lib/date';
 import { useAppAlert } from '../components/AppAlert';
 import { normalizeMediaUrl } from '../lib/media';
+import ResponsiveImage from '../components/ResponsiveImage';
 
 const MONTHS_PT = ['JAN','FEV','MAR','ABR','MAI','JUN','JUL','AGO','SET','OUT','NOV','DEZ'];
 
@@ -136,16 +137,20 @@ export default function Home() {
       <section className="home-hero" style={{ background:'#000',minHeight:'100vh',display:'flex',alignItems:'center',position:'relative',overflow:'hidden' }}>
         {slides.map((slide, i) => slide.image_url && (
           <div key={slide.id || i} style={{ position:'absolute', inset:0, opacity:i === currentSlide ? 1 : 0, transition:'opacity .9s ease' }}>
-            <img
+            {/* Blurred background fills any letterbox area for off-aspect images */}
+            <ResponsiveImage
               src={slide.image_url}
-              alt=""
-              aria-hidden="true"
+              kind="hero"
+              eager={i === 0}
               onError={(e) => { e.currentTarget.parentElement.style.display = 'none'; }}
               style={{ position:'absolute', inset:0, width:'100%', height:'100%', objectFit:'cover', filter:'blur(18px)', transform:'scale(1.08)', opacity:.55 }}
             />
-            <img
+            {/* Main image — sharp already cropped smartly to 16:9 */}
+            <ResponsiveImage
               src={slide.image_url}
+              kind="hero"
               alt=""
+              eager={i === 0}
               onError={(e) => { e.currentTarget.parentElement.style.display = 'none'; }}
               style={{ position:'absolute', inset:0, width:'100%', height:'100%', objectFit:'cover', objectPosition:'center center', transform:i === currentSlide ? 'scale(1.01)' : 'scale(1)', transition:'transform 7s ease' }}
             />
@@ -426,7 +431,7 @@ export default function Home() {
                     onMouseEnter={e => { e.currentTarget.style.transform='translateY(-3px)'; e.currentTarget.style.boxShadow='0 8px 28px rgba(0,0,0,.07)'; }}
                     onMouseLeave={e => { e.currentTarget.style.transform=''; e.currentTarget.style.boxShadow='0 1px 4px rgba(0,0,0,.03)'; }}>
                     {r.image_url && (
-                      <img src={r.image_url} alt={r.name} onError={e => { e.currentTarget.style.display='none'; }}
+                      <ResponsiveImage src={r.image_url} kind="card" alt={r.name} onError={e => { e.currentTarget.style.display='none'; }}
                         style={{ width:'100%', height:140, objectFit:'cover', display:'block' }} />
                     )}
                     <div style={{ padding:'22px' }}>

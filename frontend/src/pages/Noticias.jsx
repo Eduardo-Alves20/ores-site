@@ -3,6 +3,7 @@ import { useParams, Link } from 'react-router-dom';
 import PageHeader from '../components/PageHeader';
 import Reveal from '../components/Reveal';
 import RichTextContent from '../components/RichTextContent';
+import ResponsiveImage from '../components/ResponsiveImage';
 import { normalizeMediaUrl } from '../lib/media';
 
 function formatDate(value) {
@@ -29,9 +30,9 @@ function NewsCard({ newsItem }) {
     <>
       {imageUrl && (
         <div style={{ height: 190, background: '#e9e5dd' }}>
-          <img
-            className="uploaded-media-fit"
+          <ResponsiveImage
             src={imageUrl}
+            kind="card"
             alt={title}
             onError={(e) => { e.currentTarget.style.display = 'none'; }}
             style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
@@ -149,10 +150,11 @@ export function NoticiaDetalhe() {
             </div>
             {detailImageUrl && (
               <div className="news-detail-image" style={{ marginBottom: 20, borderRadius: 12, overflow: 'hidden', border: '1px solid var(--border)' }}>
-                <img
-                  className="uploaded-media-fit"
+                <ResponsiveImage
                   src={detailImageUrl}
+                  kind="hero"
                   alt={detailTitle}
+                  eager
                   onError={(e) => { e.currentTarget.style.display = 'none'; }}
                   style={{ width: '100%', maxHeight: 460, objectFit: 'cover', display: 'block' }}
                 />

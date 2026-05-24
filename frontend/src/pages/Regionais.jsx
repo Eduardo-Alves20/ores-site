@@ -2,6 +2,7 @@ import { useFetch } from '../hooks/useFetch';
 import PageHeader from '../components/PageHeader';
 import Reveal from '../components/Reveal';
 import RichTextContent from '../components/RichTextContent';
+import ResponsiveImage from '../components/ResponsiveImage';
 import { MapPin, Phone, Mail, ExternalLink } from 'lucide-react';
 
 export default function Regionais() {
@@ -35,7 +36,7 @@ export default function Regionais() {
                   onMouseEnter={e => e.currentTarget.style.boxShadow = '0 12px 40px rgba(13,45,94,.09)'}
                   onMouseLeave={e => e.currentTarget.style.boxShadow = ''}>
                   {unit.image_url && (
-                    <img src={unit.image_url} alt={unit.name}
+                    <ResponsiveImage src={unit.image_url} kind="card" alt={unit.name}
                       style={{ width: '100%', height: 200, objectFit: 'cover', display: 'block' }} />
                   )}
                   <div style={{ padding: '28px' }}>
