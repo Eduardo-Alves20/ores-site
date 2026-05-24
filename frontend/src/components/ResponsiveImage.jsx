@@ -1,15 +1,29 @@
 import { useEffect, useRef } from 'react';
 import { normalizeMediaUrl } from '../lib/media';
 
-// Derive variant URL from original. "/uploads/abc.jpg" -> "/uploads/abc.hero.webp"
-// External, data: and blob: URLs pass through unchanged (no variants exist).
+// Derive variant URL from original.
+//   "/uploads/originals/abc.jpg" -> "/uploads/variants/abc/hero.webp"
+// Legacy flat layout still works as a transitional fallback:
+//   "/uploads/abc.jpg"           -> "/uploads/abc.hero.webp"
+// External, data: and blob: URLs pass through unchanged.
 function variantUrl(src, variant) {
   if (!src) return '';
   if (/^(https?:|data:|blob:)/i.test(src)) return src;
-  const dot = src.lastIndexOf('.');
+
+  // Extract filename and base (without extension)
+  const slash = src.lastIndexOf('/');
+  const filename = slash >= 0 ? src.slice(slash + 1) : src;
+  const dot = filename.lastIndexOf('.');
   if (dot < 0) return src;
-  const base = src.slice(0, dot);
-  return `${base}.${variant}.webp`;
+  const base = filename.slice(0, dot);
+
+  // New structure: replace /originals/ segment with /variants/<base>/
+  if (src.includes('/uploads/originals/')) {
+    return src.replace(/\/uploads\/originals\/[^/]+$/, `/uploads/variants/${base}/${variant}.webp`);
+  }
+
+  // Legacy flat structure: foo.jpg -> foo.hero.webp
+  return `${src.slice(0, src.lastIndexOf('.'))}.${variant}.webp`;
 }
 
 /**

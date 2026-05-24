@@ -1,6 +1,7 @@
 import sharp from 'sharp';
 import fs from 'fs';
 import path from 'path';
+import { variantsDirFor, originalsDir } from './uploads.js';
 
 // Each variant: target size + crop strategy.
 // `position: 'attention'` makes sharp pick the most "interesting" region
@@ -17,13 +18,18 @@ export const VARIANTS = {
 const SKIPPABLE_EXTS = new Set(['.gif', '.svg']);
 
 /**
- * Generate WebP variants beside the original.
- * Original "/uploads/foo.jpg" yields:
- *   "/uploads/foo.hero.webp", "foo.mobile.webp", "foo.card.webp", "foo.thumb.webp"
+ * Generate WebP variants for one original image.
  *
- * Safe to call repeatedly — existing variants are skipped unless force=true.
+ * Layout produced (uploadsDir is the root):
+ *   originals/<base>.<ext>           (already exists; this is the input)
+ *   variants/<base>/hero.webp
+ *   variants/<base>/mobile.webp
+ *   variants/<base>/card.webp
+ *   variants/<base>/thumb.webp
+ *
+ * Safe to call repeatedly — existing variant files are skipped unless force=true.
  * Failures on individual variants are logged but never thrown to the caller,
- * because the original file is still usable.
+ * because the original file is still usable as a fallback.
  */
 export async function processImage(filePath, { force = false } = {}) {
   if (!fs.existsSync(filePath)) {
@@ -35,14 +41,16 @@ export async function processImage(filePath, { force = false } = {}) {
     return { skipped: true, reason: 'unsupported-format' };
   }
 
-  const dir = path.dirname(filePath);
-  const base = path.basename(filePath, ext);
+  const filename = path.basename(filePath);
+  const variantDir = variantsDirFor(filename);
+  fs.mkdirSync(variantDir, { recursive: true });
+
   const generated = [];
   const errors = [];
 
   // Process each variant serially to avoid memory spikes on small containers.
   for (const [name, opts] of Object.entries(VARIANTS)) {
-    const outPath = path.join(dir, `${base}.${name}.webp`);
+    const outPath = path.join(variantDir, `${name}.webp`);
     if (!force && fs.existsSync(outPath)) continue;
 
     try {
@@ -65,7 +73,7 @@ export async function processImage(filePath, { force = false } = {}) {
       generated.push(name);
     } catch (err) {
       errors.push({ variant: name, message: err.message });
-      console.warn(`[imageProcessor] ${base} ${name} failed:`, err.message);
+      console.warn(`[imageProcessor] ${filename} ${name} failed:`, err.message);
     }
   }
 
@@ -73,25 +81,22 @@ export async function processImage(filePath, { force = false } = {}) {
 }
 
 /**
- * Process all images in a directory that don't yet have variants.
- * Used by the one-shot reprocess script and at startup.
+ * Process every image found in the originals directory that does not yet
+ * have a complete variant set. Used by the one-shot reprocess script.
  */
-export async function reprocessDirectory(dir, { force = false } = {}) {
-  if (!fs.existsSync(dir)) return { processed: 0, total: 0 };
+export async function reprocessAll({ force = false } = {}) {
+  if (!fs.existsSync(originalsDir)) return { processed: 0, total: 0 };
 
-  const entries = fs.readdirSync(dir, { withFileTypes: true });
+  const entries = fs.readdirSync(originalsDir, { withFileTypes: true });
   const originals = entries.filter((e) => {
     if (!e.isFile()) return false;
     const ext = path.extname(e.name).toLowerCase();
-    if (!['.jpg', '.jpeg', '.png', '.webp'].includes(ext)) return false;
-    // Skip files that are themselves variants (foo.hero.webp etc)
-    const base = path.basename(e.name, ext);
-    return !/\.(hero|mobile|card|thumb)$/.test(base);
+    return ['.jpg', '.jpeg', '.png', '.webp'].includes(ext);
   });
 
   let processed = 0;
   for (const entry of originals) {
-    const full = path.join(dir, entry.name);
+    const full = path.join(originalsDir, entry.name);
     const res = await processImage(full, { force });
     if (!res.skipped && res.generated?.length) processed += 1;
   }

@@ -12,6 +12,23 @@ function resolveUploadsDir() {
 }
 
 export const uploadsDir = resolveUploadsDir();
+export const originalsDir = path.join(uploadsDir, 'originals');
+export const variantsDir = path.join(uploadsDir, 'variants');
+
+// Ensure structure exists at module load — cheap and idempotent.
+fs.mkdirSync(originalsDir, { recursive: true });
+fs.mkdirSync(variantsDir, { recursive: true });
+
+/**
+ * For an original filename like "abc.jpg", returns the per-image variant
+ * subdirectory path: ".../uploads/variants/abc/".
+ * The directory is NOT created here — callers do that when writing.
+ */
+export function variantsDirFor(originalFilename) {
+  const ext = path.extname(originalFilename);
+  const base = path.basename(originalFilename, ext);
+  return path.join(variantsDir, base);
+}
 
 export function syncLegacyUploads() {
   const legacyDir = path.resolve(process.cwd(), 'backend/public/uploads');

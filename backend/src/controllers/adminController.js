@@ -6,14 +6,14 @@ import multer from 'multer';
 import path from 'path';
 import fs from 'fs';
 import { randomUUID } from 'crypto';
-import { uploadsDir } from '../utils/uploads.js';
+import { uploadsDir, originalsDir } from '../utils/uploads.js';
 import { processImage } from '../utils/imageProcessor.js';
 
-fs.mkdirSync(uploadsDir, { recursive: true });
+fs.mkdirSync(originalsDir, { recursive: true });
 
 const upload = multer({
   storage: multer.diskStorage({
-    destination: (_req, _file, cb) => cb(null, uploadsDir),
+    destination: (_req, _file, cb) => cb(null, originalsDir),
     filename: (_req, file, cb) => {
       const ext = path.extname(file.originalname || '').toLowerCase();
       cb(null, `${Date.now()}-${randomUUID()}${ext}`);
@@ -225,12 +225,13 @@ export async function uploadMedia(req, res) {
   upload(req, res, async (err) => {
     if (err) return res.status(400).json({ error: err.message || 'Erro no upload.' });
     if (!req.file) return res.status(400).json({ error: 'Arquivo obrigatório.' });
-    const url = `/uploads/${req.file.filename}`;
-    const filePath = path.join(uploadsDir, req.file.filename);
+    const url = `/uploads/originals/${req.file.filename}`;
+    const filePath = path.join(originalsDir, req.file.filename);
 
-    // Generate responsive WebP variants. We await so the response only goes
-    // out once variants exist — that way the frontend never gets a 404 trying
-    // to load them. If sharp fails, the original URL still works.
+    // Generate responsive WebP variants (written to /uploads/variants/<base>/).
+    // We await so the response only returns once variants exist — that way
+    // the frontend never gets a 404 trying to load them. If sharp fails the
+    // original URL still works as a fallback.
     try {
       const result = await processImage(filePath);
       if (result.errors?.length) {
