@@ -37,6 +37,7 @@ const SETTINGS_KEYS = [
   'secretary_hours', 'maps_url',
   'hero_eyebrow', 'hero_title', 'hero_subtitle', 'hero_image_url', 'hero_primary_label',
   'hero_primary_url', 'hero_secondary_label', 'hero_secondary_url',
+  'daily_message',
   'home_quick_title', 'home_mission_eyebrow', 'home_mission_title', 'home_mission_text',
   'home_mission_primary_label', 'home_mission_primary_url', 'home_mission_secondary_label',
   'home_mission_secondary_url',
@@ -59,6 +60,8 @@ const SETTINGS_KEYS = [
   'voluntario_area_4_icon', 'voluntario_area_4_title', 'voluntario_area_4_desc',
   'obra_social_eyebrow', 'obra_social_title', 'obra_social_subtitle', 'obra_social_image_url',
   'obra_social_mission_title', 'obra_social_mission_text', 'obra_social_cta_label', 'obra_social_cta_url',
+  'programas_eyebrow', 'programas_title', 'programas_subtitle', 'programas_image_url',
+  'programas_mission_title', 'programas_mission_text', 'programas_cta_label', 'programas_cta_url',
   'regionais_eyebrow', 'regionais_title', 'regionais_subtitle', 'regionais_image_url',
   'projetos_eyebrow', 'projetos_title', 'projetos_subtitle', 'projetos_image_url',
   'espaco_ores_eyebrow', 'espaco_ores_title', 'espaco_ores_subtitle', 'espaco_ores_image_url',
@@ -199,8 +202,10 @@ export async function updateSettings(req, res) {
       'voluntario_subtitle', 'voluntario_cta_text',
       'voluntario_area_1_desc', 'voluntario_area_2_desc', 'voluntario_area_3_desc', 'voluntario_area_4_desc',
       'obra_social_subtitle', 'obra_social_mission_text',
+      'programas_subtitle', 'programas_mission_text',
       'regionais_subtitle', 'projetos_subtitle', 'espaco_ores_subtitle',
       'news_subtitle', 'contact_subtitle', 'calendar_subtitle',
+      'daily_message',
     ]);
 
     for (const key of SETTINGS_KEYS) {
