@@ -8,11 +8,14 @@ export default function ObraSocial() {
   const { data } = useFetch('/social');
   const { data: siteInfo } = useFetch('/site-info');
   const s = siteInfo || {};
+  // Respect explicit empty strings — if the admin cleared a field on purpose,
+  // do not silently restore old/default text. Only fall back to the legacy
+  // key or the default when the new key has never been set at all.
   const setting = (primaryKey, fallbackKey, defaultValue = '') => {
     const primary = s?.[primaryKey];
-    if (primary !== undefined && primary !== null && String(primary).trim() !== '') return primary;
+    if (primary !== undefined && primary !== null) return primary;
     const fallback = s?.[fallbackKey];
-    if (fallback !== undefined && fallback !== null && String(fallback).trim() !== '') return fallback;
+    if (fallback !== undefined && fallback !== null) return fallback;
     return defaultValue;
   };
   const services = data?.services || [];

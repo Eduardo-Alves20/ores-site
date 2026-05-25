@@ -22,12 +22,21 @@ const HEADER_KEYS = {
   'Calendário de Eventos': 'calendar',
 };
 
+// Use the DB value when the admin has touched the key (including explicitly
+// clearing it to ""). Only fall back to the prop default when the key has
+// never been set at all (undefined / null).
+function pick(siteData, key, fallback) {
+  if (!key) return fallback;
+  const v = siteData?.[key];
+  return v === undefined || v === null ? fallback : v;
+}
+
 export default function PageHeader({ eyebrow, title, subtitle, headerKey, imageUrl, children }) {
   const { data } = useFetch('/site-info');
   const prefix = headerKey || HEADER_KEYS[title];
-  const e = prefix ? data?.[`${prefix}_eyebrow`] || eyebrow : eyebrow;
-  const t = prefix ? data?.[`${prefix}_title`] || title : title;
-  const s = prefix ? data?.[`${prefix}_subtitle`] || subtitle : subtitle;
+  const e = pick(data, prefix && `${prefix}_eyebrow`, eyebrow);
+  const t = pick(data, prefix && `${prefix}_title`, title);
+  const s = pick(data, prefix && `${prefix}_subtitle`, subtitle);
   const image = normalizeMediaUrl(imageUrl || (prefix ? data?.[`${prefix}_image_url`] : null));
   const [imageFailed, setImageFailed] = useState(false);
   const showImage = image && !imageFailed;
@@ -63,7 +72,7 @@ export default function PageHeader({ eyebrow, title, subtitle, headerKey, imageU
       <div style={{ position: 'absolute', top: -40, right: -40, width: 180, height: 180, borderRadius: '50%', border: '1px solid rgba(255,255,255,.025)' }} />
       <div style={{ maxWidth: 1200, margin: '0 auto', position: 'relative', textAlign: 'center' }}>
         {e && <div style={{ fontSize: 11, fontWeight: 600, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--gold-light)', marginBottom: 16 }}>{e}</div>}
-        <h1 style={{ fontFamily: 'Montserrat,sans-serif', fontSize: 'clamp(30px,5vw,52px)', fontWeight: 700, color: '#fff', textShadow: '0 2px 12px rgba(0,0,0,.38)', marginBottom: s ? 16 : 0 }}>{t}</h1>
+        {t && <h1 style={{ fontFamily: 'Montserrat,sans-serif', fontSize: 'clamp(30px,5vw,52px)', fontWeight: 700, color: '#fff', textShadow: '0 2px 12px rgba(0,0,0,.38)', marginBottom: s ? 16 : 0 }}>{t}</h1>}
         {s && (
           <RichTextContent
             html={s}
