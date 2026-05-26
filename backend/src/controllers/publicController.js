@@ -109,6 +109,14 @@ export async function getProjetoSlides(_req, res) {
   return res.json(slides);
 }
 
+export async function getProgramSlides(_req, res) {
+  const slides = await safeQuery(
+    `SELECT id, title, subtitle, image_url, display_order
+     FROM program_slides WHERE active = 1 ORDER BY display_order, id`
+  );
+  return res.json(slides);
+}
+
 export async function getRegionais(_req, res) {
   const regionais = await safeQuery(`SELECT * FROM regional_units WHERE active = 1 ORDER BY display_order`);
   return res.json(regionais);

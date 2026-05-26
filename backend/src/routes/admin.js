@@ -94,6 +94,12 @@ router.post('/projeto-slides', adm.createPastoralSlide);
 router.put('/projeto-slides/:id', adm.updatePastoralSlide);
 router.delete('/projeto-slides/:id', adm.deletePastoralSlide);
 
+// ── Program slides (Programas Sociais carousel) ───────────────────────────────
+router.get('/program-slides', adm.listProgramSlides);
+router.post('/program-slides', adm.createProgramSlide);
+router.put('/program-slides/:id', adm.updateProgramSlide);
+router.delete('/program-slides/:id', adm.deleteProgramSlide);
+
 // ── Facilities (Espaço ORES) ──────────────────────────────────────────────────
 router.get('/facilities', adm.listFacilities);
 router.post('/facilities', adm.createFacility);

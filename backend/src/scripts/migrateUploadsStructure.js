@@ -71,7 +71,7 @@ async function migrateFiles() {
 }
 
 async function migrateDb() {
-  const tables = ['hero_slides', 'pastoral_slides', 'pastorals', 'news', 'regional_units'];
+  const tables = ['hero_slides', 'pastoral_slides', 'program_slides', 'pastorals', 'news', 'regional_units'];
   let updated = 0;
 
   for (const table of tables) {

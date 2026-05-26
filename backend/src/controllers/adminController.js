@@ -450,6 +450,33 @@ export async function deletePastoralSlide(req, res) {
   return deleteRecord(req, res, 'pastoral_slides', parseInt(req.params.id));
 }
 
+// ── Program slides (Programas Sociais carousel) ──────────────────────────────
+export async function listProgramSlides(req, res) {
+  return res.json(await list('program_slides', 'display_order, id'));
+}
+
+export async function createProgramSlide(req, res) {
+  try {
+    const { title, subtitle, image_url, display_order, active } = req.body;
+    const [result] = await pool.execute(
+      `INSERT INTO program_slides (title, subtitle, image_url, display_order, active) VALUES (?, ?, ?, ?, ?)`,
+      [sanitizeText(title), sanitizeText(subtitle), sanitizeText(image_url), display_order || 0, active === undefined ? 1 : Number(active) ? 1 : 0]
+    );
+    await auditLog(req.adminUser.id, 'CREATE_PROGRAM_SLIDE', 'program_slides', result.insertId, null, req.body, req.ip);
+    return res.status(201).json({ id: result.insertId });
+  } catch (err) {
+    return res.status(500).json({ error: 'Erro interno.' });
+  }
+}
+
+export async function updateProgramSlide(req, res) {
+  return updateRecord(req, res, 'program_slides', ['title', 'subtitle', 'image_url', 'display_order', 'active'], parseInt(req.params.id));
+}
+
+export async function deleteProgramSlide(req, res) {
+  return deleteRecord(req, res, 'program_slides', parseInt(req.params.id));
+}
+
 // ── Facilities (Espaço ORES) ──────────────────────────────────────────────────
 export async function listFacilities(req, res) {
   return res.json(await list('facilities', 'display_order'));
