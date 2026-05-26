@@ -34,7 +34,6 @@ import AdminUsers from './pages/admin/AdminUsers';
 import AdminAudit from './pages/admin/AdminAudit';
 import AdminDoacoes from './pages/admin/AdminDoacoes';
 import Admin2FA from './pages/admin/Admin2FA';
-import AdminProgramSlides from './pages/admin/AdminProgramSlides';
 
 function PublicLayout() {
   const { data: siteInfo } = useFetch('/site-info');
@@ -79,7 +78,6 @@ export default function App() {
             <Route path="espaco" element={<AdminEspaco />} />
             <Route path="courses" element={<AdminCourses />} />
             <Route path="services" element={<AdminServices />} />
-            <Route path="program-slides" element={<AdminProgramSlides />} />
             <Route path="messages" element={<AdminMessages />} />
             <Route path="users" element={<AdminUsers />} />
             <Route path="audit" element={<AdminAudit />} />
