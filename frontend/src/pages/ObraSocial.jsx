@@ -1,26 +1,14 @@
-﻿import { useState, useEffect } from 'react';
-import { useFetch } from '../hooks/useFetch';
+﻿import { useFetch } from '../hooks/useFetch';
 import PageHeader from '../components/PageHeader';
 import Reveal from '../components/Reveal';
 import RichTextContent from '../components/RichTextContent';
-import ResponsiveImage from '../components/ResponsiveImage';
+import ServiceCardGallery from '../components/ServiceCardGallery';
 import { Link } from 'react-router-dom';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
 
 export default function ObraSocial() {
   const { data } = useFetch('/social');
   const { data: siteInfo } = useFetch('/site-info');
-  const { data: programSlides } = useFetch('/program-slides');
   const s = siteInfo || {};
-  const slides = Array.isArray(programSlides) ? programSlides : [];
-  const [slideIdx, setSlideIdx] = useState(0);
-
-  // Auto-advance the carousel every 5.5s when there's more than one slide
-  useEffect(() => {
-    if (slides.length < 2) return undefined;
-    const t = setTimeout(() => setSlideIdx((i) => (i + 1) % slides.length), 5500);
-    return () => clearTimeout(t);
-  }, [slideIdx, slides.length]);
   // Respect explicit empty strings — if the admin cleared a field on purpose,
   // do not silently restore old/default text. Only fall back to the legacy
   // key or the default when the new key has never been set at all.
@@ -42,52 +30,6 @@ export default function ObraSocial() {
         subtitle={setting('programas_subtitle', 'obra_social_subtitle', 'Reintegracao, capacitacao e apoio para familias em situacao de vulnerabilidade.')}
         imageUrl={setting('programas_image_url', 'obra_social_image_url')}
       />
-
-      {/* Programa gallery — single image when there's one slide, auto-rotating carousel otherwise */}
-      {slides.length > 0 && (
-        <section style={{ padding:'56px 24px 0', maxWidth:1200, margin:'0 auto' }}>
-          <Reveal>
-            <div style={{ position:'relative', borderRadius:20, overflow:'hidden', aspectRatio:'16/9', background:'#0d1c3a', boxShadow:'0 10px 40px rgba(13,28,58,.18)' }}>
-              {slides.map((slide, i) => (
-                <div key={slide.id} style={{ position:'absolute', inset:0, opacity: i === slideIdx ? 1 : 0, transition:'opacity .8s ease' }}>
-                  <ResponsiveImage
-                    src={slide.image_url}
-                    kind="hero"
-                    alt={slide.title || ''}
-                    eager={i === 0}
-                    style={{ width:'100%', height:'100%', objectFit:'cover', display:'block' }}
-                  />
-                  {(slide.title || slide.subtitle) && (
-                    <div style={{ position:'absolute', left:0, right:0, bottom:0, padding:'42px 36px 28px', background:'linear-gradient(to top, rgba(13,28,58,.85), transparent)' }}>
-                      {slide.title && <h3 style={{ fontFamily:'Montserrat,sans-serif', fontWeight:800, fontSize:'clamp(20px,3vw,28px)', color:'#fff', marginBottom: slide.subtitle ? 6 : 0 }}>{slide.title}</h3>}
-                      {slide.subtitle && <p style={{ fontSize:14, color:'rgba(255,255,255,.85)', maxWidth:640 }}>{slide.subtitle}</p>}
-                    </div>
-                  )}
-                </div>
-              ))}
-
-              {slides.length > 1 && (
-                <>
-                  <button onClick={() => setSlideIdx((slideIdx - 1 + slides.length) % slides.length)} aria-label="Slide anterior"
-                    style={{ position:'absolute', left:14, top:'50%', transform:'translateY(-50%)', width:42, height:42, borderRadius:'50%', background:'rgba(255,255,255,.18)', backdropFilter:'blur(6px)', border:'1px solid rgba(255,255,255,.2)', color:'#fff', display:'flex', alignItems:'center', justifyContent:'center', cursor:'pointer' }}>
-                    <ChevronLeft size={20} />
-                  </button>
-                  <button onClick={() => setSlideIdx((slideIdx + 1) % slides.length)} aria-label="Próximo slide"
-                    style={{ position:'absolute', right:14, top:'50%', transform:'translateY(-50%)', width:42, height:42, borderRadius:'50%', background:'rgba(255,255,255,.18)', backdropFilter:'blur(6px)', border:'1px solid rgba(255,255,255,.2)', color:'#fff', display:'flex', alignItems:'center', justifyContent:'center', cursor:'pointer' }}>
-                    <ChevronRight size={20} />
-                  </button>
-                  <div style={{ position:'absolute', bottom:14, left:'50%', transform:'translateX(-50%)', display:'flex', gap:8 }}>
-                    {slides.map((_, i) => (
-                      <button key={i} onClick={() => setSlideIdx(i)} aria-label={`Ir para slide ${i + 1}`}
-                        style={{ width: i === slideIdx ? 24 : 8, height:8, borderRadius:8, background: i === slideIdx ? '#fff' : 'rgba(255,255,255,.4)', border:'none', transition:'all .3s', cursor:'pointer' }} />
-                    ))}
-                  </div>
-                </>
-              )}
-            </div>
-          </Reveal>
-        </section>
-      )}
 
       <section style={{ padding:'72px 24px', maxWidth:1200, margin:'0 auto' }}>
         <Reveal>
@@ -115,15 +57,18 @@ export default function ObraSocial() {
             <Reveal>
               <h2 style={{ fontFamily:'Montserrat,sans-serif', fontSize:24, fontWeight:700, color:'var(--navy)', marginBottom:24 }}>Serviços Oferecidos</h2>
             </Reveal>
-            <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fill,minmax(220px,1fr))', gap:20, marginBottom:56 }}>
+            <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fill,minmax(280px,1fr))', gap:20, marginBottom:56 }}>
               {services.map((sv, i) => (
                 <Reveal key={sv.id} delay={i * 60}>
-                  <div style={{ background:'#fff', borderRadius:12, border:'1px solid var(--border)', padding:'24px', transition:'transform .2s,box-shadow .2s' }}
+                  <div style={{ background:'#fff', borderRadius:12, border:'1px solid var(--border)', overflow:'hidden', transition:'transform .2s,box-shadow .2s', height:'100%', display:'flex', flexDirection:'column' }}
                     onMouseEnter={e => { e.currentTarget.style.transform='translateY(-2px)'; e.currentTarget.style.boxShadow='0 6px 20px rgba(0,0,0,.07)'; }}
                     onMouseLeave={e => { e.currentTarget.style.transform=''; e.currentTarget.style.boxShadow=''; }}>
-                    <div style={{ fontSize:36, marginBottom:12 }}>{sv.icon}</div>
-                    <h3 style={{ fontFamily:'Montserrat,sans-serif', fontSize:17, fontWeight:700, color:'var(--navy)', marginBottom:8 }}>{sv.title}</h3>
-                    <p style={{ fontSize:13, color:'var(--text-mid)', lineHeight:1.65 }}>{sv.description}</p>
+                    <ServiceCardGallery images={sv.images} alt={sv.title} />
+                    <div style={{ padding:'24px', flex:1 }}>
+                      {sv.icon && <div style={{ fontSize:36, marginBottom:12 }}>{sv.icon}</div>}
+                      <h3 style={{ fontFamily:'Montserrat,sans-serif', fontSize:17, fontWeight:700, color:'var(--navy)', marginBottom:8 }}>{sv.title}</h3>
+                      <p style={{ fontSize:13, color:'var(--text-mid)', lineHeight:1.65 }}>{sv.description}</p>
+                    </div>
                   </div>
                 </Reveal>
               ))}

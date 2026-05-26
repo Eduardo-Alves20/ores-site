@@ -179,6 +179,7 @@ const migrations = [
     title VARCHAR(200) NOT NULL,
     description TEXT,
     icon VARCHAR(10),
+    images JSON,
     active TINYINT(1) DEFAULT 1,
     display_order INT DEFAULT 0,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -253,6 +254,7 @@ const alterColumnMigrations = [
   { table: 'news', column: 'external_url', definition: 'VARCHAR(700) AFTER image_url' },
   { table: 'admin_users', column: 'totp_secret', definition: 'VARCHAR(255) NULL AFTER password_hash' },
   { table: 'admin_users', column: 'totp_enabled', definition: 'TINYINT(1) DEFAULT 0 AFTER totp_secret' },
+  { table: 'social_services', column: 'images', definition: 'JSON NULL AFTER icon' },
 ];
 
 async function columnExists(conn, table, column) {

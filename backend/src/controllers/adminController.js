@@ -536,12 +536,41 @@ export async function listServices(req, res) {
   return res.json(await list('social_services', 'display_order'));
 }
 
+// Normalize the `images` field to a clean array of URL strings.
+// Accepts: array | JSON string | single string | null/undefined.
+function normalizeImagesField(input) {
+  if (input === undefined || input === null) return null;
+  let arr = input;
+  if (typeof arr === 'string') {
+    const trimmed = arr.trim();
+    if (!trimmed) return null;
+    try {
+      arr = JSON.parse(trimmed);
+    } catch {
+      arr = [trimmed];
+    }
+  }
+  if (!Array.isArray(arr)) return null;
+  const clean = arr
+    .filter((v) => typeof v === 'string' && v.trim())
+    .map((v) => v.trim())
+    .slice(0, 20); // hard cap
+  return clean;
+}
+
 export async function createService(req, res) {
   try {
     const { title, description, icon, display_order } = req.body;
+    const images = normalizeImagesField(req.body.images);
     const [result] = await pool.execute(
-      `INSERT INTO social_services (title, description, icon, display_order) VALUES (?, ?, ?, ?)`,
-      [sanitizeText(title), sanitizeRichText(description), sanitizeText(icon), display_order || 0]
+      `INSERT INTO social_services (title, description, icon, images, display_order) VALUES (?, ?, ?, ?, ?)`,
+      [
+        sanitizeText(title),
+        sanitizeRichText(description),
+        sanitizeText(icon),
+        images === null ? null : JSON.stringify(images),
+        display_order || 0,
+      ]
     );
     await auditLog(req.adminUser.id, 'CREATE_SERVICE', 'social_services', result.insertId, null, req.body, req.ip);
     return res.status(201).json({ id: result.insertId });
@@ -551,7 +580,52 @@ export async function createService(req, res) {
 }
 
 export async function updateService(req, res) {
-  return updateRecord(req, res, 'social_services', ['title', 'description', 'icon', 'display_order', 'active'], parseInt(req.params.id));
+  // The generic updateRecord helper sanitizes strings; we need bespoke
+  // handling for the `images` JSON column so the array survives.
+  const id = parseInt(req.params.id);
+  if (!Number.isFinite(id)) return res.status(400).json({ error: 'ID inválido.' });
+
+  try {
+    const old = await queryOne('SELECT * FROM social_services WHERE id = ?', [id]);
+    if (!old) return res.status(404).json({ error: 'Registro não encontrado.' });
+
+    const updates = [];
+    const values = [];
+
+    for (const f of ['title', 'icon']) {
+      if (req.body[f] !== undefined) {
+        updates.push(`\`${f}\` = ?`);
+        values.push(sanitizeText(String(req.body[f])));
+      }
+    }
+    if (req.body.description !== undefined) {
+      updates.push('`description` = ?');
+      values.push(sanitizeRichText(String(req.body.description)));
+    }
+    for (const f of ['display_order', 'active']) {
+      if (req.body[f] !== undefined) {
+        updates.push(`\`${f}\` = ?`);
+        values.push(Number(req.body[f]) || 0);
+      }
+    }
+    if (req.body.images !== undefined) {
+      const images = normalizeImagesField(req.body.images);
+      updates.push('`images` = ?');
+      values.push(images === null ? null : JSON.stringify(images));
+    }
+
+    if (!updates.length) return res.status(400).json({ error: 'Nenhum campo para atualizar.' });
+
+    values.push(id);
+    await query(`UPDATE social_services SET ${updates.join(', ')} WHERE id = ?`, values);
+    await auditLog(req.adminUser.id, 'UPDATE_SOCIAL_SERVICES', 'social_services', id, old, req.body, req.ip);
+
+    const updated = await queryOne('SELECT * FROM social_services WHERE id = ?', [id]);
+    return res.json(updated);
+  } catch (err) {
+    console.error('updateService error:', err);
+    return res.status(500).json({ error: 'Erro interno.' });
+  }
 }
 
 export async function deleteService(req, res) {
