@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
 import ResponsiveImage from './ResponsiveImage';
 
 /**
@@ -55,30 +54,28 @@ export default function ServiceCardGallery({ images, alt = '' }) {
 
       {list.length > 1 && (
         <>
+          {/* Invisible click zones — left half goes back, right half advances */}
           <button
             type="button"
             onClick={() => setIdx((idx - 1 + list.length) % list.length)}
             aria-label="Foto anterior"
-            style={{ position: 'absolute', left: 8, top: '50%', transform: 'translateY(-50%)', width: 30, height: 30, borderRadius: '50%', background: 'rgba(255,255,255,.85)', border: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--navy)', cursor: 'pointer', boxShadow: '0 2px 8px rgba(0,0,0,.15)' }}
-          >
-            <ChevronLeft size={16} />
-          </button>
+            style={{ position: 'absolute', left: 0, top: 0, bottom: 30, width: '40%', background: 'transparent', border: 'none', cursor: 'pointer', padding: 0 }}
+          />
           <button
             type="button"
             onClick={() => setIdx((idx + 1) % list.length)}
             aria-label="Próxima foto"
-            style={{ position: 'absolute', right: 8, top: '50%', transform: 'translateY(-50%)', width: 30, height: 30, borderRadius: '50%', background: 'rgba(255,255,255,.85)', border: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--navy)', cursor: 'pointer', boxShadow: '0 2px 8px rgba(0,0,0,.15)' }}
-          >
-            <ChevronRight size={16} />
-          </button>
-          <div style={{ position: 'absolute', bottom: 8, left: '50%', transform: 'translateX(-50%)', display: 'flex', gap: 5 }}>
+            style={{ position: 'absolute', right: 0, top: 0, bottom: 30, width: '40%', background: 'transparent', border: 'none', cursor: 'pointer', padding: 0 }}
+          />
+          {/* Dots: visual indicator + manual nav */}
+          <div style={{ position: 'absolute', bottom: 8, left: '50%', transform: 'translateX(-50%)', display: 'flex', gap: 5, zIndex: 1 }}>
             {list.map((_, i) => (
               <button
                 key={i}
                 type="button"
                 onClick={() => setIdx(i)}
                 aria-label={`Foto ${i + 1}`}
-                style={{ width: i === idx ? 18 : 6, height: 6, borderRadius: 6, background: i === idx ? '#fff' : 'rgba(255,255,255,.55)', border: 'none', transition: 'all .25s', cursor: 'pointer', padding: 0 }}
+                style={{ width: i === idx ? 18 : 6, height: 6, borderRadius: 6, background: i === idx ? '#fff' : 'rgba(255,255,255,.55)', border: 'none', transition: 'all .25s', cursor: 'pointer', padding: 0, boxShadow: '0 1px 4px rgba(0,0,0,.3)' }}
               />
             ))}
           </div>
