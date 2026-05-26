@@ -3,6 +3,7 @@ import { Link, useLocation } from 'react-router-dom';
 import { Menu, X, ChevronDown } from 'lucide-react';
 import { getSiteName } from '../lib/branding';
 import { normalizeMediaUrl } from '../lib/media';
+import LanguageSwitcher from './LanguageSwitcher';
 
 function isEnabled(s, key) { return s?.[key] !== '0'; }
 function label(s, key, fallback) { return s?.[key] || fallback; }
@@ -116,6 +117,10 @@ export default function Navbar({ siteInfo = {} }) {
               )}
             </div>
           ))}
+        </div>
+
+        <div className="navbar-lang-switcher" style={{ marginRight: 10 }}>
+          <LanguageSwitcher dark={!solid} />
         </div>
 
         <Link to="/doe" className="navbar-doe-btn" style={{
