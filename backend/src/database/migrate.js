@@ -128,6 +128,18 @@ const migrations = [
     INDEX idx_active_order (active, display_order)
   ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci`,
 
+  // Background music tracks — admin uploads audio files, public site plays them
+  `CREATE TABLE IF NOT EXISTS music_tracks (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    title VARCHAR(200),
+    file_url VARCHAR(500) NOT NULL,
+    display_order INT DEFAULT 0,
+    active TINYINT(1) DEFAULT 1,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    INDEX idx_active_order (active, display_order)
+  ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci`,
+
   // Social Programs gallery slides (carousel on /programas page)
   `CREATE TABLE IF NOT EXISTS program_slides (
     id INT AUTO_INCREMENT PRIMARY KEY,

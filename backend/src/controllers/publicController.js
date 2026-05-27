@@ -117,6 +117,25 @@ export async function getProgramSlides(_req, res) {
   return res.json(slides);
 }
 
+export async function getMusic(_req, res) {
+  // Pull music-related settings inline so the player only needs one request.
+  const settingRows = await safeQuery(
+    `SELECT \`key\`, value FROM site_settings
+     WHERE \`key\` IN ('music_enabled', 'music_default_volume', 'music_autoplay')`
+  );
+  const settings = Object.fromEntries(settingRows.map((r) => [r.key, r.value]));
+  const tracks = await safeQuery(
+    `SELECT id, title, file_url, display_order
+     FROM music_tracks WHERE active = 1 ORDER BY display_order, id`
+  );
+  return res.json({
+    enabled: settings.music_enabled === '1',
+    autoplay: settings.music_autoplay !== '0', // default true
+    defaultVolume: Math.max(0, Math.min(100, Number(settings.music_default_volume) || 35)),
+    tracks,
+  });
+}
+
 export async function getRegionais(_req, res) {
   const regionais = await safeQuery(`SELECT * FROM regional_units WHERE active = 1 ORDER BY display_order`);
   return res.json(regionais);

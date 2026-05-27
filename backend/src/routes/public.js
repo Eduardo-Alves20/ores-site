@@ -15,6 +15,7 @@ router.get('/news/:slug', pub.getNewsItem);
 router.get('/projetos', pub.getProjetos);
 router.get('/projeto-slides', pub.getProjetoSlides);
 router.get('/program-slides', pub.getProgramSlides);
+router.get('/music', pub.getMusic);
 router.get('/regionais', pub.getRegionais);
 router.get('/facilities', pub.getFacilities);
 router.get('/social', pub.getSocialServices);

@@ -14,10 +14,12 @@ function resolveUploadsDir() {
 export const uploadsDir = resolveUploadsDir();
 export const originalsDir = path.join(uploadsDir, 'originals');
 export const variantsDir = path.join(uploadsDir, 'variants');
+export const audioDir = path.join(uploadsDir, 'audio');
 
 // Ensure structure exists at module load — cheap and idempotent.
 fs.mkdirSync(originalsDir, { recursive: true });
 fs.mkdirSync(variantsDir, { recursive: true });
+fs.mkdirSync(audioDir, { recursive: true });
 
 /**
  * For an original filename like "abc.jpg", returns the per-image variant

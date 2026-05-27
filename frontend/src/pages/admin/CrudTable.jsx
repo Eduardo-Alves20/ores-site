@@ -4,6 +4,7 @@ import api from '../../lib/api';
 import { useFetch } from '../../hooks/useFetch';
 import MediaField from './MediaField';
 import MultiImageField from './MultiImageField';
+import AudioField from './AudioField';
 import { useAppAlert } from '../../components/AppAlert';
 import RichTextEditor from '../../components/RichTextEditor';
 
@@ -21,11 +22,12 @@ function Modal({ title, children, onClose }) {
   );
 }
 
-function Field({ label, type='text', value, onChange, options, required, textarea, upload, images, richText }) {
+function Field({ label, type='text', value, onChange, options, required, textarea, upload, images, audio, richText }) {
   const style = { width:'100%', padding:'9px 12px', borderRadius:8, border:'1px solid var(--border)', fontSize:14, outline:'none', fontFamily:'Plus Jakarta Sans,sans-serif', transition:'border-color .2s' };
   const events = { onFocus:e=>e.target.style.borderColor='var(--gold)', onBlur:e=>e.target.style.borderColor='var(--border)' };
   if (upload) return <MediaField label={label} value={value} onChange={onChange} />;
   if (images) return <MultiImageField label={label} value={value} onChange={onChange} />;
+  if (audio) return <AudioField label={label} value={value} onChange={onChange} />;
 
   return (
     <div style={{ marginBottom:14 }}>
@@ -167,7 +169,7 @@ export default function CrudTable({
       {modal && (
         <Modal title={modal==='create'?`Novo ${title}`:`Editar`} onClose={()=>setModal(null)}>
           {fields.map(f => (
-            <Field key={f.key} label={f.label} type={f.type} value={form[f.key]} onChange={v=>set(f.key,v)} options={f.options} required={f.required} textarea={f.textarea} upload={f.upload} images={f.images} richText={f.richText} />
+            <Field key={f.key} label={f.label} type={f.type} value={form[f.key]} onChange={v=>set(f.key,v)} options={f.options} required={f.required} textarea={f.textarea} upload={f.upload} images={f.images} audio={f.audio} richText={f.richText} />
           ))}
           {error && <p style={{ fontSize:13, color:'#dc2626', marginBottom:14 }}>{error}</p>}
           <div style={{ display:'flex', gap:10, justifyContent:'flex-end', paddingTop:8 }}>

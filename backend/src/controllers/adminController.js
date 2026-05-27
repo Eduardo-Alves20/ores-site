@@ -6,7 +6,7 @@ import multer from 'multer';
 import path from 'path';
 import fs from 'fs';
 import { randomUUID } from 'crypto';
-import { uploadsDir, originalsDir } from '../utils/uploads.js';
+import { uploadsDir, originalsDir, audioDir } from '../utils/uploads.js';
 import { processImage } from '../utils/imageProcessor.js';
 
 fs.mkdirSync(originalsDir, { recursive: true });
@@ -68,6 +68,7 @@ const SETTINGS_KEYS = [
   'news_eyebrow', 'news_title', 'news_subtitle', 'news_image_url',
   'contact_eyebrow', 'contact_title', 'contact_subtitle', 'contact_image_url',
   'calendar_eyebrow', 'calendar_title', 'calendar_subtitle', 'calendar_image_url',
+  'music_enabled', 'music_default_volume', 'music_autoplay',
   'programs_image_url', 'courses_image_url', 'projects_image_url', 'regionais_page_image_url',
   'menu_public_home', 'menu_public_sobre', 'menu_public_quem_somos', 'menu_public_regionais',
   'menu_public_projetos', 'menu_public_espaco', 'menu_public_programas', 'menu_public_programas_sobre',
@@ -224,6 +225,36 @@ export async function updateSettings(req, res) {
   } catch (err) {
     return res.status(500).json({ error: 'Erro interno.' });
   }
+}
+
+// ── Audio upload (background music) ──────────────────────────────────────────
+// Separate from uploadMedia because the file filter, size limit, destination
+// and "no sharp processing" make a fused endpoint clumsy.
+const uploadAudioMw = multer({
+  storage: multer.diskStorage({
+    destination: (_req, _file, cb) => cb(null, audioDir),
+    filename: (_req, file, cb) => {
+      const ext = path.extname(file.originalname || '').toLowerCase();
+      cb(null, `${Date.now()}-${randomUUID()}${ext}`);
+    },
+  }),
+  limits: { fileSize: 20 * 1024 * 1024 }, // 20MB — generous for MP3/WAV
+  fileFilter: (_req, file, cb) => {
+    if (!/^audio\/(mpeg|mp3|wav|x-wav|ogg|aac|mp4|webm)$/.test(file.mimetype)) {
+      return cb(new Error('Formato de áudio inválido. Use MP3, WAV, OGG, AAC, M4A.'));
+    }
+    cb(null, true);
+  },
+}).single('file');
+
+export async function uploadAudio(req, res) {
+  uploadAudioMw(req, res, async (err) => {
+    if (err) return res.status(400).json({ error: err.message || 'Erro no upload.' });
+    if (!req.file) return res.status(400).json({ error: 'Arquivo obrigatório.' });
+    const url = `/uploads/audio/${req.file.filename}`;
+    await auditLog(req.adminUser.id, 'UPLOAD_AUDIO', 'uploads', null, null, { url, name: req.file.originalname }, req.ip);
+    return res.status(201).json({ url });
+  });
 }
 
 export async function uploadMedia(req, res) {
@@ -756,5 +787,33 @@ export async function listDonations(req, res) {
   } catch (err) {
     return res.status(500).json({ error: 'Erro interno.' });
   }
+}
+
+// ── Music tracks (background audio) ──────────────────────────────────────────
+export async function listMusicTracks(req, res) {
+  return res.json(await list('music_tracks', 'display_order, id'));
+}
+
+export async function createMusicTrack(req, res) {
+  try {
+    const { title, file_url, display_order, active } = req.body;
+    if (!file_url) return res.status(400).json({ error: 'Arquivo de áudio obrigatório.' });
+    const [result] = await pool.execute(
+      `INSERT INTO music_tracks (title, file_url, display_order, active) VALUES (?, ?, ?, ?)`,
+      [sanitizeText(title || ''), sanitizeText(file_url), Number(display_order) || 0, active === undefined ? 1 : Number(active) ? 1 : 0]
+    );
+    await auditLog(req.adminUser.id, 'CREATE_MUSIC_TRACK', 'music_tracks', result.insertId, null, req.body, req.ip);
+    return res.status(201).json({ id: result.insertId });
+  } catch (err) {
+    return res.status(500).json({ error: 'Erro interno.' });
+  }
+}
+
+export async function updateMusicTrack(req, res) {
+  return updateRecord(req, res, 'music_tracks', ['title', 'file_url', 'display_order', 'active'], parseInt(req.params.id));
+}
+
+export async function deleteMusicTrack(req, res) {
+  return deleteRecord(req, res, 'music_tracks', parseInt(req.params.id));
 }
 

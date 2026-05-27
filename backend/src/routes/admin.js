@@ -45,6 +45,13 @@ router.get('/dashboard', adm.getDashboardStats);
 router.get('/settings', adm.getSettings);
 router.put('/settings', adm.updateSettings);
 router.post('/media', adm.uploadMedia);
+router.post('/audio', adm.uploadAudio);
+
+// Music tracks CRUD
+router.get('/music', adm.listMusicTracks);
+router.post('/music', adm.createMusicTrack);
+router.put('/music/:id', adm.updateMusicTrack);
+router.delete('/music/:id', adm.deleteMusicTrack);
 
 router.get('/hero-slides', adm.listHeroSlides);
 router.post('/hero-slides', [

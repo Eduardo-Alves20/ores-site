@@ -34,6 +34,8 @@ import AdminUsers from './pages/admin/AdminUsers';
 import AdminAudit from './pages/admin/AdminAudit';
 import AdminDoacoes from './pages/admin/AdminDoacoes';
 import Admin2FA from './pages/admin/Admin2FA';
+import AdminMusic from './pages/admin/AdminMusic';
+import MusicPlayer from './components/MusicPlayer';
 
 function PublicLayout() {
   const { data: siteInfo } = useFetch('/site-info');
@@ -44,6 +46,7 @@ function PublicLayout() {
       <Navbar siteInfo={siteInfo || {}} />
       <main style={{ paddingTop: isHome ? 0 : 68, minHeight:'80vh' }}><Outlet /></main>
       <Footer siteInfo={siteInfo || {}} />
+      <MusicPlayer />
     </>
   );
 }
@@ -83,6 +86,7 @@ export default function App() {
             <Route path="audit" element={<AdminAudit />} />
             <Route path="doacoes" element={<AdminDoacoes />} />
             <Route path="2fa" element={<Admin2FA />} />
+            <Route path="music" element={<AdminMusic />} />
           </Route>
           <Route path="/" element={<PublicLayout />}>
             <Route index element={<Home />} />
