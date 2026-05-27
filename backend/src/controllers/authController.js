@@ -10,12 +10,20 @@ import {
   auditLog
 } from '../middleware/auth.js';
 
+// Session cookie tuning:
+//  - sameSite 'lax': prevents CSRF on POST/PUT/DELETE from external origins
+//    but lets the cookie travel on top-level navigations (F5, new tab to the
+//    same site). 'strict' was eating the cookie in those cases.
+//  - 30 days: admin panel is used sporadically; weekly forced re-login was
+//    causing real annoyance with no extra security benefit.
+//  - httpOnly + secure: same as before — JS can't read it, only HTTPS.
+const SESSION_DAYS = 30;
 const COOKIE_OPTS = {
   httpOnly: true,
   secure: process.env.NODE_ENV === 'production',
-  sameSite: 'strict',
+  sameSite: 'lax',
   path: '/api/admin',
-  maxAge: 7 * 24 * 60 * 60 * 1000,
+  maxAge: SESSION_DAYS * 24 * 60 * 60 * 1000,
 };
 
 const EMERGENCY_LOGIN_ENABLED = process.env.NODE_ENV !== 'production' && process.env.ADMIN_EMERGENCY_LOGIN !== 'false';

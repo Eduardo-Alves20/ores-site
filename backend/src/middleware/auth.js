@@ -7,7 +7,11 @@ import { query, queryOne } from '../database/connection.js';
 const ACCESS_SECRET = process.env.JWT_ACCESS_SECRET || 'fallback_access_secret_change_me';
 const REFRESH_SECRET = process.env.JWT_REFRESH_SECRET || 'fallback_refresh_secret_change_me';
 const ACCESS_EXPIRES = process.env.JWT_ACCESS_EXPIRES || '15m';
-const REFRESH_EXPIRES_MS = 7 * 24 * 60 * 60 * 1000;
+// Matches COOKIE_OPTS.maxAge in authController.js
+const REFRESH_EXPIRES_MS = 30 * 24 * 60 * 60 * 1000;
+// Grace window: if a recently-rotated token comes back within this many
+// milliseconds, treat as a network-blip retry rather than token theft.
+const ROTATION_GRACE_MS = 60 * 1000;
 
 // ── Token generation ─────────────────────────────────────────────────────────
 export function generateAccessToken(user) {
@@ -38,31 +42,60 @@ export async function storeRefreshToken(userId, token, family, req) {
 }
 
 // ── Rotate refresh token ─────────────────────────────────────────────────────
+// Two scenarios produce a "used" token coming back from the client:
+//   1. Network/browser blip during the previous rotation: the server already
+//      marked the token used and issued a new one, but the response never
+//      reached the browser, so the cookie still has the old token. This is
+//      the COMMON case and must NOT log the user out.
+//   2. Actual token theft: an attacker captured a previous token and is
+//      replaying it after the legitimate client already rotated successfully.
+//      Here we should burn the whole family.
+//
+// We disambiguate by time: if the used token was created within
+// ROTATION_GRACE_MS, scenario 1 is overwhelmingly likely → forgive it and
+// rotate again from the latest active token in the same family.
 export async function rotateRefreshToken(oldToken, req) {
   const hash = hashToken(oldToken);
+
+  // Happy path: the token is still active.
   const existing = await queryOne(
     `SELECT * FROM refresh_tokens WHERE token_hash = ? AND used = 0 AND expires_at > NOW()`,
     [hash]
   );
 
-  if (!existing) {
-    // Detect reuse: invalidate entire family (token theft)
-    const stolen = await queryOne(`SELECT family FROM refresh_tokens WHERE token_hash = ?`, [hash]);
-    if (stolen) {
-      await query(`UPDATE refresh_tokens SET used = 1 WHERE family = ?`, [stolen.family]);
-    }
-    return null;
+  if (existing) {
+    await query(`UPDATE refresh_tokens SET used = 1 WHERE id = ?`, [existing.id]);
+    const newToken = generateRefreshToken();
+    await storeRefreshToken(existing.user_id, newToken, existing.family, req);
+    const user = await queryOne(`SELECT id, email, role FROM admin_users WHERE id = ?`, [existing.user_id]);
+    return { user, newToken };
   }
 
-  // Mark old token as used
-  await query(`UPDATE refresh_tokens SET used = 1 WHERE id = ?`, [existing.id]);
+  // Token used (or unknown). Grace path: was it used very recently?
+  const recent = await queryOne(
+    `SELECT * FROM refresh_tokens
+     WHERE token_hash = ? AND used = 1
+       AND created_at > (NOW() - INTERVAL ? SECOND)
+       AND expires_at > NOW()`,
+    [hash, Math.ceil(ROTATION_GRACE_MS / 1000)]
+  );
 
-  // Issue new token in same family
-  const newToken = generateRefreshToken();
-  await storeRefreshToken(existing.user_id, newToken, existing.family, req);
+  if (recent) {
+    // The previous response likely got lost on the wire. Issue a new active
+    // token in the same family and let the client carry on. We do NOT mark
+    // any extra tokens used.
+    const newToken = generateRefreshToken();
+    await storeRefreshToken(recent.user_id, newToken, recent.family, req);
+    const user = await queryOne(`SELECT id, email, role FROM admin_users WHERE id = ?`, [recent.user_id]);
+    return { user, newToken };
+  }
 
-  const user = await queryOne(`SELECT id, email, role FROM admin_users WHERE id = ?`, [existing.user_id]);
-  return { user, newToken };
+  // Definitive reuse / unknown token: burn the family.
+  const stolen = await queryOne(`SELECT family FROM refresh_tokens WHERE token_hash = ?`, [hash]);
+  if (stolen) {
+    await query(`UPDATE refresh_tokens SET used = 1 WHERE family = ?`, [stolen.family]);
+  }
+  return null;
 }
 
 // ── Revoke all tokens for user ───────────────────────────────────────────────
