@@ -4,8 +4,14 @@ import Reveal from '../components/Reveal';
 import RichTextContent from '../components/RichTextContent';
 import ResponsiveImage from '../components/ResponsiveImage';
 import { MapPin, Phone, Calendar, Clock } from 'lucide-react';
+import { useSeo } from '../hooks/useSeo';
 
 export default function Projetos() {
+  useSeo({
+    title: 'Projetos e Iniciativas',
+    description: 'Conheça os projetos sociais da ORES: iniciativas que transformam realidades através de acolhimento, educação e cidadania.',
+    keywords: 'ORES projetos, projetos sociais, iniciativas ONG, projetos comunitários',
+  });
   const { data: projetos, loading } = useFetch('/projetos');
   const { data: slides } = useFetch('/projeto-slides');
   const { data: siteInfo } = useFetch('/site-info');

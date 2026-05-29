@@ -8,6 +8,7 @@ import { parseDateOnly } from '../lib/date';
 import { useAppAlert } from '../components/AppAlert';
 import { normalizeMediaUrl } from '../lib/media';
 import ResponsiveImage from '../components/ResponsiveImage';
+import { useSeo } from '../hooks/useSeo';
 
 const MONTHS_PT = ['JAN','FEV','MAR','ABR','MAI','JUN','JUL','AGO','SET','OUT','NOV','DEZ'];
 
@@ -34,6 +35,12 @@ function Counter({ target, suffix = '' }) {
 }
 
 export default function Home() {
+  useSeo({
+    suffix: false,
+    title: 'ORES - ONG Organização de Reintegração e Estímulo Social',
+    description: 'A ORES é uma ONG brasileira que promove acolhimento, inclusão e reintegração social. Conheça nossos projetos, programas sociais e como você pode ajudar fazendo parte da transformação de vidas.',
+    keywords: 'ORES, ONG ORES, oresong, ong oresong, Organização de Reintegração, ONG Brasil, ONG Rio de Janeiro, acolhimento social, doação ONG, voluntariado',
+  });
   const { data } = useFetch('/home');
   const { notify } = useAppAlert();
   const settings = data?.settings || {};

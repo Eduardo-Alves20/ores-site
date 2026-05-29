@@ -1,4 +1,5 @@
 import { Heart, Globe, Users, ShieldCheck } from 'lucide-react';
+import { useSeo } from '../hooks/useSeo';
 
 const PAYPAL_BUTTON_ID = 'WPZWP2RXDTYDC';
 
@@ -16,6 +17,11 @@ const tiers = [
 ];
 
 export default function Doe() {
+  useSeo({
+    title: 'Doe agora',
+    description: 'Faça uma doação para a ORES e ajude a transformar vidas. Aceitamos doações via PIX, cartão de crédito e PayPal (Brasil e exterior).',
+    keywords: 'doar ORES, doação ONG, doação PIX, doação cartão, doação PayPal',
+  });
   return (
     <div style={{ background: '#f7f9fc', minHeight: '100vh' }}>
 

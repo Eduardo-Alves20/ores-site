@@ -6,6 +6,7 @@ import { Heart, Users, BookOpen, Handshake, Send } from 'lucide-react';
 import { useFetch } from '../hooks/useFetch';
 import { useAppAlert } from '../components/AppAlert';
 import api from '../lib/api';
+import { useSeo } from '../hooks/useSeo';
 
 const AREA_DEFAULTS = [
   { icon: 'heart', title: 'Assistencia Social', desc: 'Apoio direto as familias em vulnerabilidade, distribuicao de alimentos e atendimento social.' },
@@ -35,6 +36,11 @@ function buildVolunteerAreas(settings) {
 }
 
 export default function Voluntario() {
+  useSeo({
+    title: 'Seja Voluntário',
+    description: 'Junte-se à ORES como voluntário. Descubra como você pode ajudar nossas ações sociais e fazer parte da transformação de vidas.',
+    keywords: 'voluntariado ORES, ser voluntário ONG, voluntariado social, doação de tempo',
+  });
   const { data: siteInfo } = useFetch('/site-info');
   const { notify } = useAppAlert();
   const s = siteInfo || {};

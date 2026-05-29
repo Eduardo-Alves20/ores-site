@@ -3,6 +3,7 @@ import { useFetch } from '../hooks/useFetch';
 import PageHeader from '../components/PageHeader';
 import Reveal from '../components/Reveal';
 import RichTextContent from '../components/RichTextContent';
+import { useSeo } from '../hooks/useSeo';
 
 const CARDS = [
   { label: 'Unidades Regionais', to: '/regionais', icon: '🏢', desc: 'Conheça nossas unidades em diferentes regiões do RJ.' },
@@ -12,6 +13,11 @@ const CARDS = [
 ];
 
 export default function QuemSomos() {
+  useSeo({
+    title: 'Quem Somos',
+    description: 'Conheça a ORES: nossa missão, história e equipe. Uma ONG brasileira dedicada ao acolhimento, inclusão social e transformação de vidas.',
+    keywords: 'ORES ONG quem somos, ORES história, ORES missão, ONG Rio de Janeiro',
+  });
   const { data: siteInfo } = useFetch('/site-info');
   const s = siteInfo || {};
 

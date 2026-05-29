@@ -5,8 +5,14 @@ import { useFetch } from '../hooks/useFetch';
 import api from '../lib/api';
 import { Mail, Phone, MapPin, Clock, AtSign, Users, Play, MessageCircle } from 'lucide-react';
 import { useAppAlert } from '../components/AppAlert';
+import { useSeo } from '../hooks/useSeo';
 
 export default function Contato() {
+  useSeo({
+    title: 'Contato',
+    description: 'Entre em contato com a ORES. Tire dúvidas, proponha parcerias ou saiba como ajudar. Atendimento por e-mail, telefone e WhatsApp.',
+    keywords: 'ORES contato, telefone ORES, e-mail ORES, falar com a ORES',
+  });
   const { data: siteInfo } = useFetch('/site-info');
   const { notify } = useAppAlert();
   const [form, setForm] = useState({ name:'', email:'', phone:'', subject:'', message:'' });

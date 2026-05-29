@@ -4,8 +4,14 @@ import Reveal from '../components/Reveal';
 import RichTextContent from '../components/RichTextContent';
 import ServiceCardGallery from '../components/ServiceCardGallery';
 import { Link } from 'react-router-dom';
+import { useSeo } from '../hooks/useSeo';
 
 export default function ObraSocial() {
+  useSeo({
+    title: 'Programas Sociais',
+    description: 'Programas sociais gratuitos da ORES: banho da cidadania, cursos profissionalizantes, atendimento, cuidado e acolhimento para famílias em situação de vulnerabilidade.',
+    keywords: 'ORES programas sociais, programas sociais gratuitos, banho da cidadania, cursos gratuitos, assistência social',
+  });
   const { data } = useFetch('/social');
   const { data: siteInfo } = useFetch('/site-info');
   const s = siteInfo || {};
